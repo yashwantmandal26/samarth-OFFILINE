@@ -1,0 +1,412 @@
+[
+  {
+    "id": "jh-001",
+    "scheme_name": "Mukhyamantri Sukanya Yojana",
+    "department": "Women, Child Development and Social Security",
+    "category": "Women",
+    "description": "Financial assistance to girls from birth till the age of 18 to curb child marriage and promote education.",
+    "benefits": "Total assistance of ₹40,000 in various stages from birth to 18 years.",
+    "eligibility": {
+      "gender": "Female",
+      "age_min": 0,
+      "age_max": 18,
+      "income_limit": 72000,
+      "domicile": "Jharkhand",
+      "social_category": ["SC", "ST", "OBC", "General", "BPL"]
+    },
+    "documents_required": ["Aadhar Card", "Birth Certificate", "Income Certificate", "Residential Certificate", "Bank Passbook"],
+    "application_process": "Apply through Pragya Kendras or Child Development Project Office (CDPO).",
+    "fees": "Free",
+    "processing_time": "30-60 days",
+    "official_portal": "https://socialsecurity.jharkhand.gov.in/",
+    "reference_links": ["https://www.jharkhand.gov.in/"],
+    "keywords": ["girls", "education", "financial aid", "women"]
+  },
+  {
+    "id": "jh-002",
+    "scheme_name": "Jharkhand Krishi Rin Mafi Yojana",
+    "department": "Agriculture, Animal Husbandry & Cooperative",
+    "category": "Farmers",
+    "description": "Loan waiver scheme for small and marginal farmers of Jharkhand to provide relief from agricultural debts.",
+    "benefits": "Loan waiver up to ₹50,000 for eligible farmers.",
+    "eligibility": {
+      "occupation": "Farmer",
+      "land_holding": "Small/Marginal",
+      "domicile": "Jharkhand",
+      "age_min": 18
+    },
+    "documents_required": ["Aadhar Card", "Ration Card", "KCC Bank Account Details", "Land Documents"],
+    "application_process": "Register on the official portal or visit the nearest bank branch.",
+    "fees": "₹1 registration fee",
+    "processing_time": "15-30 days",
+    "official_portal": "https://jkrmy.jharkhand.gov.in/",
+    "reference_links": ["https://agriculture.jharkhand.gov.in/"],
+    "keywords": ["farmers", "loan waiver", "agriculture", "debt relief"]
+  },
+  {
+    "id": "jh-003",
+    "scheme_name": "Marang Gomke Jaipal Singh Munda Transnational Scholarship",
+    "department": "Scheduled Tribe, Scheduled Caste, Minority and Backward Class Welfare",
+    "category": "Students",
+    "description": "Scholarship for higher education (Masters/M.Phil) in selected universities in the UK and Northern Ireland.",
+    "benefits": "Full tuition fees, living expenses, and airfare covered.",
+    "eligibility": {
+      "social_category": ["ST", "SC", "OBC", "Minority"],
+      "age_max": 35,
+      "qualification": "Graduate",
+      "domicile": "Jharkhand"
+    },
+    "documents_required": ["Aadhar Card", "Caste Certificate", "Income Certificate", "Academic Records", "Offer letter from UK University"],
+    "application_process": "Online application through the official scholarship portal.",
+    "fees": "Free",
+    "processing_time": "90-120 days",
+    "official_portal": "https://mgjsmsscholarship.jharkhand.gov.in/",
+    "reference_links": ["https://welfare.jharkhand.gov.in/"],
+    "keywords": ["students", "scholarship", "abroad", "higher education"]
+  },
+  {
+    "id": "jh-004",
+    "scheme_name": "Mukhyamantri Protsahan Yojana",
+    "department": "Labor, Employment, Training & Skill Development",
+    "category": "Employment",
+    "description": "Financial incentive for unemployed graduates and post-graduates to support them while seeking jobs.",
+    "benefits": "₹5,000 per annum for graduates, ₹7,000 for post-graduates (one-time or yearly as per policy).",
+    "eligibility": {
+      "qualification": "Graduate/Post-Graduate",
+      "employment_status": "Unemployed",
+      "domicile": "Jharkhand",
+      "age_min": 18,
+      "age_max": 35
+    },
+    "documents_required": ["Aadhar Card", "Educational Certificates", "Employment Exchange Registration", "Residential Certificate"],
+    "application_process": "Register on the Jharkhand Rojgar portal.",
+    "fees": "Free",
+    "processing_time": "30 days",
+    "official_portal": "https://jharkhandrojgar.nic.in/",
+    "reference_links": ["https://shramadhan.jharkhand.gov.in/"],
+    "keywords": ["unemployed", "graduates", "allowance", "employment"]
+  },
+  {
+    "id": "jh-005",
+    "scheme_name": "Birsa Harit Gram Yojana",
+    "department": "Rural Development",
+    "category": "Farmers",
+    "description": "Promoting fruit-based horticulture for sustainable income in rural areas using MGNREGA funds.",
+    "benefits": "Plants, fertilizers, and labor costs for 3-5 years; expected income of ₹50k-1 lakh per year.",
+    "eligibility": {
+      "occupation": "Farmer/Rural Laborer",
+      "land_availability": "0.5 to 1 acre",
+      "domicile": "Jharkhand"
+    },
+    "documents_required": ["Aadhar Card", "Job Card (MGNREGA)", "Land Records", "Bank Account"],
+    "application_process": "Contact Gram Panchayat or Block Development Office.",
+    "fees": "Free",
+    "processing_time": "Ongoing",
+    "official_portal": "https://nrega.nic.in/",
+    "reference_links": ["https://rural.jharkhand.gov.in/"],
+    "keywords": ["horticulture", "fruits", "rural development", "income"]
+  },
+  {
+    "id": "jh-006",
+    "scheme_name": "PMAY-G (Pradhan Mantri Awaas Yojana - Gramin) Jharkhand",
+    "department": "Rural Development",
+    "category": "Housing",
+    "description": "Providing pucca houses with basic amenities to all houseless householders and those living in kutcha houses.",
+    "benefits": "Financial assistance of ₹1.20 lakh in plains and ₹1.30 lakh in hilly/difficult areas + MGNREGA labor.",
+    "eligibility": {
+      "housing_status": "Houseless/Kutcha House",
+      "social_category": ["SC", "ST", "Minority", "BPL"],
+      "domicile": "Jharkhand"
+    },
+    "documents_required": ["Aadhar Card", "Socio-Economic Caste Census (SECC) Data", "Bank Account", "Voter ID"],
+    "application_process": "Identification via SECC 2011 data and Gram Sabha verification.",
+    "fees": "Free",
+    "processing_time": "Variable",
+    "official_portal": "https://pmayg.nic.in/",
+    "reference_links": ["https://rural.jharkhand.gov.in/"],
+    "keywords": ["house", "rural housing", "PMAY", "home"]
+  },
+  {
+    "id": "jh-007",
+    "scheme_name": "Ayushman Bharat Jharkhand (PM-JAY)",
+    "department": "Health, Medical Education & Family Welfare",
+    "category": "Healthcare",
+    "description": "World's largest health insurance scheme providing cashless treatment at empanelled hospitals.",
+    "benefits": "Health cover of ₹5 lakh per family per year for secondary and tertiary care.",
+    "eligibility": {
+      "income_limit": "BPL/Low Income",
+      "domicile": "Jharkhand",
+      "social_category": ["SECC listed"]
+    },
+    "documents_required": ["Aadhar Card", "Ration Card", "Ayushman Card"],
+    "application_process": "Visit empanelled hospital or Common Service Centre (CSC) to get Ayushman Card.",
+    "fees": "Free",
+    "processing_time": "Instant (Card issuance)",
+    "official_portal": "https://setu.pmjay.gov.in/",
+    "reference_links": ["https://health.jharkhand.gov.in/"],
+    "keywords": ["health", "insurance", "medical", "hospital"]
+  },
+  {
+    "id": "jh-008",
+    "scheme_name": "Mukhyamantri Rajya Old Age Pension Scheme",
+    "department": "Women, Child Development and Social Security",
+    "category": "Pension",
+    "description": "Monthly pension for elderly citizens who are not covered under national pension schemes.",
+    "benefits": "₹1,000 per month.",
+    "eligibility": {
+      "age_min": 60,
+      "domicile": "Jharkhand",
+      "income_limit": "Low Income"
+    },
+    "documents_required": ["Aadhar Card", "Age Proof", "Residential Certificate", "Income Certificate", "Bank Details"],
+    "application_process": "Apply at the Block Office or through the Sarvajan Pension Portal.",
+    "fees": "Free",
+    "processing_time": "45-60 days",
+    "official_portal": "https://pension.jharkhand.gov.in/",
+    "reference_links": ["https://socialsecurity.jharkhand.gov.in/"],
+    "keywords": ["elderly", "pension", "old age", "social security"]
+  },
+  {
+    "id": "jh-009",
+    "scheme_name": "Jharkhand Mukhyamantri Sarathi Yojana",
+    "department": "Labor, Employment, Training & Skill Development",
+    "category": "Entrepreneurs",
+    "description": "Skill development training for youth to enhance employability and encourage self-employment.",
+    "benefits": "Free skill training, ₹1000/month transport allowance, and ₹1000-1500/month post-training allowance.",
+    "eligibility": {
+      "age_min": 18,
+      "age_max": 35,
+      "domicile": "Jharkhand",
+      "qualification": "8th Pass and above"
+    },
+    "documents_required": ["Aadhar Card", "Educational Marksheets", "Residential Certificate", "Bank Passbook"],
+    "application_process": "Apply at Block Level Skill Development Centers.",
+    "fees": "Free",
+    "processing_time": "Course duration varies",
+    "official_portal": "https://skill.jharkhand.gov.in/",
+    "reference_links": ["https://shramadhan.jharkhand.gov.in/"],
+    "keywords": ["skills", "training", "youth", "employment"]
+  },
+  {
+    "id": "jh-010",
+    "scheme_name": "E-Kalyan Scholarship",
+    "department": "Scheduled Tribe, Scheduled Caste, Minority and Backward Class Welfare",
+    "category": "Students",
+    "description": "Post-matric scholarship for students belonging to SC, ST, and OBC categories studying in Jharkhand or outside.",
+    "benefits": "Reimbursement of tuition fees and maintenance allowance.",
+    "eligibility": {
+      "social_category": ["SC", "ST", "OBC"],
+      "income_limit": 250000,
+      "domicile": "Jharkhand",
+      "qualification": "Post-Matric (Class 11 to PhD)"
+    },
+    "documents_required": ["Aadhar Card", "Caste Certificate", "Income Certificate", "Residential Certificate", "Bonafide Certificate"],
+    "application_process": "Online application through E-Kalyan portal.",
+    "fees": "Free",
+    "processing_time": "60-90 days",
+    "official_portal": "https://ekalyan.cgg.gov.in/",
+    "reference_links": ["https://welfare.jharkhand.gov.in/"],
+    "keywords": ["students", "scholarship", "post-matric", "SC/ST/OBC"]
+  },
+  {
+    "id": "jh-011",
+    "scheme_name": "Phulo Jhano Ashirwad Abhiyan",
+    "department": "Rural Development",
+    "category": "Women",
+    "description": "Rehabilitation of women involved in the sale of traditional liquor (Hadiya/Daru) by providing alternative livelihoods.",
+    "benefits": "Interest-free loan of ₹10,000 for starting a small business or shop.",
+    "eligibility": {
+      "gender": "Female",
+      "occupation": "Liquor Seller (Traditional)",
+      "domicile": "Jharkhand"
+    },
+    "documents_required": ["Aadhar Card", "SHG Membership Proof", "Bank Account Details"],
+    "application_process": "Identification by Sakhi Mandals (SHGs) and support from JSLPS.",
+    "fees": "Free",
+    "processing_time": "30 days",
+    "official_portal": "http://www.jslps.in/",
+    "reference_links": ["https://rural.jharkhand.gov.in/"],
+    "keywords": ["women", "livelihood", "entrepreneurship", "rehabilitation"]
+  },
+  {
+    "id": "jh-012",
+    "scheme_name": "Nilamber-Pitamber Jal Samridhi Yojana",
+    "department": "Rural Development",
+    "category": "Farmers",
+    "description": "Water conservation and groundwater recharge scheme focused on drought-prone areas of Jharkhand.",
+    "benefits": "Creation of water harvesting structures; labor employment via MGNREGA.",
+    "eligibility": {
+      "occupation": "Farmer/Rural Laborer",
+      "domicile": "Jharkhand"
+    },
+    "documents_required": ["Aadhar Card", "Job Card", "Land Details"],
+    "application_process": "Apply through Gram Sabha or Block Development Office.",
+    "fees": "Free",
+    "processing_time": "Ongoing",
+    "official_portal": "https://nrega.nic.in/",
+    "reference_links": ["https://rural.jharkhand.gov.in/"],
+    "keywords": ["water", "irrigation", "farmers", "conservation"]
+  },
+  {
+    "id": "jh-013",
+    "scheme_name": "Mukhyamantri Pashudhan Vikas Yojana",
+    "department": "Agriculture, Animal Husbandry & Cooperative",
+    "category": "Farmers",
+    "description": "Subsidized distribution of livestock (cows, goats, poultry, pigs) to increase farmers' income.",
+    "benefits": "50% to 90% subsidy on purchase of livestock.",
+    "eligibility": {
+      "occupation": "Farmer",
+      "domicile": "Jharkhand",
+      "social_category": ["SC", "ST", "Widows", "Disabled prioritized"]
+    },
+    "documents_required": ["Aadhar Card", "Caste Certificate", "Residential Certificate", "Bank Details"],
+    "application_process": "Apply through the District Animal Husbandry Office.",
+    "fees": "Free",
+    "processing_time": "60-90 days",
+    "official_portal": "https://agriculture.jharkhand.gov.in/",
+    "reference_links": ["https://www.jharkhand.gov.in/"],
+    "keywords": ["livestock", "cows", "poultry", "farmers", "subsidy"]
+  },
+  {
+    "id": "jh-014",
+    "scheme_name": "Savitribai Phule Kishori Samridhi Yojana",
+    "department": "Women, Child Development and Social Security",
+    "category": "Women",
+    "description": "Financial assistance to adolescent girls for education and empowerment, replacing Sukanya Yojana with broader scope.",
+    "benefits": "Financial aid at Class 8, 9, 10, 11, 12 and a lump sum at age 18-19 (Total ₹40,000).",
+    "eligibility": {
+      "gender": "Female",
+      "age_min": 10,
+      "age_max": 19,
+      "domicile": "Jharkhand",
+      "qualification": "Student (Class 8-12)"
+    },
+    "documents_required": ["Aadhar Card", "School Certificate", "Bank Details", "Residential Certificate"],
+    "application_process": "Apply through School or Anganwadi Center.",
+    "fees": "Free",
+    "processing_time": "30-45 days",
+    "official_portal": "https://socialsecurity.jharkhand.gov.in/",
+    "reference_links": ["https://www.jharkhand.gov.in/"],
+    "keywords": ["girls", "education", "financial aid", "adolescent"]
+  },
+  {
+    "id": "jh-015",
+    "scheme_name": "Mukhyamantri Shramik Yojana (MSY)",
+    "department": "Urban Development & Housing",
+    "category": "Employment",
+    "description": "Employment guarantee scheme for urban unskilled workers, similar to MGNREGA but for urban areas.",
+    "benefits": "Guaranteed 100 days of work in a financial year; unemployment allowance if work not provided within 15 days.",
+    "eligibility": {
+      "residence": "Urban",
+      "age_min": 18,
+      "domicile": "Jharkhand",
+      "occupation": "Unskilled Laborer"
+    },
+    "documents_required": ["Aadhar Card", "Urban Residential Proof", "Bank Details"],
+    "application_process": "Register on the MSY portal or at the Urban Local Body (ULB) office.",
+    "fees": "Free",
+    "processing_time": "15 days for work allocation",
+    "official_portal": "http://msy.jharkhand.gov.in/",
+    "reference_links": ["https://udhd.jharkhand.gov.in/"],
+    "keywords": ["urban", "employment", "labor", "jobs"]
+  },
+  {
+    "id": "jh-016",
+    "scheme_name": "Guru-Ji Student Credit Card Scheme",
+    "department": "Higher and Technical Education",
+    "category": "Students",
+    "description": "Providing low-interest loans to students for pursuing higher education in professional courses.",
+    "benefits": "Loan up to ₹15 lakh at 4% simple interest; no collateral required.",
+    "eligibility": {
+      "domicile": "Jharkhand",
+      "qualification": "10th/12th Pass",
+      "age_max": 40
+    },
+    "documents_required": ["Aadhar Card", "Admission Proof", "Fee Structure", "Income Certificate", "Caste Certificate"],
+    "application_process": "Apply through the dedicated Guru-Ji Student Credit Card portal.",
+    "fees": "Free",
+    "processing_time": "45-60 days",
+    "official_portal": "https://gurujicc.jharkhand.gov.in/",
+    "reference_links": ["https://highereducation.jharkhand.gov.in/"],
+    "keywords": ["education loan", "students", "higher education", "credit card"]
+  },
+  {
+    "id": "jh-017",
+    "scheme_name": "Sona Sobhran Dhoti Saree Yojana",
+    "department": "Food, Public Distribution & Consumer Affairs",
+    "category": "Healthcare",
+    "description": "Distribution of subsidized clothes to BPL families in Jharkhand.",
+    "benefits": "One Dhoti/Lungi and one Saree at ₹10 each, twice a year.",
+    "eligibility": {
+      "income_limit": "BPL",
+      "domicile": "Jharkhand",
+      "documents_required": ["Ration Card"]
+    },
+    "documents_required": ["Ration Card", "Aadhar Card"],
+    "application_process": "Available at Public Distribution System (PDS) shops/Ration shops.",
+    "fees": "₹10 per item",
+    "processing_time": "Immediate at PDS shop",
+    "official_portal": "https://aahar.jharkhand.gov.in/",
+    "reference_links": ["https://www.jharkhand.gov.in/"],
+    "keywords": ["clothing", "BPL", "ration", "subsidy"]
+  },
+  {
+    "id": "jh-018",
+    "scheme_name": "Mukhyamantri Gram Gaadi Yojana",
+    "department": "Transport",
+    "category": "Entrepreneurs",
+    "description": "Providing subsidized transportation in rural areas while creating self-employment for youth.",
+    "benefits": "Interest subvention on vehicle loans, exemption from road tax and permit fees for operators.",
+    "eligibility": {
+      "domicile": "Jharkhand",
+      "occupation": "Unemployed Youth/Entrepreneur",
+      "age_min": 18
+    },
+    "documents_required": ["Aadhar Card", "Driving License", "Residential Certificate", "Bank Details"],
+    "application_process": "Apply through the District Transport Office (DTO).",
+    "fees": "Variable",
+    "processing_time": "60 days",
+    "official_portal": "https://transport.jharkhand.gov.in/",
+    "reference_links": ["https://www.jharkhand.gov.in/"],
+    "keywords": ["transport", "rural connectivity", "employment", "bus"]
+  },
+  {
+    "id": "jh-019",
+    "scheme_name": "Jharkhand State Food Security Scheme (SFSS)",
+    "department": "Food, Public Distribution & Consumer Affairs",
+    "category": "Healthcare",
+    "description": "Providing subsidized food grains to families not covered under the National Food Security Act (NFSA).",
+    "benefits": "5 kg of food grains per person per month at ₹1 per kg.",
+    "eligibility": {
+      "domicile": "Jharkhand",
+      "income_limit": "Low Income/Poor",
+      "excluded": "Not covered under NFSA"
+    },
+    "documents_required": ["Aadhar Card", "Green Ration Card", "Residential Proof"],
+    "application_process": "Apply for Green Ration Card through the Aahar portal.",
+    "fees": "Free (Application)",
+    "processing_time": "30-60 days",
+    "official_portal": "https://aahar.jharkhand.gov.in/",
+    "reference_links": ["https://www.jharkhand.gov.in/"],
+    "keywords": ["ration", "food security", "grains", "BPL"]
+  },
+  {
+    "id": "jh-020",
+    "scheme_name": "Jharkhand Petrol Subsidy Scheme",
+    "department": "Food, Public Distribution & Consumer Affairs",
+    "category": "Farmers",
+    "description": "Subsidy on petrol for two-wheeler owners who are ration card holders (CM-SUPPORTS).",
+    "benefits": "₹25 per liter subsidy for up to 10 liters per month (Total ₹250/month).",
+    "eligibility": {
+      "domicile": "Jharkhand",
+      "documents_required": ["Ration Card", "Driving License", "Vehicle Registration (JH)"]
+    },
+    "documents_required": ["Aadhar Card", "Ration Card", "Driving License", "RC Book"],
+    "application_process": "Apply through the CM-SUPPORTS App or Aahar portal.",
+    "fees": "Free",
+    "processing_time": "Monthly credit to bank",
+    "official_portal": "https://aahar.jharkhand.gov.in/",
+    "reference_links": ["https://www.jharkhand.gov.in/"],
+    "keywords": ["petrol", "subsidy", "two-wheeler", "ration card"]
+  }
+]
