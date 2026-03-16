@@ -41,7 +41,8 @@ const SchemeFinderWizard = () => {
     qualification: '',
     isBPL: false,
     housingStatus: 'Own',
-    landHolding: 'None'
+    landHolding: 'None',
+    preferredCategory: ''
   });
 
   const steps = [
@@ -425,6 +426,30 @@ const SchemeFinderWizard = () => {
                     </button>
                   ))}
                 </div>
+              </div>
+
+              {/* Optional Field of Interest Filter */}
+              <div className="pt-4 border-t border-slate-100">
+                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                  Field of Interest <span className="text-[8px] bg-slate-100 px-1.5 py-0.5 rounded text-slate-500">Optional</span>
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {['Women', 'Farmers', 'Students', 'Healthcare', 'Housing', 'Pension'].map(cat => (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => setFormData(p => ({ ...p, preferredCategory: p.preferredCategory === cat ? '' : cat }))}
+                      className={`py-2 rounded-lg border text-[9px] font-black uppercase tracking-tighter transition-all ${
+                        formData.preferredCategory === cat 
+                        ? 'border-primary-600 bg-primary-50 text-primary-700' 
+                        : 'border-slate-100 bg-slate-50 text-slate-400 hover:border-primary-200'
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-[8px] text-slate-400 font-medium mt-2 italic">* Narrow down schemes by specific sector</p>
               </div>
             </div>
           )}
