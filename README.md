@@ -120,8 +120,8 @@ npm start
 ## 📜 Research Credits
 **Project:** Samarth – MCA Dissertation  
 **Developer:** Yashwant Mandal  
-**Institution:** [Insert Institution Name]  
+**Institution:** VIT Vellore  
 **Remote Origin:** [https://github.com/yashwantmandal26/samarth-OFFILINE.git](https://github.com/yashwantmandal26/samarth-OFFILINE.git)
 
 ---
-© 2026 Government of Jharkhand • Local AI Powered Platform
+© 2026 Government of Jharkhand (Unofficial) • Local AI Powered Platform
