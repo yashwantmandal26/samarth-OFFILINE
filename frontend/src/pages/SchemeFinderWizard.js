@@ -42,7 +42,7 @@ const SchemeFinderWizard = () => {
     isBPL: false,
     housingStatus: 'Own',
     landHolding: 'None',
-    preferredCategory: ''
+    preferredField: ''
   });
 
   const steps = [
@@ -248,8 +248,45 @@ const SchemeFinderWizard = () => {
               </div>
               
               {!visionLoading && (
-                <div className="text-center">
-                  <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">Or</span>
+                <div className="space-y-6">
+                  <div className="text-center">
+                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">Or</span>
+                  </div>
+
+                  <div className="space-y-4">
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Select Preferred Field (Optional)</label>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {[
+                        { label: 'Student / Education', value: 'Students' },
+                        { label: 'Scholarship / Higher Studies', value: 'Education' },
+                        { label: 'Farmer / Agriculture', value: 'Farmers' },
+                        { label: 'Employment / Jobs', value: 'Employment' },
+                        { label: 'Skill Development', value: 'Entrepreneurs' },
+                        { label: 'Business / Startup', value: 'Entrepreneurs' },
+                        { label: 'Women Welfare', value: 'Women' },
+                        { label: 'Healthcare', value: 'Healthcare' },
+                        { label: 'Housing', value: 'Housing' },
+                        { label: 'Pension / Senior Citizen', value: 'Pension' },
+                        { label: 'Entrepreneurship', value: 'Entrepreneurs' },
+                        { label: 'Digital Services', value: 'Social Welfare' },
+                        { label: 'General Welfare', value: 'Social Welfare' }
+                      ].map((field) => (
+                        <button
+                          key={field.label}
+                          type="button"
+                          onClick={() => setFormData(p => ({ ...p, preferredField: p.preferredField === field.value ? '' : field.value }))}
+                          className={`p-2 rounded-xl border text-[9px] font-black uppercase tracking-tight transition-all text-center flex items-center justify-center min-h-[44px] ${
+                            formData.preferredField === field.value 
+                            ? 'border-primary-600 bg-primary-600 text-white shadow-md shadow-primary-100' 
+                            : 'border-slate-100 bg-slate-50 text-slate-500 hover:border-primary-200'
+                          }`}
+                        >
+                          {field.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
                   <button onClick={() => setStep(2)} className="block w-full mt-4 text-[10px] font-black text-primary-600 uppercase tracking-widest hover:text-primary-800">
                     Skip and enter manually
                   </button>
@@ -426,30 +463,6 @@ const SchemeFinderWizard = () => {
                     </button>
                   ))}
                 </div>
-              </div>
-
-              {/* Optional Field of Interest Filter */}
-              <div className="pt-4 border-t border-slate-100">
-                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
-                  Field of Interest <span className="text-[8px] bg-slate-100 px-1.5 py-0.5 rounded text-slate-500">Optional</span>
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {['Women', 'Farmers', 'Students', 'Healthcare', 'Housing', 'Pension'].map(cat => (
-                    <button
-                      key={cat}
-                      type="button"
-                      onClick={() => setFormData(p => ({ ...p, preferredCategory: p.preferredCategory === cat ? '' : cat }))}
-                      className={`py-2 rounded-lg border text-[9px] font-black uppercase tracking-tighter transition-all ${
-                        formData.preferredCategory === cat 
-                        ? 'border-primary-600 bg-primary-50 text-primary-700' 
-                        : 'border-slate-100 bg-slate-50 text-slate-400 hover:border-primary-200'
-                      }`}
-                    >
-                      {cat}
-                    </button>
-                  ))}
-                </div>
-                <p className="text-[8px] text-slate-400 font-medium mt-2 italic">* Narrow down schemes by specific sector</p>
               </div>
             </div>
           )}
