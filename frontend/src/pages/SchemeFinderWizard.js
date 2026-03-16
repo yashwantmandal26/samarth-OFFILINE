@@ -45,7 +45,7 @@ const SchemeFinderWizard = () => {
   });
 
   const steps = [
-    { title: 'Smart Start', icon: Sparkles, color: 'bg-indigo-500' },
+    { title: 'Smart Start', icon: Sparkles, color: 'bg-primary-500' },
     { title: 'Personal', icon: User, color: 'bg-blue-500' },
     { title: 'Region', icon: MapPin, color: 'bg-emerald-500' },
     { title: 'Social', icon: Users, color: 'bg-purple-500' },
@@ -218,20 +218,20 @@ const SchemeFinderWizard = () => {
                 <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">Smart Intake</h3>
                 <p className="text-xs text-slate-500 font-medium">Upload a document to pre-fill your profile automatically.</p>
               </div>
-              <div className={`p-8 border-2 border-dashed rounded-[2rem] flex flex-col items-center justify-center gap-4 transition-all ${visionLoading ? 'bg-indigo-50 border-indigo-200' : 'bg-slate-50 border-slate-200 hover:border-indigo-400'}`}>
+              <div className={`p-8 border-2 border-dashed rounded-[2rem] flex flex-col items-center justify-center gap-4 transition-all ${visionLoading ? 'bg-primary-50 border-primary-200' : 'bg-slate-50 border-slate-200 hover:border-primary-400'}`}>
                 {visionLoading ? (
                   <div className="flex flex-col items-center gap-4">
-                    <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-indigo-200 animate-pulse">
+                    <div className="w-16 h-16 bg-primary-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-primary-200 animate-pulse">
                       <Eye size={32} />
                     </div>
                     <div className="text-center">
-                      <p className="text-xs font-black text-indigo-600 uppercase tracking-widest">Vision Agent Active</p>
-                      <p className="text-[10px] text-indigo-400 font-bold uppercase tracking-tighter">Reading document...</p>
+                      <p className="text-xs font-black text-primary-600 uppercase tracking-widest">Vision Agent Active</p>
+                      <p className="text-[10px] text-primary-400 font-bold uppercase tracking-tighter">Reading document...</p>
                     </div>
                   </div>
                 ) : (
                   <>
-                    <div className="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center">
+                    <div className="w-16 h-16 bg-primary-50 text-primary-600 rounded-2xl flex items-center justify-center">
                       <Upload size={32} />
                     </div>
                     <div className="text-center">
@@ -239,7 +239,7 @@ const SchemeFinderWizard = () => {
                       <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">JPG, PNG supported</p>
                     </div>
                     <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" id="smart-upload" />
-                    <label htmlFor="smart-upload" className="px-8 py-3 bg-indigo-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl cursor-pointer hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100">
+                    <label htmlFor="smart-upload" className="px-8 py-3 bg-primary-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl cursor-pointer hover:bg-primary-700 transition-all shadow-lg shadow-primary-100">
                       Select Document
                     </label>
                   </>
@@ -249,7 +249,7 @@ const SchemeFinderWizard = () => {
               {!visionLoading && (
                 <div className="text-center">
                   <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">Or</span>
-                  <button onClick={() => setStep(2)} className="block w-full mt-4 text-[10px] font-black text-indigo-600 uppercase tracking-widest hover:text-indigo-800">
+                  <button onClick={() => setStep(2)} className="block w-full mt-4 text-[10px] font-black text-primary-600 uppercase tracking-widest hover:text-primary-800">
                     Skip and enter manually
                   </button>
                 </div>
@@ -533,7 +533,7 @@ const SchemeFinderWizard = () => {
                 <motion.div 
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className="px-4 py-2 bg-indigo-50 text-indigo-600 text-[9px] font-black uppercase tracking-widest rounded-xl border border-indigo-100 flex items-center gap-2 shadow-sm"
+                  className="px-4 py-2 bg-primary-50 text-primary-600 text-[9px] font-black uppercase tracking-widest rounded-xl border border-primary-100 flex items-center gap-2 shadow-sm"
                 >
                   <Sparkles size={12} className="animate-pulse" /> Smart Autofill Active
                 </motion.div>

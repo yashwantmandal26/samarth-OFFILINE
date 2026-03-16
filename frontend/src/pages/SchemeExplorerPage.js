@@ -58,8 +58,11 @@ const SchemeExplorerPage = () => {
               <Link to="/" className="inline-flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-slate-900 mb-6 transition-all">
                 <ArrowLeft size={14} /> Back to Home
               </Link>
-              <h1 className="text-4xl font-black text-slate-900 tracking-tight leading-none mb-4">Policy Explorer</h1>
-              <p className="text-sm text-slate-500 font-medium uppercase tracking-widest">Discover Jharkhand's digital transformation through {schemes.length} initiatives.</p>
+              <h1 className="text-4xl font-black text-slate-900 tracking-tight leading-none mb-4 uppercase">Policy Explorer</h1>
+              <p className="text-sm text-slate-500 font-medium uppercase tracking-widest flex items-center gap-2">
+                <div className="h-1 w-8 bg-primary-600 rounded-full"></div>
+                Discover {schemes.length} Jharkhand Initiatives
+              </p>
             </div>
             <div className="relative group flex-1 max-w-md">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary-600 transition-colors" size={18} />
@@ -74,15 +77,15 @@ const SchemeExplorerPage = () => {
           </div>
 
           {/* Categories */}
-          <div className="flex flex-wrap gap-2 mb-12">
+          <div className="flex flex-wrap gap-2 mb-12 overflow-x-auto pb-2 no-scrollbar">
             {categories.map(cat => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${
+                className={`px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all whitespace-nowrap ${
                   activeCategory === cat 
-                  ? 'bg-emerald-600 text-white border-emerald-600 shadow-xl shadow-emerald-100' 
-                  : 'bg-white text-slate-400 border-slate-100 hover:border-emerald-300 hover:text-emerald-600'
+                  ? 'bg-slate-900 text-white border-slate-900 shadow-xl shadow-slate-200 scale-105' 
+                  : 'bg-white text-slate-400 border-slate-100 hover:border-slate-300 hover:text-slate-600 active:scale-95'
                 }`}
               >
                 {cat}
@@ -90,13 +93,8 @@ const SchemeExplorerPage = () => {
             ))}
           </div>
 
-          {/* Info */}
-          <div className="flex items-center gap-2 mb-8 text-[9px] font-black uppercase tracking-[0.2em] text-slate-300">
-            <Layers size={14} /> {filteredSchemes.length} Results Found
-          </div>
-
           {/* Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredSchemes.map((scheme, i) => (
               <motion.div 
                 key={scheme.id}
@@ -104,29 +102,34 @@ const SchemeExplorerPage = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.03 }}
-                className="bg-white rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-500 border border-slate-50 overflow-hidden flex flex-col group"
+                className="enterprise-card group"
               >
-                <div className="p-8 flex-1">
-                  <span className="inline-block px-3 py-1 rounded-lg text-[8px] font-black bg-emerald-50 text-emerald-600 uppercase tracking-widest mb-6 group-hover:bg-emerald-100 transition-colors">
-                    {scheme.category}
-                  </span>
-                  <h3 className="text-xl font-black text-slate-900 mb-3 leading-tight group-hover:text-emerald-600 transition-colors">
+                <div className="p-10 flex-1">
+                  <div className="flex justify-between items-start mb-6">
+                    <span className="badge-primary">
+                      {scheme.category}
+                    </span>
+                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">
+                      {scheme.id}
+                    </span>
+                  </div>
+                  <h3 className="text-2xl font-black text-slate-900 mb-4 leading-tight group-hover:text-primary-600 transition-colors uppercase tracking-tight">
                     {scheme.scheme_name}
                   </h3>
-                  <p className="text-xs text-slate-500 font-medium leading-relaxed line-clamp-3">
+                  <p className="text-sm text-slate-500 font-medium leading-relaxed line-clamp-3 italic">
                     {scheme.description}
                   </p>
                 </div>
-                <div className="px-8 py-6 bg-slate-50 border-t border-slate-50 flex items-center justify-between group-hover:bg-white transition-colors">
+                <div className="px-10 py-8 bg-slate-50 border-t border-slate-50 flex items-center justify-between group-hover:bg-white transition-colors">
                   <div className="overflow-hidden">
-                    <span className="block text-[8px] font-black text-slate-300 uppercase tracking-widest mb-1">Dept.</span>
+                    <span className="block text-[8px] font-black text-slate-300 uppercase tracking-widest mb-1">Department</span>
                     <span className="block text-[10px] font-bold text-slate-500 truncate max-w-[140px] uppercase tracking-tighter">{scheme.department}</span>
                   </div>
                   <Link
                     to={`/scheme/${scheme.id}`}
-                    className="flex items-center gap-2 px-6 py-2.5 bg-white border border-slate-100 text-slate-900 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition-all shadow-sm active:scale-95"
+                    className="flex items-center gap-2 px-6 py-3 bg-white border border-slate-100 text-slate-900 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-sm active:scale-95"
                   >
-                    View <ChevronRight size={14} />
+                    Details <ChevronRight size={14} />
                   </Link>
                 </div>
               </motion.div>

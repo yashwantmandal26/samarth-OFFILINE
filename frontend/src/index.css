@@ -15,3 +15,37 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@layer components {
+  .enterprise-card {
+    @apply bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden transition-all duration-500 hover:shadow-xl hover:border-slate-200;
+  }
+  
+  .enterprise-title {
+    @apply text-slate-900 font-black tracking-tighter uppercase;
+  }
+  
+  .enterprise-text {
+    @apply text-slate-500 font-medium leading-relaxed;
+  }
+
+  .badge-primary {
+    @apply px-3 py-1 bg-primary-50 text-primary-700 text-[10px] font-black uppercase tracking-widest rounded-full border border-primary-100;
+  }
+
+  .badge-slate {
+    @apply px-3 py-1 bg-slate-50 text-slate-500 text-[10px] font-black uppercase tracking-widest rounded-full border border-slate-100;
+  }
+
+  .btn-primary {
+    @apply px-8 py-4 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 active:scale-95 flex items-center justify-center gap-2;
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

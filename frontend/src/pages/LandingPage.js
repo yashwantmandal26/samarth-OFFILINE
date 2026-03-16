@@ -9,128 +9,97 @@ import {
   Cpu, 
   Database,
   ChevronRight,
-  Sparkles,
-  CheckCircle,
-  Target,
-  Mic,
-  FileText,
-  IndianRupee
+  Sparkles
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import logoImg from '../assets/logo.png';
 
 const LandingPage = () => {
   return (
-    <div className="bg-white overflow-hidden">
+    <div className="bg-slate-50 overflow-hidden">
       {/* Hero Section */}
-      <section className="relative pt-24 pb-32 px-6 bg-gradient-to-b from-emerald-50/50 to-white">
+      <section className="relative pt-24 pb-32 px-6">
         <div className="container mx-auto">
-          <div className="max-w-5xl mx-auto text-center relative z-10">
+          <div className="max-w-4xl mx-auto text-center relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white text-emerald-700 rounded-full text-[10px] font-bold uppercase tracking-widest mb-12 border border-emerald-100 shadow-sm">
-                <Sparkles size={12} className="text-emerald-500" />
-                AI-Powered Scheme Discovery
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-50 text-primary-700 rounded-full text-[10px] font-black uppercase tracking-widest mb-8 border border-primary-100 shadow-sm">
+                <Sparkles size={12} className="animate-pulse" />
+                Next-Gen E-Governance Platform
               </div>
               <h1 className="text-6xl md:text-7xl lg:text-8xl font-black text-slate-900 mb-8 tracking-tighter leading-[0.9]">
-                Don't search for schemes. <br />
-                <span className="relative inline-block">
-                  Let schemes find you.
-                  <div className="absolute bottom-4 left-0 w-full h-3 bg-orange-200/60 -z-10 rounded-full"></div>
-                </span>
+                Empowering <span className="text-primary-600">Jharkhand</span> through AI.
               </h1>
-              <p className="text-lg md:text-xl text-slate-500 font-medium leading-relaxed max-w-2xl mx-auto mb-12">
-                Answer a few simple questions and Samarth AI will find every Jharkhand & Central government scheme, scholarship, and pension you're eligible for.
+              <p className="text-lg md:text-xl text-slate-500 font-medium leading-relaxed max-w-2xl mx-auto mb-12 italic">
+                Samarth is a research-grade Multi-Agent System designed to bridge the gap between complex government policies and citizens.
               </p>
               
-              <div className="flex flex-col items-center justify-center gap-6">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Link
+                  to="/finder"
+                  className="btn-primary px-10 py-5 text-lg"
+                >
+                  Find My Schemes <Search size={20} />
+                </Link>
                 <Link
                   to="/chat"
-                  className="w-full sm:w-auto px-10 py-5 bg-emerald-600 text-white rounded-2xl font-bold text-lg hover:bg-emerald-700 transition-all shadow-2xl shadow-emerald-200 flex items-center justify-center gap-3 active:scale-95"
+                  className="w-full sm:w-auto px-10 py-5 bg-white text-slate-700 border border-slate-200 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:border-primary-200 hover:text-primary-600 transition-all flex items-center justify-center gap-3 active:scale-95 shadow-sm"
                 >
-                  <MessageSquare size={20} /> Find My Schemes — Start Chat
+                  <MessageSquare size={20} /> AI Assistant
                 </Link>
-                <div className="flex flex-wrap justify-center gap-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                  <span className="flex items-center gap-2 text-slate-600"><Bot size={14} className="text-purple-600" /> Supports Hindi, English & Santhali</span>
-                  <span className="flex items-center gap-2 text-slate-600"><CheckCircle size={14} className="text-emerald-500" /> 100% Free</span>
-                  <span className="flex items-center gap-2 text-slate-600"><ShieldCheck size={14} className="text-orange-500" /> Private</span>
-                </div>
               </div>
             </motion.div>
           </div>
         </div>
-      </section>
-
-      {/* How it Works Section */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-6">
-          <div className="max-w-3xl mx-auto bg-slate-50/50 rounded-3xl border border-slate-100 p-10 shadow-sm">
-             <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-8">How it works</h4>
-             <div className="space-y-6">
-               {[
-                 { step: 1, text: "Samarth asks you simple questions about yourself" },
-                 { step: 2, text: "AI matches your profile with 50+ govt schemes" },
-                 { step: 3, text: "Get eligibility, documents & apply links instantly" }
-               ].map((item) => (
-                 <div key={item.step} className="flex items-center gap-4">
-                   <div className="w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center font-bold text-sm shrink-0">
-                     {item.step}
-                   </div>
-                   <p className="text-slate-700 font-medium text-sm">{item.text}</p>
-                 </div>
-               ))}
-             </div>
-          </div>
+        
+        {/* Background Accents */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-0 opacity-20 pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary-400 rounded-full blur-[120px] animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-blue-400 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }}></div>
         </div>
       </section>
 
-      {/* Why Citizens Love Samarth */}
-      <section className="py-32 bg-white border-t border-slate-50">
+      {/* Trust Badges */}
+      <div className="py-12 border-y border-slate-100 bg-white">
         <div className="container mx-auto px-6">
-          <div className="text-center max-w-3xl mx-auto mb-20">
-            <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">Why Citizens Love Samarth</h2>
-            <p className="text-slate-500 font-medium">Built to make government schemes accessible to every Jharkhand citizen</p>
+          <div className="flex flex-wrap justify-center gap-12 md:gap-24 items-center opacity-40 grayscale hover:grayscale-0 transition-all">
+            <div className="flex items-center gap-3 font-black text-slate-900 text-xs uppercase tracking-[0.2em]">
+              <ShieldCheck size={24} className="text-primary-600" /> 100% Private
+            </div>
+            <div className="flex items-center gap-3 font-black text-slate-900 text-xs uppercase tracking-[0.2em]">
+              <Globe size={24} className="text-blue-600" /> Local Intelligence
+            </div>
+            <div className="flex items-center gap-3 font-black text-slate-900 text-xs uppercase tracking-[0.2em]">
+              <Cpu size={24} className="text-purple-600" /> Multi-Agent System
+            </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-y-20 gap-x-12">
+        </div>
+      </div>
+
+      {/* Feature Grid */}
+      <section className="py-32 bg-white">
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {[
               {
+                icon: Search,
+                title: "Policy Matching",
+                desc: "Our Symbolic-AI engine cross-references your profile against 90+ Jharkhand schemes with 100% deterministic accuracy.",
+                color: "bg-blue-50 text-blue-600"
+              },
+              {
                 icon: MessageSquare,
-                title: "Conversational Discovery",
-                desc: "No long forms. Samarth asks you simple questions one-by-one and builds your profile to find matching schemes.",
-                color: "text-emerald-600"
+                title: "Natural Language",
+                desc: "Interact with Samarth in plain English or Hindi. No bureaucratic jargon, just simple conversations.",
+                color: "bg-purple-50 text-purple-600"
               },
               {
-                icon: Target,
-                title: "Personalised Matching",
-                desc: "AI matches your age, income, caste, occupation, and location against 50+ state and central schemes.",
-                color: "text-emerald-600"
-              },
-              {
-                icon: Mic,
-                title: "Multilingual Support",
-                desc: "Chat in Hindi, English, Santhali, or any language you're comfortable with. Samarth understands them all.",
-                color: "text-emerald-600"
-              },
-              {
-                icon: FileText,
-                title: "Documents & Steps",
-                desc: "Get the exact documents needed and step-by-step apply process with official portal links.",
-                color: "text-emerald-600"
-              },
-              {
-                icon: IndianRupee,
-                title: "100% Free",
-                desc: "Samarth is completely free for all citizens of Jharkhand. No hidden costs, no subscriptions.",
-                color: "text-emerald-600"
-              },
-              {
-                icon: Globe,
-                title: "State + Central Schemes",
-                desc: "Covers both Jharkhand state schemes and all central government schemes available to Jharkhand citizens.",
-                color: "text-emerald-600"
+                icon: Database,
+                title: "Secure & Local",
+                desc: "Everything runs on your machine. Your personal documents and data never leave your computer.",
+                color: "bg-emerald-50 text-emerald-600"
               }
             ].map((f, i) => (
               <motion.div
@@ -139,28 +108,37 @@ const LandingPage = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="flex flex-col items-center text-center group"
+                className="p-10 rounded-[2.5rem] border border-slate-50 hover:border-slate-100 hover:shadow-2xl hover:shadow-slate-100 transition-all duration-500 group"
               >
-                <div className={`w-16 h-16 bg-white rounded-full flex items-center justify-center mb-8 transition-transform duration-500 group-hover:scale-110`}>
-                  <f.icon size={32} className={f.color} />
+                <div className={`w-16 h-16 ${f.color} rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500 shadow-sm`}>
+                  <f.icon size={32} />
                 </div>
-                <h3 className="text-xl font-black text-slate-900 mb-4 tracking-tight">{f.title}</h3>
-                <p className="text-slate-500 font-medium leading-relaxed text-sm">{f.desc}</p>
+                <h3 className="text-2xl font-black text-slate-900 mb-4 tracking-tight uppercase">{f.title}</h3>
+                <p className="text-slate-500 font-medium leading-relaxed italic">{f.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Final CTA */}
-      <section className="py-24 bg-white border-t border-slate-50">
-        <div className="container mx-auto px-6 text-center">
-           <div className="max-w-3xl mx-auto flex flex-col items-center gap-8">
-              <div className="w-16 h-16 bg-emerald-600 rounded-2xl flex items-center justify-center text-white overflow-hidden shadow-xl shadow-emerald-100"> 
-                <img src={logoImg} alt="Samarth Logo" className="h-12 w-12 object-contain" />
-              </div>
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-[0.4em]">© 2026 Samarth. Built for Jharkhand citizens.</p>
-           </div>
+      {/* Stats Section */}
+      <section className="py-32 bg-slate-900 text-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-24 opacity-10 pointer-events-none">
+          <Bot size={400} />
+        </div>
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-12">
+            <div className="text-center md:text-left">
+              <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tighter leading-none">Ready to discover your benefits?</h2>
+              <p className="text-slate-400 font-medium text-lg italic max-w-lg">Join thousands of Jharkhand citizens who have already found their perfect policy match.</p>
+            </div>
+            <Link
+              to="/finder"
+              className="btn-primary px-12 py-6 text-sm bg-primary-600 shadow-primary-900/20"
+            >
+              Get Started Now <ChevronRight size={20} />
+            </Link>
+          </div>
         </div>
       </section>
     </div>

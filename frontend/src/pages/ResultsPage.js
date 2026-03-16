@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { Award, Sparkles, Brain, ArrowLeft, ShieldCheck, Target, Wallet, ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
-import logoImg from '../assets/logo.png';
 
 const TypewriterSummary = ({ text }) => {
   const [displayedText, setDisplayedText] = useState('');
@@ -22,19 +21,19 @@ const TypewriterSummary = ({ text }) => {
     <motion.div 
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-emerald-900 text-white p-8 rounded-[2rem] shadow-2xl mb-12 relative overflow-hidden group"
+      className="bg-slate-900 text-white p-8 rounded-[2rem] shadow-2xl mb-12 relative overflow-hidden group"
     >
       <div className="absolute top-0 right-0 p-8 opacity-10">
-        <img src={logoImg} alt="" className="w-32 h-32 object-contain grayscale brightness-200" />
+        <Brain size={120} className="text-white" />
       </div>
       
       <div className="relative z-10">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center border border-emerald-500/30 text-white">
-            <Sparkles size={20} className="text-emerald-400 animate-pulse" />
+          <div className="w-10 h-10 bg-primary-500/20 rounded-xl flex items-center justify-center border border-primary-500/30">
+            <Sparkles size={20} className="text-primary-400 animate-pulse" />
           </div>
           <div>
-            <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400 mb-1">AI Executive Summary</h2>
+            <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary-400 mb-1">AI Executive Summary</h2>
             <div className="flex items-center gap-2">
                 <span className="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span>
                 <span className="text-[8px] font-black uppercase tracking-widest text-emerald-500">Live Synthesis Active</span>
@@ -42,14 +41,14 @@ const TypewriterSummary = ({ text }) => {
           </div>
         </div>
         
-        <p className="text-lg md:text-xl font-medium leading-relaxed text-emerald-50 max-w-3xl">
+        <p className="text-lg md:text-xl font-medium leading-relaxed text-slate-100 max-w-3xl">
           {displayedText}
-          <span className="inline-block w-2 h-6 bg-emerald-500 ml-1 animate-pulse align-middle"></span>
+          <span className="inline-block w-2 h-6 bg-primary-500 ml-1 animate-pulse align-middle"></span>
         </p>
       </div>
 
       {/* Decorative Gradient */}
-      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-500 opacity-50"></div>
+      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 via-purple-500 to-blue-500 opacity-50"></div>
     </motion.div>
   );
 };
@@ -110,7 +109,7 @@ const ResultsPage = () => {
           </div>
           <div className="hidden md:block text-right">
             <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] block mb-1">Status</span>
-            <span className="px-3 py-1 bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-widest rounded-full border border-emerald-200">Analysis Verified</span>
+            <span className="px-3 py-1 bg-primary-50 text-primary-700 text-[10px] font-black uppercase tracking-widest rounded-full border border-primary-100">Analysis Verified</span>
           </div>
         </div>
 
@@ -118,73 +117,72 @@ const ResultsPage = () => {
         <TypewriterSummary text={summaryText} />
 
         {/* Results List */}
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-10">
           {recommendations.map((scheme, index) => (
             <motion.div 
               key={scheme.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col group"
+              className="enterprise-card group flex flex-col"
             >
               {/* Section A: Header */}
-              <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between">
+              <div className="px-10 py-8 border-b border-slate-50 flex items-center justify-between">
                 <div>
-                  <h3 className="text-xl font-semibold text-slate-900 tracking-tight mb-1">
+                  <h3 className="text-2xl font-black text-slate-900 tracking-tight mb-2 uppercase">
                     {scheme.scheme_name}
                   </h3>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-medium text-slate-500">
+                  <div className="flex items-center gap-3">
+                    <span className="badge-slate">
                       {scheme.department}
                     </span>
-                    <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
-                    <span className="text-xs font-semibold text-emerald-600 uppercase tracking-wider">
+                    <span className="badge-primary">
                       {scheme.category}
                     </span>
                   </div>
                 </div>
-                <div className="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full font-medium text-sm border border-emerald-200">
+                <div className="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl font-black text-xs border border-emerald-100 shadow-sm uppercase tracking-widest">
                   {scheme.matchScore}% Match
                 </div>
               </div>
 
               {/* Section B: Core Content */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 border-b border-slate-100">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-10 border-b border-slate-50 flex-1">
                 {/* Column 1: Scheme Data */}
                 <div className="flex flex-col">
-                  <p className="text-slate-600 text-sm leading-relaxed line-clamp-2 mb-4">
+                  <p className="text-slate-500 text-sm font-medium leading-relaxed italic mb-8">
                     {scheme.description}
                   </p>
                   
-                  <div className="bg-slate-50 rounded-lg p-5 mt-auto border border-slate-100 space-y-4">
-                    <div className="flex items-center gap-3 text-slate-700 font-medium">
-                      <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-400">
-                        <Wallet size={16} />
+                  <div className="bg-slate-50 rounded-[1.5rem] p-8 mt-auto border border-slate-100 space-y-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-primary-600 shadow-sm">
+                        <Wallet size={20} />
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Benefit</span>
+                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Primary Benefit</span>
                         <span className="text-sm font-bold text-slate-700">{scheme.benefits}</span>
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-3 text-slate-700 font-medium">
-                      <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-400">
-                        <Target size={16} />
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-primary-600 shadow-sm">
+                        <Target size={20} />
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Target Group</span>
+                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Target Demographic</span>
                         <span className="text-sm font-bold text-slate-700">{scheme.category}</span>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3 text-slate-700 font-medium">
-                      <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-400">
-                        <ShieldCheck size={16} />
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-primary-600 shadow-sm">
+                        <ShieldCheck size={20} />
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Income Eligibility</span>
+                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Income Eligibility</span>
                         <span className="text-sm font-bold text-slate-700">
-                          {scheme.eligibility.income_limit ? `Up to ₹${scheme.eligibility.income_limit.toLocaleString()}` : "Variable/No Limit"}
+                          {scheme.eligibility.income_limit ? `Up to ₹${scheme.eligibility.income_limit.toLocaleString()}` : "Variable Eligibility"}
                         </span>
                       </div>
                     </div>
@@ -192,21 +190,26 @@ const ResultsPage = () => {
                 </div>
 
                 {/* Column 2: AI Agent Analysis */}
-                <div className="bg-emerald-50/30 border border-emerald-100 rounded-lg p-5 flex flex-col">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Sparkles size={14} className="text-emerald-600" />
-                    <span className="text-xs font-bold text-emerald-800 tracking-wider uppercase">✦ AI Reasoning Engine</span>
+                <div className="bg-primary-50/30 border border-primary-100/50 rounded-[1.5rem] p-8 flex flex-col relative overflow-hidden">
+                  <div className="absolute -top-4 -right-4 opacity-5 rotate-12">
+                    <Sparkles size={120} />
                   </div>
-                  <div className="text-xs flex-1">
+                  <div className="flex items-center gap-2 mb-6 relative z-10">
+                    <div className="w-8 h-8 bg-primary-100 rounded-lg flex items-center justify-center text-primary-600">
+                        <Sparkles size={16} />
+                    </div>
+                    <span className="text-[10px] font-black text-primary-800 tracking-[0.2em] uppercase">AI Reasoning Protocol</span>
+                  </div>
+                  <div className="text-xs flex-1 relative z-10">
                     {formatAIExplanation(scheme.aiExplanation) || (
-                      <ul className="space-y-2">
-                        <li className="flex items-start gap-2">
-                          <span className="text-emerald-500 mt-1 text-[10px]">✦</span>
-                          <span className="text-slate-700 font-bold leading-relaxed">Profile matches deterministic eligibility rules.</span>
+                      <ul className="space-y-3">
+                        <li className="flex items-start gap-3">
+                          <span className="text-primary-500 mt-1 text-[10px]">✦</span>
+                          <span className="text-slate-700 font-bold leading-relaxed uppercase tracking-tight">Socio-economic profile verified by symbolic engine.</span>
                         </li>
-                        <li className="flex items-start gap-2">
-                          <span className="text-emerald-500 mt-1 text-[10px]">✦</span>
-                          <span className="text-slate-700 font-bold leading-relaxed">Policy reasoning verified by backend agent protocol.</span>
+                        <li className="flex items-start gap-3">
+                          <span className="text-primary-500 mt-1 text-[10px]">✦</span>
+                          <span className="text-slate-700 font-bold leading-relaxed uppercase tracking-tight">Eligibility criteria matched with 100% deterministic accuracy.</span>
                         </li>
                       </ul>
                     )}
@@ -215,18 +218,18 @@ const ResultsPage = () => {
               </div>
 
               {/* Section C: Footer */}
-              <div className="px-8 py-4 bg-white flex justify-end items-center gap-6">
+              <div className="px-10 py-6 bg-white flex justify-end items-center gap-8">
                 <button
                   onClick={() => navigate(`/scheme/${scheme.id}`)}
-                  className="text-sm font-bold text-slate-500 hover:text-emerald-600 transition-colors uppercase tracking-widest"
+                  className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors"
                 >
-                  View Full Details
+                  Deep Detail View
                 </button>
                 <a 
                   href={scheme.official_portal}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-lg text-sm font-bold transition-all shadow-lg shadow-emerald-50 active:scale-95 flex items-center gap-2"
+                  className="btn-primary"
                 >
                   Apply Now <ExternalLink size={16} />
                 </a>
