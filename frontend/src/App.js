@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { Home, Search, MessageSquare, BookOpen, Bot, Github, ExternalLink } from 'lucide-react';
+import { Home, Search, MessageSquare, BookOpen, Bot, Github, ExternalLink, Globe } from 'lucide-react';
 
 // Pages
 import LandingPage from './pages/LandingPage';

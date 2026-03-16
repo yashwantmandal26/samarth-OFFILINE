@@ -9,7 +9,12 @@ import {
   Cpu, 
   Database,
   ChevronRight,
-  Sparkles
+  Sparkles,
+  CheckCircle,
+  Target,
+  Mic,
+  FileText,
+  IndianRupee
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import logoImg from '../assets/logo.png';
