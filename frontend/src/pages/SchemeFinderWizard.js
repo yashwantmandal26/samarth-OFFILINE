@@ -12,15 +12,12 @@ import {
   CheckCircle2, 
   AlertCircle,
   Upload,
-  ArrowLeft,
-  IndianRupee,
   Eye,
   Brain,
   Languages,
   Sparkles
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import logoImg from '../assets/logo.png';
 
 const SchemeFinderWizard = () => {
   const navigate = useNavigate();
@@ -432,35 +429,35 @@ const SchemeFinderWizard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center p-6">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
         <motion.div 
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="max-w-xs w-full bg-white rounded-[2rem] shadow-2xl p-8 text-center border border-slate-100"
+          className="max-w-xs w-full bg-white rounded-3xl shadow-2xl p-8 text-center border border-slate-100"
         >
-          <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center text-white backdrop-blur-xl mb-6 overflow-hidden">
-            <img src={logoImg} alt="Samarth Logo" className="h-10 w-10 object-contain" />
+          <div className="w-16 h-16 bg-primary-50 text-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <Brain size={32} className="animate-pulse" />
           </div>
-          <h2 className="text-xs font-black text-slate-900 mb-6 uppercase tracking-[0.3em]">MAS Analysis</h2>
+          <h2 className="text-sm font-black text-slate-900 mb-6 uppercase tracking-[0.2em]">MAS Analysis</h2>
           <div className="space-y-3">
             {agentWorkflow.map((agent, i) => (
               <motion.div 
                 key={i} 
                 animate={{ 
                   scale: agent.active ? 1.05 : 1,
-                  backgroundColor: agent.active ? 'rgba(16, 185, 129, 0.05)' : 'rgba(248, 250, 252, 1)',
-                  borderColor: agent.active ? 'rgba(16, 185, 129, 0.2)' : 'rgba(241, 245, 249, 1)'
+                  backgroundColor: agent.active ? 'rgba(79, 70, 229, 0.05)' : 'rgba(248, 250, 252, 1)',
+                  borderColor: agent.active ? 'rgba(79, 70, 229, 0.2)' : 'rgba(241, 245, 249, 1)'
                 }}
                 className="flex items-center gap-3 p-4 rounded-xl border transition-all duration-300"
               >
-                <div className={`${agent.active ? 'text-emerald-600' : 'text-slate-300'}`}>
+                <div className={`${agent.active ? 'text-primary-600' : 'text-slate-300'}`}>
                   {agent.agent === 'Vision Agent' ? <Eye size={16} /> : agent.agent === 'Reasoning Agent' ? <Brain size={16} /> : <Languages size={16} />}
                 </div>
                 <div className="text-left flex-1">
-                  <p className={`text-[8px] font-black uppercase tracking-widest leading-none mb-1 ${agent.active ? 'text-emerald-600' : 'text-slate-400'}`}>{agent.agent}</p>
+                  <p className={`text-[8px] font-black uppercase tracking-widest leading-none mb-1 ${agent.active ? 'text-primary-600' : 'text-slate-400'}`}>{agent.agent}</p>
                   <p className={`text-[10px] font-bold leading-tight ${agent.active ? 'text-slate-900' : 'text-slate-500'}`}>{agent.status}</p>
                 </div>
-                {agent.active && <Loader className="animate-spin text-emerald-600" size={12} />}
+                {agent.active && <Loader className="animate-spin text-primary-600" size={12} />}
                 {!agent.active && agent.status !== 'Pending' && <CheckCircle2 size={12} className="text-emerald-500" />}
               </motion.div>
             ))}
@@ -471,7 +468,7 @@ const SchemeFinderWizard = () => {
                     initial={{ width: "0%" }}
                     animate={{ width: "100%" }}
                     transition={{ duration: 3, ease: "linear" }}
-                    className="bg-emerald-600 h-full"
+                    className="bg-primary-600 h-full"
                 ></motion.div>
             </div>
             <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest mt-2">Processing Protocols</p>
@@ -482,87 +479,126 @@ const SchemeFinderWizard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-12 px-4 flex items-center justify-center">
-      <div className="max-w-4xl w-full">
-        <div className="bg-white rounded-[2rem] shadow-2xl overflow-hidden border border-slate-100 flex flex-col md:flex-row">
+    <div className="min-h-screen bg-slate-50 py-16 px-4 flex items-center justify-center">
+      <div className="max-w-5xl w-full">
+        <div className="bg-white rounded-[2rem] shadow-2xl overflow-hidden border border-slate-200 flex flex-col md:flex-row min-h-[600px]">
           {/* Sidebar */}
-          <div className="md:w-80 bg-emerald-600 p-10 text-white flex flex-col justify-between relative overflow-hidden">
-            <div className="absolute -bottom-10 -left-10 opacity-10 rotate-12">
-               <img src={logoImg} alt="" className="w-64 h-64 object-contain grayscale brightness-200" />
+          <div className="md:w-80 bg-slate-900 p-10 text-white hidden md:flex flex-col">
+            <div className="mb-12">
+              <h2 className="text-2xl font-black tracking-tighter uppercase text-primary-400">Samarth</h2>
+              <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] mt-1">E-Governance MAS</p>
             </div>
-            <div className="relative z-10">
-              <div className="flex items-center gap-3 mb-12">
-                <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white overflow-hidden p-1.5">
-                  <img src={logoImg} alt="Samarth Logo" className="w-full h-full object-contain" />
-                </div>
-                <span className="text-xl font-black tracking-tight">Samarth</span>
-              </div>
-              <div className="space-y-8">
-                {[
-                  { step: 1, label: 'Smart Start', icon: Sparkles },
-                  { step: 2, label: 'Verify Profile', icon: User },
-                  { step: 3, label: 'Location & Region', icon: MapPin },
-                  { step: 4, label: 'Economic Status', icon: IndianRupee },
-                  { step: 5, label: 'MAS Finalize', icon: CheckCircle2 }
-                ].map((s) => (
-                  <div key={s.step} className={`flex items-center gap-4 transition-all ${step === s.step ? 'opacity-100 translate-x-2' : 'opacity-40'}`}>
-                    <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-bold ${step === s.step ? 'bg-white text-emerald-600 border-white' : 'border-white/30'}`}>
-                      {s.step}
+            
+            <div className="flex-1 flex flex-col gap-8 justify-center">
+              {steps.map((s, idx) => {
+                const Icon = s.icon;
+                const isActive = step === idx + 1;
+                const isCompleted = step > idx + 1;
+                return (
+                  <div key={idx} className="flex items-center gap-4 group cursor-default">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 ${
+                      isActive ? `${s.color} scale-110 shadow-lg shadow-primary-900/50 ring-4 ring-white/10` : isCompleted ? 'bg-emerald-500 shadow-lg shadow-emerald-900/20' : 'bg-slate-800 opacity-40'
+                    }`}>
+                      {isCompleted ? <CheckCircle2 size={18} /> : <Icon size={18} />}
                     </div>
-                    <span className="text-xs font-black uppercase tracking-widest">{s.label}</span>
+                    <div className="flex flex-col leading-tight">
+                      <span className={`text-[9px] font-black uppercase tracking-widest mb-1 ${isActive ? 'text-primary-400' : 'text-slate-600'}`}>Step {idx + 1}</span>
+                      <span className={`text-sm font-bold tracking-tight transition-colors ${isActive ? 'text-white' : 'text-slate-500'}`}>{s.title}</span>
+                    </div>
                   </div>
-                ))}
-              </div>
+                );
+              })}
             </div>
-            <div className="relative z-10 pt-12 border-t border-white/10">
-              <p className="text-[10px] font-bold text-white/60 uppercase tracking-widest leading-relaxed">
-                Your data is processed locally using Jharkhand's Hybrid Symbolic-AI engine.
-              </p>
+
+            <div className="mt-auto pt-8 border-t border-slate-800">
+              <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                Secure Local Environment
+              </div>
             </div>
           </div>
 
-          {/* Form Area */}
-          <div className="flex-1 p-10 md:p-16">
-            <div className="mb-10">
-              <h2 className="text-3xl font-black text-slate-900 tracking-tight mb-2">
-                {step === 1 ? 'Namaskar!' : 'Tell us more'}
-              </h2>
-              <p className="text-sm font-medium text-slate-400 uppercase tracking-widest">Step {step} of 5</p>
-            </div>
-
-            <form onSubmit={step === 5 ? handleSubmit : (e) => e.preventDefault()}>
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={step}
+          {/* Main Form Area */}
+          <div className="flex-1 bg-white p-12 md:p-14 flex flex-col">
+            {/* Top Section */}
+            <div className="mb-10 flex justify-between items-start">
+              <div className="space-y-1">
+                <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase leading-none">{steps[step-1].title}</h2>
+                <div className="flex items-center gap-2">
+                  <div className="h-1 w-12 bg-primary-600 rounded-full"></div>
+                  <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Hybrid Symbolic-Generative MAS</p>
+                </div>
+              </div>
+              {step > 1 && (
+                <motion.div 
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="min-h-[300px]"
+                  className="px-4 py-2 bg-indigo-50 text-indigo-600 text-[9px] font-black uppercase tracking-widest rounded-xl border border-indigo-100 flex items-center gap-2 shadow-sm"
                 >
-                  {renderStep()}
+                  <Sparkles size={12} className="animate-pulse" /> Smart Autofill Active
                 </motion.div>
-              </AnimatePresence>
+              )}
+            </div>
 
-              <div className="flex items-center justify-between mt-12 pt-8 border-t border-slate-50">
-                {step > 1 ? (
+            {/* Error Alert */}
+            <AnimatePresence>
+              {error && (
+                <motion.div 
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mb-8 p-5 bg-rose-50 border border-rose-100 rounded-2xl flex items-start gap-4 text-rose-600 shadow-sm"
+                >
+                  <AlertCircle size={20} className="shrink-0 mt-0.5" />
+                  <div className="flex flex-col gap-1">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em]">Validation Error</p>
+                    <p className="text-sm font-bold leading-relaxed">{error}</p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Middle Section: Form/Upload Area */}
+            <div className="flex-grow flex flex-col items-center justify-center w-full py-8">
+              <form onSubmit={handleSubmit} className="w-full flex flex-col h-full">
+                <div className="flex-grow flex flex-col items-center justify-center max-w-md mx-auto w-full">
+                  <div className="w-full">
+                    {renderStep()}
+                  </div>
+                </div>
+
+                {/* Bottom Section: Navigation */}
+                <div className="mt-auto pt-10 flex justify-between items-center border-t border-slate-50">
                   <button
                     type="button"
-                    onClick={() => setStep(step - 1)}
-                    className="flex items-center gap-2 text-xs font-black text-slate-400 uppercase tracking-widest hover:text-slate-900 transition-all"
+                    onClick={prevStep}
+                    disabled={step === 1 || loading || visionLoading}
+                    className="flex items-center gap-2 px-6 py-3 text-[11px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 disabled:opacity-0 transition-all active:scale-95 group"
                   >
-                    <ArrowLeft size={16} /> Back
+                    <ChevronLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> Back
                   </button>
-                ) : <div></div>}
-                
-                <button
-                  type="button"
-                  onClick={step === 5 ? handleSubmit : () => validateStep() && setStep(step + 1)}
-                  className="flex items-center gap-3 px-10 py-4 bg-emerald-600 text-white rounded-2xl font-bold text-sm hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-100 active:scale-95"
-                >
-                  {step === 5 ? 'Begin MAS Analysis' : 'Next Step'} <ChevronRight size={18} />
-                </button>
-              </div>
-            </form>
+                  
+                  {step < steps.length ? (
+                    <button
+                      type="button"
+                      onClick={nextStep}
+                      disabled={visionLoading}
+                      className="flex items-center gap-3 px-10 py-4 bg-slate-900 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-2xl shadow-slate-200 active:scale-95 disabled:opacity-50 group"
+                    >
+                      {step === 1 && document ? 'Verify Profile' : 'Continue'} <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  ) : (
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="flex items-center gap-3 px-12 py-5 bg-primary-600 text-white rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest hover:bg-primary-700 transition-all shadow-2xl shadow-primary-100 active:scale-95 group"
+                    >
+                      Analyze Eligibility <Brain size={20} className="group-hover:scale-110 transition-transform" />
+                    </button>
+                  )}
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       </div>
