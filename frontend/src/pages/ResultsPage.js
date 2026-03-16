@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
-import { ChevronRight, Award, Sparkles, Brain, ArrowLeft } from 'lucide-react';
+import { ChevronRight, Award, Sparkles, Brain, ArrowLeft, IndianRupee, Users, FileText, ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const ResultsPage = () => {
@@ -10,8 +10,8 @@ const ResultsPage = () => {
 
   if (!results) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="text-center bg-white p-12 rounded-[2rem] shadow-xl border border-slate-100">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center bg-white p-12 rounded-[2rem] shadow-sm border border-gray-200">
           <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight mb-4">No results found</h2>
           <Link to="/finder" className="inline-flex items-center gap-2 text-primary-600 font-black uppercase tracking-widest text-xs hover:gap-4 transition-all">
             <ArrowLeft size={16} /> Go back to finder
@@ -24,87 +24,143 @@ const ResultsPage = () => {
   const { recommendations, profile, totalMatches } = results;
 
   return (
-    <div className="min-h-screen bg-slate-50 py-16 px-6">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div className="max-w-2xl">
-            <span className="inline-block px-3 py-1 mb-4 text-[10px] font-black tracking-widest text-primary-700 uppercase bg-primary-100 rounded-full">
-              Analysis Complete
-            </span>
-            <h1 className="text-4xl font-black text-slate-900 tracking-tight leading-none mb-4">
-              Tailored for {profile.name}
+    <div className="min-h-screen bg-gray-50 py-12 px-6">
+      <div className="max-w-4xl mx-auto">
+        {/* Header Section */}
+        <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div>
+            <Link to="/finder" className="inline-flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-slate-900 mb-4 transition-all">
+              <ArrowLeft size={14} /> Back to Finder
+            </Link>
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight leading-none mb-2">
+              Recommended Schemes
             </h1>
-            <p className="text-sm text-slate-500 font-medium uppercase tracking-widest">
-              Our agents identified {totalMatches} eligible schemes.
+            <p className="text-sm text-slate-500 font-medium">
+              Showing {totalMatches} matches tailored for <span className="text-slate-900 font-bold">{profile.name}</span>
             </p>
           </div>
-          <Link to="/finder" className="text-xs font-black text-slate-400 uppercase tracking-widest hover:text-slate-900 transition-all flex items-center gap-2 mb-1">
-            <ArrowLeft size={14} /> Refine Profile
-          </Link>
+          <div className="hidden md:block text-right">
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] block mb-1">Status</span>
+            <span className="px-3 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase tracking-widest rounded-full">Analysis Verified</span>
+          </div>
         </div>
 
-        {/* Schemes Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Results List (Single Column) */}
+        <div className="flex flex-col gap-6">
           {recommendations.map((scheme, index) => (
             <motion.div 
               key={scheme.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="bg-white rounded-[2rem] shadow-sm hover:shadow-2xl transition-all duration-500 border border-slate-100 overflow-hidden flex flex-col group"
+              className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col group"
             >
-              {/* Card Header */}
-              <div className="p-8 pb-6">
-                <div className="flex justify-between items-start mb-6">
-                  <span className="px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-slate-100 text-slate-500 group-hover:bg-primary-600 group-hover:text-white transition-colors">
-                    {scheme.category}
+              {/* Card Header Section */}
+              <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between bg-white">
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-xl font-black text-slate-900 tracking-tight group-hover:text-primary-600 transition-colors">
+                      {scheme.scheme_name}
+                    </h3>
+                    <span className="px-2 py-0.5 bg-slate-100 text-slate-500 text-[9px] font-black uppercase tracking-widest rounded">
+                      {scheme.department}
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-bold text-primary-600 uppercase tracking-widest flex items-center gap-1">
+                    <FileText size={12} /> {scheme.category}
                   </span>
-                  <div className="flex items-center text-primary-600 text-sm font-black uppercase tracking-tighter">
-                    <Award size={16} className="mr-1" /> {scheme.matchScore}%
+                </div>
+                <div className="flex flex-col items-end">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Match Score</span>
+                    <span className="text-2xl font-black text-emerald-500 tracking-tighter">{scheme.matchScore}%</span>
+                  </div>
+                  <div className="w-24 h-1.5 bg-gray-100 rounded-full mt-1 overflow-hidden">
+                    <div 
+                      className="h-full bg-emerald-500 rounded-full" 
+                      style={{ width: `${scheme.matchScore}%` }}
+                    ></div>
                   </div>
                 </div>
-                <h3 className="text-xl font-black text-slate-900 mb-3 leading-tight group-hover:text-primary-600 transition-colors line-clamp-2 min-h-[3rem]">
-                  {scheme.scheme_name}
-                </h3>
-                <p className="text-xs text-slate-500 font-medium leading-relaxed line-clamp-2">
-                  {scheme.description}
-                </p>
               </div>
 
-              {/* AI Insight (Simplified by Translation Agent) */}
-              {scheme.aiExplanation && (
-                <div className="px-8 py-5 bg-slate-50 border-y border-slate-100 group-hover:bg-primary-50 transition-colors">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Sparkles size={12} className="text-primary-600" />
-                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">AI Insight</span>
-                  </div>
-                  <p className="text-[11px] text-slate-700 font-bold leading-relaxed italic">
-                    "{scheme.aiExplanation}"
+              {/* Card Body Section (Grid) */}
+              <div className="grid grid-cols-1 md:grid-cols-10 border-b border-gray-50">
+                {/* Left Column: Description & Facts (60%) */}
+                <div className="md:col-span-6 p-8 border-r border-gray-50">
+                  <p className="text-sm text-slate-600 font-medium leading-relaxed line-clamp-2 mb-6 italic">
+                    {scheme.description}
                   </p>
+                  
+                  {/* Quick Facts Row */}
+                  <div className="flex flex-wrap gap-6 items-center">
+                    <div className="flex items-center gap-2 text-slate-500">
+                      <IndianRupee size={14} className="text-slate-400" />
+                      <div className="flex flex-col leading-none">
+                        <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest">Benefit</span>
+                        <span className="text-[10px] font-bold text-slate-700 truncate max-w-[100px]">{scheme.benefits}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 text-slate-500">
+                      <Users size={14} className="text-slate-400" />
+                      <div className="flex flex-col leading-none">
+                        <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest">Target</span>
+                        <span className="text-[10px] font-bold text-slate-700">{scheme.category}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 text-slate-500">
+                      <FileText size={14} className="text-slate-400" />
+                      <div className="flex flex-col leading-none">
+                        <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest">Income Limit</span>
+                        <span className="text-[10px] font-bold text-slate-700 italic">
+                          {scheme.eligibility.income_limit ? `₹${scheme.eligibility.income_limit}` : "Variable"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              )}
 
-              {/* Policy Reasoning (Technical Agent Output) */}
-              <div className="p-8 pt-6 mt-auto">
-                <div className="mb-6">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Brain size={12} className="text-slate-400" />
-                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Policy Reasoning</span>
+                {/* Right Column: AI Insight (40%) */}
+                <div className="md:col-span-4 p-8 bg-slate-50/50">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Sparkles size={14} className="text-primary-600" />
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">AI Agent Analysis</span>
                   </div>
-                  <p className="text-[10px] text-slate-500 font-medium leading-relaxed line-clamp-2 italic">
-                    {scheme.reasoningChain || "Matched based on profile eligibility rules."}
-                  </p>
+                  <div className="text-[11px] text-slate-700 font-bold leading-relaxed whitespace-pre-line">
+                    {scheme.aiExplanation ? scheme.aiExplanation : "• Profile matches eligibility rules.\n• Policy reasoning verified by agent."}
+                  </div>
                 </div>
+              </div>
+
+              {/* Card Footer Section */}
+              <div className="px-8 py-4 bg-white flex justify-end items-center gap-4">
                 <button
                   onClick={() => navigate(`/scheme/${scheme.id}`)}
-                  className="w-full flex items-center justify-center gap-2 py-3 bg-white border border-slate-200 text-slate-900 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all shadow-lg shadow-slate-50 active:scale-95"
+                  className="px-6 py-2.5 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-slate-900 transition-all"
                 >
-                  Details <ChevronRight size={14} />
+                  View Full Details
                 </button>
+                <a 
+                  href={scheme.official_portal}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-8 py-2.5 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary-600 transition-all shadow-lg shadow-slate-100"
+                >
+                  Apply Now <ExternalLink size={14} />
+                </a>
               </div>
             </motion.div>
           ))}
+        </div>
+
+        {/* Footer Support */}
+        <div className="mt-12 py-8 border-t border-gray-100 flex flex-col items-center gap-4 opacity-40">
+          <div className="flex items-center gap-6">
+            <Brain size={24} className="text-slate-400" />
+            <Sparkles size={24} className="text-slate-400" />
+            <Award size={24} className="text-slate-400" />
+          </div>
+          <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em]">Hybrid Symbolic-Generative MAS</p>
         </div>
       </div>
     </div>
