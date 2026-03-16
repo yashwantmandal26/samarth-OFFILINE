@@ -24,9 +24,11 @@ const translationAgent = {
             `;
 
             const response = await axios.post(OLLAMA_URL, {
-                model: 'llama3:8b',
+                model: 'llama3',
                 prompt: prompt,
                 stream: false
+            }, {
+                timeout: 60000 // 60s timeout
             });
 
             return response.data.response;

@@ -52,7 +52,7 @@ const ExplanationAgent = {
 
         try {
             const response = await axios.post(OLLAMA_URL, {
-                model: 'llama3:8b',
+                model: 'llama3',
                 prompt: prompt,
                 stream: false
             }, {
@@ -64,7 +64,7 @@ const ExplanationAgent = {
             if (error.code === 'ECONNABORTED') {
                 return "• Analysis processing timed out. Please refresh to try again.";
             }
-            return "• Ollama server unreachable. Please ensure it is running with 'llama3:8b' model.";
+            return "• Ollama server unreachable. Please ensure it is running with 'llama3' model.";
         }
     }
 };

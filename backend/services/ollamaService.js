@@ -2,7 +2,7 @@ const axios = require('axios');
 require('dotenv').config();
 
 const OLLAMA_URL = process.env.OLLAMA_API_URL || 'http://localhost:11434/api/generate';
-const MODEL = process.env.OLLAMA_MODEL || 'llama3:8b';
+const MODEL = process.env.OLLAMA_MODEL || 'llama3';
 
 const generateResponse = async (prompt) => {
     try {
