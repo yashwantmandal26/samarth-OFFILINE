@@ -288,6 +288,43 @@
     ]
   },
   {
+    "id": "jh-030",
+    "scheme_name": "Mukhyamantri Maiya Samman Yojana",
+    "department": "Women, Child Development and Social Security",
+    "category": "Women",
+    "description": "A Jharkhand government initiative launched in August 2024 to empower women by providing monthly financial assistance.",
+    "benefits": "\u20b91,000 monthly (\u20b912,000 annually) via Direct Benefit Transfer (DBT).",
+    "eligibility": {
+      "gender": "Female",
+      "age_min": 18,
+      "age_max": 50,
+      "domicile": "Jharkhand",
+      "income_limit": "Economically Weaker Sections"
+    },
+    "documents_required": [
+      "Aadhar Card",
+      "Residential Certificate",
+      "Income Certificate",
+      "Bank Passbook (Linked with Aadhaar)",
+      "Ration Card"
+    ],
+    "application_process": "Apply through the official portal or visit Pragya Kendras/Block Office.",
+    "fees": "Free",
+    "processing_time": "30-45 days",
+    "official_portal": "https://mmmsy.jharkhand.gov.in/",
+    "reference_links": [
+      "https://www.jharkhand.gov.in/",
+      "https://india.gov.in/"
+    ],
+    "keywords": [
+      "women",
+      "financial independence",
+      "respect",
+      "monthly allowance",
+      "maiya samman"
+    ]
+  },
+  {
     "id": "jh-009",
     "scheme_name": "Jharkhand Mukhyamantri Sarathi Yojana",
     "department": "Labor, Employment, Training & Skill Development",
