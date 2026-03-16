@@ -58,6 +58,14 @@ const ResultsPage = () => {
   const navigate = useNavigate();
   const { results } = location.state || { results: null };
 
+  useEffect(() => {
+    if (results) {
+      document.title = `Samarth | ${results.totalMatches} Schemes Found`;
+    } else {
+      document.title = "Samarth | Analysis Results";
+    }
+  }, [results]);
+
   const formatAIExplanation = (text) => {
     if (!text) return null;
     // Split by common delimiters if it's not already bulleted

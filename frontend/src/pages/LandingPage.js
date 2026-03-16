@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Search, 
@@ -14,6 +14,10 @@ import {
 import { motion } from 'framer-motion';
 
 const LandingPage = () => {
+  useEffect(() => {
+    document.title = "Samarth | Jharkhand AI E-Governance";
+  }, []);
+
   return (
     <div className="bg-slate-50 overflow-hidden">
       {/* Hero Section */}

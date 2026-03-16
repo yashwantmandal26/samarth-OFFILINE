@@ -51,6 +51,14 @@ const SchemeDetailPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (scheme) {
+      document.title = `Samarth | ${scheme.scheme_name}`;
+    } else {
+      document.title = "Samarth | Scheme Details";
+    }
+  }, [scheme]);
+
+  useEffect(() => {
     const fetchScheme = async () => {
       try {
         const response = await schemeService.getSchemeById(id);

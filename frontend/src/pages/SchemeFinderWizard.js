@@ -23,6 +23,11 @@ import logo from '../assets/logo.png';
 const SchemeFinderWizard = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
+  
+  useEffect(() => {
+    document.title = `Samarth | Step ${step} - Find Schemes`;
+  }, [step]);
+
   const [loading, setLoading] = useState(false);
   const [visionLoading, setVisionLoading] = useState(false);
   const [error, setError] = useState(null);

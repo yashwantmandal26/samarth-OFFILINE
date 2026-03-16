@@ -7,6 +7,10 @@ import ReactMarkdown from 'react-markdown';
 import logo from '../assets/logo.png';
 
 const AIChatPage = () => {
+  useEffect(() => {
+    document.title = "Samarth | AI Assistant";
+  }, []);
+
   const [messages, setMessages] = useState([
     { role: 'assistant', content: "Hello! I am **Samarth**, your Jharkhand Government Scheme assistant. How can I help you today?" }
   ]);

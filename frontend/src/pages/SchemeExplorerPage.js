@@ -5,6 +5,10 @@ import { Search, ChevronRight, Layers, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const SchemeExplorerPage = () => {
+  useEffect(() => {
+    document.title = "Samarth | Explore Schemes";
+  }, []);
+
   const [schemes, setSchemes] = useState([]);
   const [filteredSchemes, setFilteredSchemes] = useState([]);
   const [loading, setLoading] = useState(true);
