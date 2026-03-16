@@ -41,11 +41,13 @@ const ExplanationAgent = {
         Benefits: ${match.benefits}
 
         Instructions:
-        1. Explain in simple, empathetic terms exactly WHY the citizen qualifies for this scheme.
-        2. Base your explanation STRICTLY on the Symbolic Reasoning Path provided.
-        3. Eliminate all bureaucratic and mathematical jargon.
-        4. Tailor the response to the user's specific socio-economic profile.
-        5. Keep it to 3-4 sentences maximum.
+        1. Act as a professional policy analyst. 
+        2. Provide exactly 2-3 crisp, professional bullet points explaining why the citizen is a match based on the provided Symbolic Reasoning Path.
+        3. Do NOT include any conversational greetings like "Hello", "Hi", or "Dear citizen".
+        4. Do NOT write paragraphs. 
+        5. Use the bullet point character "•".
+        6. Each bullet should be one sentence maximum.
+        7. Base your response STRICTLY on the Symbolic Reasoning Path provided.
         `;
 
         try {
@@ -53,11 +55,16 @@ const ExplanationAgent = {
                 model: 'llama3:8b',
                 prompt: prompt,
                 stream: false
+            }, {
+                timeout: 60000 // 60 second timeout
             });
             return response.data.response;
         } catch (error) {
             console.error('[ExplanationAgent] Generation Error:', error.message);
-            return "Based on your profile, you are a strong candidate for this scheme because you meet the eligibility criteria.";
+            if (error.code === 'ECONNABORTED') {
+                return "• Analysis processing timed out. Please refresh to try again.";
+            }
+            return "• Ollama server unreachable. Please ensure it is running with 'llama3:8b' model.";
         }
     }
 };

@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { schemeService } from '../services/api';
-import { Send, User, Bot, Loader, Sparkles, ArrowLeft, Trash2 } from 'lucide-react';
+import { Send, User, Bot, Loader, Sparkles, ArrowLeft, Trash2, Mic, Volume2, VolumeX, MicOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
@@ -10,7 +10,92 @@ const AIChatPage = () => {
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [activeSpeechIndex, setActiveSpeechIndex] = useState(null);
   const messagesEndRef = useRef(null);
+  const recognitionRef = useRef(null);
+  const synthRef = useRef(window.speechSynthesis);
+
+  // Initialize Speech Recognition
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.interimResults = false;
+      recognitionRef.current.lang = 'en-IN'; // Default to Indian English, can be 'hi-IN'
+
+      recognitionRef.current.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        setInput(transcript);
+        setIsListening(false);
+        // Auto-send after a short delay to allow user to see the text
+        setTimeout(() => handleSend(null, transcript), 500);
+      };
+
+      recognitionRef.current.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+        setIsListening(false);
+      };
+
+      recognitionRef.current.onend = () => {
+        setIsListening(false);
+      };
+    }
+  }, []);
+
+  const toggleListening = () => {
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+    } else {
+      if (isSpeaking) stopSpeaking();
+      recognitionRef.current?.start();
+      setIsListening(true);
+    }
+  };
+
+  const speak = useCallback((text, index) => {
+    if (synthRef.current.speaking) {
+      synthRef.current.cancel();
+    }
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    
+    // Voice selection logic
+    const voices = synthRef.current.getVoices();
+    const preferredVoice = voices.find(v => v.lang === 'hi-IN') || 
+                          voices.find(v => v.lang === 'en-IN') || 
+                          voices[0];
+    
+    if (preferredVoice) utterance.voice = preferredVoice;
+    utterance.rate = 0.9; // Slightly slower for clarity
+    utterance.pitch = 1;
+
+    utterance.onstart = () => {
+      setIsSpeaking(true);
+      setActiveSpeechIndex(index);
+    };
+
+    utterance.onend = () => {
+      setIsSpeaking(false);
+      setActiveSpeechIndex(null);
+    };
+
+    utterance.onerror = () => {
+      setIsSpeaking(false);
+      setActiveSpeechIndex(null);
+    };
+
+    synthRef.current.speak(utterance);
+  }, []);
+
+  const stopSpeaking = () => {
+    synthRef.current.cancel();
+    setIsSpeaking(false);
+    setActiveSpeechIndex(null);
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -25,6 +110,8 @@ const AIChatPage = () => {
     const messageToSend = customMessage || input;
     if (!messageToSend.trim()) return;
 
+    if (isSpeaking) stopSpeaking();
+
     const newMessages = [...messages, { role: 'user', content: messageToSend }];
     setMessages(newMessages);
     setInput('');
@@ -32,10 +119,16 @@ const AIChatPage = () => {
 
     try {
       const response = await schemeService.chat(messageToSend, {}, []);
-      setMessages([...newMessages, { role: 'assistant', content: response.data.response }]);
+      const assistantMessage = { role: 'assistant', content: response.data.response };
+      const updatedMessages = [...newMessages, assistantMessage];
+      setMessages(updatedMessages);
+      
+      // Auto-play TTS for the new response
+      setTimeout(() => speak(assistantMessage.content, updatedMessages.length - 1), 500);
     } catch (error) {
       console.error('Chat error:', error);
-      setMessages([...newMessages, { role: 'assistant', content: "Offline Error. Please ensure Ollama is running Llama3." }]);
+      const errorMessage = { role: 'assistant', content: "Offline Error. Please ensure Ollama is running Llama3." };
+      setMessages([...newMessages, errorMessage]);
     } finally {
       setLoading(false);
     }
@@ -95,8 +188,19 @@ const AIChatPage = () => {
                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 shadow-sm ${m.role === 'user' ? 'bg-slate-900 text-white' : 'bg-white text-slate-900 border border-slate-100'}`}>
                     {m.role === 'user' ? <User size={14} /> : <Bot size={14} />}
                   </div>
-                  <div className={`p-4 rounded-2xl shadow-sm border text-sm font-medium leading-relaxed ${m.role === 'user' ? 'bg-slate-900 text-white border-slate-800 rounded-tr-none' : 'bg-white text-slate-700 border-slate-50 rounded-tl-none italic'}`}>
-                    {m.content}
+                  <div className="flex flex-col gap-2">
+                    <div className={`p-4 rounded-2xl shadow-sm border text-sm font-medium leading-relaxed ${m.role === 'user' ? 'bg-slate-900 text-white border-slate-800 rounded-tr-none' : 'bg-white text-slate-700 border-slate-50 rounded-tl-none italic'}`}>
+                      {m.content}
+                    </div>
+                    {m.role === 'assistant' && (
+                      <button 
+                        onClick={() => activeSpeechIndex === i ? stopSpeaking() : speak(m.content, i)}
+                        className={`self-start p-1.5 rounded-full transition-all ${activeSpeechIndex === i ? 'bg-primary-50 text-primary-600 animate-pulse' : 'text-slate-300 hover:text-primary-500 hover:bg-slate-50'}`}
+                        title={activeSpeechIndex === i ? "Stop speaking" : "Read aloud"}
+                      >
+                        {activeSpeechIndex === i ? <VolumeX size={14} /> : <Volume2 size={14} />}
+                      </button>
+                    )}
                   </div>
                 </div>
               </motion.div>
@@ -143,16 +247,26 @@ const AIChatPage = () => {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask anything about Jharkhand policies..."
-              className="w-full p-4 pr-14 bg-slate-50 border border-slate-200 rounded-2xl focus:border-primary-500 focus:bg-white focus:ring-0 text-sm font-bold text-slate-900 placeholder-slate-300 transition-all"
+              placeholder={isListening ? "Listening..." : "Ask anything about Jharkhand policies..."}
+              className={`w-full p-4 pr-24 bg-slate-50 border ${isListening ? 'border-primary-500 ring-2 ring-primary-100' : 'border-slate-200'} rounded-2xl focus:border-primary-500 focus:bg-white focus:ring-0 text-sm font-bold text-slate-900 placeholder-slate-300 transition-all`}
             />
-            <button
-              type="submit"
-              disabled={loading || !input.trim()}
-              className="absolute right-2 top-2 p-2.5 bg-slate-900 text-white rounded-xl hover:bg-primary-600 disabled:bg-slate-100 disabled:text-slate-300 transition-all shadow-xl"
-            >
-              <Send size={18} />
-            </button>
+            <div className="absolute right-2 top-2 flex gap-1.5">
+              <button
+                type="button"
+                onClick={toggleListening}
+                className={`p-2.5 rounded-xl transition-all shadow-lg ${isListening ? 'bg-rose-500 text-white animate-pulse' : 'bg-white text-slate-400 hover:text-primary-600 border border-slate-100'}`}
+                title={isListening ? "Stop listening" : "Voice input"}
+              >
+                {isListening ? <MicOff size={18} /> : <Mic size={18} />}
+              </button>
+              <button
+                type="submit"
+                disabled={loading || (!input.trim() && !isListening)}
+                className="p-2.5 bg-slate-900 text-white rounded-xl hover:bg-primary-600 disabled:bg-slate-100 disabled:text-slate-300 transition-all shadow-xl"
+              >
+                <Send size={18} />
+              </button>
+            </div>
           </form>
           <div className="mt-4 text-center">
             <p className="inline-flex items-center gap-1.5 text-[8px] font-black text-slate-300 uppercase tracking-[0.2em]">

@@ -51,17 +51,22 @@ const VisionAgent = {
             `;
 
             const response = await axios.post(OLLAMA_URL, {
-                model: 'llava',
+                model: 'llava', // Specifically calling llava for multimodal
                 prompt: prompt,
                 images: [base64Image],
                 stream: false,
                 format: 'json'
+            }, {
+                timeout: 60000 // 60 second timeout
             });
 
             return JSON.parse(response.data.response);
         } catch (error) {
             console.error('[VisionAgent] Extraction Error:', error.message);
-            return {};
+            if (error.code === 'ECONNABORTED') {
+                throw new Error('Ollama vision processing timed out. Please try again or fill manually.');
+            }
+            throw new Error('Ollama server unreachable or LLaVA model missing. Please ensure Ollama is running with "llava" model.');
         }
     }
 };
