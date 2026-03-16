@@ -327,7 +327,13 @@ const SchemeFinderWizard = () => {
                   className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-emerald-500 focus:bg-white focus:ring-0 transition-all text-sm font-bold text-slate-700"
                 >
                   <option value="">Select District</option>
-                  {['Ranchi', 'Dhanbad', 'Jamshedpur', 'Bokaro', 'Deoghar'].map(d => <option key={d} value={d}>{d}</option>)}
+                  {[
+                    'Bokaro', 'Chatra', 'Deoghar', 'Dhanbad', 'Dumka', 
+                    'East Singhbhum', 'Garhwa', 'Giridih', 'Godda', 'Gumla', 
+                    'Hazaribagh', 'Jamtara', 'Khunti', 'Koderma', 'Latehar', 
+                    'Lohardaga', 'Pakur', 'Palamu', 'Ramgarh', 'Ranchi', 
+                    'Sahibganj', 'Seraikela Kharsawan', 'Simdega', 'West Singhbhum'
+                  ].map(d => <option key={d} value={d}>{d}</option>)}
                 </select>
               </div>
               <div>
