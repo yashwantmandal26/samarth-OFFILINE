@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { schemeService } from '../services/api';
-import { Send, User, Bot, Loader, Sparkles, ArrowLeft, Trash2, Mic, Volume2, VolumeX, MicOff } from 'lucide-react';
+import { Send, User, Bot, Sparkles, ArrowLeft, Trash2, Mic, Volume2, VolumeX, MicOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 

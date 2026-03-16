@@ -2,10 +2,47 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { schemeService } from '../services/api';
 import { 
-  ChevronLeft, ExternalLink, FileText, CheckCircle, 
-  Clock, CreditCard, Info, MapPin, Sparkles, AlertCircle, Award, ArrowLeft, Wallet
+  ExternalLink, FileText, CheckCircle, 
+  Clock, Info, MapPin, Sparkles, AlertCircle, Award, ArrowLeft, Wallet
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+
+const Loader = ({ className, size }) => {
+  return (
+    <svg 
+      className={className} 
+      width={size} 
+      height={size} 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="3" 
+      strokeLinecap="round" 
+      strokeLinejoin="round"
+    >
+      <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+    </svg>
+  );
+};
+
+const DetailSection = ({ title, icon: Icon, children, colorClass = "text-primary-600" }) => (
+  <motion.div 
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    className="bg-white rounded-[2rem] shadow-sm border border-slate-100 p-10 mb-6"
+  >
+    <div className="flex items-center gap-4 mb-8">
+      <div className={`w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center ${colorClass}`}>
+        <Icon size={24} />
+      </div>
+      <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">{title}</h3>
+    </div>
+    <div className="text-slate-600 leading-relaxed font-medium">
+      {children}
+    </div>
+  </motion.div>
+);
 
 const SchemeDetailPage = () => {
   const { id } = useParams();
@@ -42,25 +79,6 @@ const SchemeDetailPage = () => {
         </Link>
       </div>
     </div>
-  );
-
-  const DetailSection = ({ title, icon: Icon, children, colorClass = "text-primary-600" }) => (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      className="bg-white rounded-[2rem] shadow-sm border border-slate-100 p-10 mb-6"
-    >
-      <div className="flex items-center gap-4 mb-8">
-        <div className={`w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center ${colorClass}`}>
-          <Icon size={24} />
-        </div>
-        <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">{title}</h3>
-      </div>
-      <div className="text-slate-600 leading-relaxed font-medium">
-        {children}
-      </div>
-    </motion.div>
   );
 
   return (
@@ -182,25 +200,20 @@ const SchemeDetailPage = () => {
               </div>
             </div>
 
-          <DetailSection title="Important Notes" icon={Info} colorClass="text-amber-600">
-            <div className="flex items-start gap-4 p-6 bg-amber-50 rounded-2xl border border-amber-100">
-              <AlertCircle className="text-amber-600 shrink-0" size={20} />
-              <p className="text-xs font-bold text-amber-900 leading-relaxed uppercase tracking-wide">
-                Always ensure your Aadhar is linked with your bank account for DBT (Direct Benefit Transfer) schemes. 
-                Visit your nearest Pragya Kendra (CSC) for offline assistance.
-              </p>
-            </div>
-          </DetailSection>
+            <DetailSection title="Important Notes" icon={Info} colorClass="text-amber-600">
+              <div className="flex items-start gap-4 p-6 bg-amber-50 rounded-2xl border border-amber-100">
+                <AlertCircle className="text-amber-600 shrink-0" size={20} />
+                <p className="text-xs font-bold text-amber-900 leading-relaxed uppercase tracking-wide">
+                  Always ensure your Aadhar is linked with your bank account for DBT (Direct Benefit Transfer) schemes. 
+                  Visit your nearest Pragya Kendra (CSC) for offline assistance.
+                </p>
+              </div>
+            </DetailSection>
+          </div>
         </div>
       </div>
     </div>
   );
 };
-
-const Loader = ({ className, size }) => (
-  <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-  </svg>
-);
 
 export default SchemeDetailPage;
