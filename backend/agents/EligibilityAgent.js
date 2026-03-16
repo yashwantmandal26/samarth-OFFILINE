@@ -36,7 +36,8 @@ const EligibilityAgent = {
             INCOME: 20,
             CATEGORY: 20,
             RESIDENCE: 15,
-            AGE: 15
+            AGE: 15,
+            PREFERRED_FIELD: 25 // Optional boost for user preference
         };
 
         const evaluatedMatches = schemes.map(scheme => {
@@ -89,6 +90,18 @@ const EligibilityAgent = {
                 if (userProfile.age >= ageMin && userProfile.age <= ageMax) {
                     score += WEIGHTS.AGE;
                     reasoning_path.push(`RULE_AGE_VALID: ${ageMin} <= UserAge(${userProfile.age}) <= ${ageMax}`);
+                }
+            }
+
+            // Rule 6: Preferred Field Match (User Intent Filter)
+            if (userProfile.preferredField && scheme.category) {
+                // Check if user's preferred field matches the scheme category
+                // This is an optional boost, so it doesn't add to totalPossibleWeight 
+                // unless we want it to be a strict requirement (which we don't, it's a filter/preference)
+                if (userProfile.preferredField.toLowerCase() === scheme.category.toLowerCase()) {
+                    score += WEIGHTS.PREFERRED_FIELD;
+                    totalPossibleWeight += WEIGHTS.PREFERRED_FIELD;
+                    reasoning_path.push(`RULE_PREFERENCE_MATCH: UserPreferred(${userProfile.preferredField}) == SchemeCategory(${scheme.category})`);
                 }
             }
 

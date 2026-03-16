@@ -16,11 +16,14 @@ const chatAgent = {
                 const allSchemes = JSON.parse(fs.readFileSync(SCHEMES_PATH, 'utf8'));
                 // Filter some relevant schemes based on simple keyword match in query
                 const keywords = userMessage.toLowerCase().split(' ');
-                contextSchemes = allSchemes.filter(s => 
-                    keywords.some(k => s.scheme_name.toLowerCase().includes(k) || 
-                                     s.category.toLowerCase().includes(k) ||
-                                     s.keywords.some(kw => kw.toLowerCase().includes(k)))
-                ).slice(0, 5);
+                contextSchemes = allSchemes.filter(s => {
+                    const nameMatch = s.scheme_name.toLowerCase().includes(userMessage.toLowerCase());
+                    const categoryMatch = s.category.toLowerCase().includes(userMessage.toLowerCase());
+                    const keywordMatch = Array.isArray(s.keywords) 
+                        ? s.keywords.some(kw => keywords.some(k => kw.toLowerCase().includes(k)))
+                        : (typeof s.keywords === 'string' && keywords.some(k => s.keywords.toLowerCase().includes(k)));
+                    return nameMatch || categoryMatch || keywordMatch;
+                }).slice(0, 5);
                 
                 // If still empty, just take first 3 for basic context
                 if (contextSchemes.length === 0) {
