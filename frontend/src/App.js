@@ -122,8 +122,8 @@ function App() {
                 <h4 className="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em] mb-6">Resources</h4>
                 <ul className="space-y-4">
                   <li><a href="https://www.jharkhand.gov.in/" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-slate-400 hover:text-slate-900 transition-colors uppercase tracking-widest flex items-center gap-2">Govt Portal <ExternalLink size={12}/></a></li>
-                  <li><a href="#" className="text-sm font-bold text-slate-400 hover:text-slate-900 transition-colors uppercase tracking-widest">Privacy Policy</a></li>
-                  <li><a href="#" className="text-sm font-bold text-slate-400 hover:text-slate-900 transition-colors uppercase tracking-widest">Terms of Service</a></li>
+                  <li><a href="https://www.jharkhand.gov.in/" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-slate-400 hover:text-slate-900 transition-colors uppercase tracking-widest">Privacy Policy</a></li>
+                  <li><a href="https://www.jharkhand.gov.in/" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-slate-400 hover:text-slate-900 transition-colors uppercase tracking-widest">Terms of Service</a></li>
                 </ul>
               </div>
             </div>

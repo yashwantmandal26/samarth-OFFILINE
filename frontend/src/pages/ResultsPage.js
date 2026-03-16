@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
-import { ChevronRight, Award, Sparkles, Brain, ArrowLeft, IndianRupee, Users, FileText, ExternalLink, ShieldCheck, Target, Wallet } from 'lucide-react';
+import { Award, Sparkles, Brain, ArrowLeft, ShieldCheck, Target, Wallet, ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const TypewriterSummary = ({ text }) => {
