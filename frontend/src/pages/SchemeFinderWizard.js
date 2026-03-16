@@ -9,13 +9,13 @@ import {
   MapPin, 
   Users, 
   Briefcase, 
-  IndianRupee,
-  CheckCircle2,
+  CheckCircle2, 
   AlertCircle,
   Upload,
   Eye,
   Brain,
-  Languages
+  Languages,
+  Sparkles
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -23,6 +23,7 @@ const SchemeFinderWizard = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [visionLoading, setVisionLoading] = useState(false);
   const [error, setError] = useState(null);
   const [document, setDocument] = useState(null);
   const [documentPreview, setDocumentPreview] = useState(null);
@@ -44,18 +45,50 @@ const SchemeFinderWizard = () => {
   });
 
   const steps = [
+    { title: 'Smart Start', icon: Sparkles, color: 'bg-indigo-500' },
     { title: 'Personal', icon: User, color: 'bg-blue-500' },
-    { title: 'Verify', icon: Upload, color: 'bg-indigo-500' },
     { title: 'Region', icon: MapPin, color: 'bg-emerald-500' },
     { title: 'Social', icon: Users, color: 'bg-purple-500' },
     { title: 'Status', icon: Briefcase, color: 'bg-orange-500' }
   ];
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
       setDocument(file);
       setDocumentPreview(URL.createObjectURL(file));
+      
+      // Auto-extract logic
+      setVisionLoading(true);
+      setError(null);
+      
+      try {
+        const data = new FormData();
+        data.append('document', file);
+        data.append('userData', JSON.stringify(formData)); // Send current form data
+
+        const response = await api.post('/recommendations', data, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+
+        if (response.data.profile) {
+          const extracted = response.data.profile;
+          setFormData(prev => ({
+            ...prev,
+            name: extracted.name || prev.name,
+            age: extracted.age || prev.age,
+            gender: extracted.gender || prev.gender,
+            income: extracted.income || prev.income,
+            socialCategory: extracted.socialCategory || prev.socialCategory,
+            isBPL: extracted.isBPL !== undefined ? extracted.isBPL : prev.isBPL
+          }));
+        }
+      } catch (err) {
+        console.error('Vision Extraction Error:', err);
+        setError(err.response?.data?.error || err.message || 'Vision scanner failed. Please fill manually.');
+      } finally {
+        setVisionLoading(false);
+      }
     }
   };
 
@@ -80,25 +113,25 @@ const SchemeFinderWizard = () => {
 
   const validateStep = () => {
     switch (step) {
-      case 1:
+      case 2: // Personal (Previously Step 1)
         if (!formData.name || !formData.age || !formData.gender) {
-          setError('Please fill in all personal details.');
+          setError('Please verify your personal details.');
           return false;
         }
         return true;
-      case 3:
+      case 3: // Region
         if (!formData.district) {
           setError('Please select your district.');
           return false;
         }
         return true;
-      case 4:
+      case 4: // Social
         if (!formData.socialCategory) {
           setError('Please select your social category.');
           return false;
         }
         return true;
-      case 5:
+      case 5: // Status
         if (!formData.income || !formData.occupation) {
           setError('Please fill in all status details.');
           return false;
@@ -115,19 +148,14 @@ const SchemeFinderWizard = () => {
     
     setLoading(true);
     setAgentWorkflow([
-        { agent: 'Vision Agent', status: document ? 'Scanning document...' : 'Skipped' },
-        { agent: 'Reasoning Agent', status: 'Pending...' },
+        { agent: 'Vision Agent', status: 'Analysis verified' },
+        { agent: 'Reasoning Agent', status: 'Processing policies...' },
         { agent: 'Translation Agent', status: 'Pending...' }
     ]);
 
     try {
-      const data = new FormData();
-      if (document) data.append('document', document);
-      data.append('userData', JSON.stringify(formData));
-
-      const response = await api.post('/recommendations', data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      // Final submission (no file needed if already processed, but we send anyway for consistency or just the data)
+      const response = await api.post('/recommendations', formData);
       
       setAgentWorkflow(response.data.agentWorkflow || []);
       
@@ -135,9 +163,9 @@ const SchemeFinderWizard = () => {
         navigate('/results', { state: { results: response.data } });
       }, 1200);
 
-    } catch (error) {
-      console.error('Error fetching recommendations:', error);
-      setError('System Error. Check Ollama LLaVA/Llama3 models.');
+    } catch (err) {
+      console.error('Final Analysis Error:', err);
+      setError(err.response?.data?.error || err.message || 'Analysis failed. Ensure Ollama is running.');
       setLoading(false);
     }
   };
@@ -161,6 +189,64 @@ const SchemeFinderWizard = () => {
           className="space-y-4"
         >
           {step === 1 && (
+            <div className="space-y-6">
+              <div className="text-center mb-6">
+                <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">Smart Intake</h3>
+                <p className="text-xs text-slate-500 font-medium">Upload a document to pre-fill your profile automatically.</p>
+              </div>
+              <div className={`p-8 border-2 border-dashed rounded-[2rem] flex flex-col items-center justify-center gap-4 transition-all ${visionLoading ? 'bg-indigo-50 border-indigo-200' : 'bg-slate-50 border-slate-200 hover:border-indigo-400'}`}>
+                {visionLoading ? (
+                  <div className="flex flex-col items-center gap-4">
+                    <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-indigo-200 animate-pulse">
+                      <Eye size={32} />
+                    </div>
+                    <div className="text-center">
+                      <p className="text-xs font-black text-indigo-600 uppercase tracking-widest">Vision Agent Active</p>
+                      <p className="text-[10px] text-indigo-400 font-bold uppercase tracking-tighter">Reading document...</p>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center">
+                      <Upload size={32} />
+                    </div>
+                    <div className="text-center">
+                      <h4 className="text-sm font-black text-slate-900 uppercase tracking-tight">Aadhaar or Certificate</h4>
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">JPG, PNG supported</p>
+                    </div>
+                    <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" id="smart-upload" />
+                    <label htmlFor="smart-upload" className="px-8 py-3 bg-indigo-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl cursor-pointer hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100">
+                      Select Document
+                    </label>
+                  </>
+                )}
+              </div>
+              
+              {!visionLoading && (
+                <div className="text-center">
+                  <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">Or</span>
+                  <button onClick={() => setStep(2)} className="block w-full mt-4 text-[10px] font-black text-indigo-600 uppercase tracking-widest hover:text-indigo-800">
+                    Skip and enter manually
+                  </button>
+                </div>
+              )}
+
+              {documentPreview && !visionLoading && (
+                <div className="p-4 bg-white border border-emerald-100 rounded-2xl flex items-center gap-4">
+                  <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center shrink-0">
+                    <CheckCircle2 size={20} />
+                  </div>
+                  <div className="flex-1 overflow-hidden">
+                    <p className="text-xs font-black text-slate-900 truncate">Extraction Complete</p>
+                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Click continue to verify data</p>
+                  </div>
+                  <button onClick={() => {setDocument(null); setDocumentPreview(null);}} className="text-rose-500 font-black text-[10px] uppercase">Reset</button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {step === 2 && (
             <div className="space-y-4">
               <div>
                 <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Full Name</label>
@@ -203,34 +289,6 @@ const SchemeFinderWizard = () => {
                   ))}
                 </div>
               </div>
-            </div>
-          )}
-
-          {step === 2 && (
-            <div className="space-y-4">
-              <div className="p-6 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50 flex flex-col items-center justify-center gap-3 hover:border-indigo-400 transition-all">
-                <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
-                  <Upload size={24} />
-                </div>
-                <div className="text-center">
-                  <h4 className="text-sm font-black text-slate-900 uppercase tracking-tight">AI Vision Scanner</h4>
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Aadhaar / Caste / Income</p>
-                </div>
-                <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" id="doc-upload" />
-                <label htmlFor="doc-upload" className="px-5 py-2 bg-indigo-600 text-white text-xs font-black uppercase tracking-widest rounded-lg cursor-pointer hover:bg-indigo-700 transition-all">
-                  Upload
-                </label>
-              </div>
-              {documentPreview && (
-                <div className="p-3 bg-white border border-indigo-100 rounded-xl flex items-center gap-3">
-                  <img src={documentPreview} alt="Preview" className="w-12 h-12 object-cover rounded-lg" />
-                  <div className="flex-1 overflow-hidden">
-                    <p className="text-xs font-black text-slate-900 truncate">{document.name}</p>
-                    <p className="text-[9px] text-indigo-500 font-black uppercase tracking-widest">Document Staged</p>
-                  </div>
-                  <button onClick={() => {setDocument(null); setDocumentPreview(null);}} className="text-rose-500 font-black text-[10px] uppercase">Remove</button>
-                </div>
-              )}
             </div>
           )}
 
@@ -352,7 +410,7 @@ const SchemeFinderWizard = () => {
           <div className="w-16 h-16 bg-primary-50 text-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
             <Brain size={32} className="animate-pulse" />
           </div>
-          <h2 className="text-sm font-black text-slate-900 mb-6 uppercase tracking-widest">Multi-Agent Workflow</h2>
+          <h2 className="text-sm font-black text-slate-900 mb-6 uppercase tracking-widest">MAS Analysis</h2>
           <div className="space-y-3">
             {agentWorkflow.map((agent, i) => (
               <div key={i} className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
@@ -401,14 +459,25 @@ const SchemeFinderWizard = () => {
 
           {/* Main Form */}
           <div className="flex-1 p-8 md:p-10">
-            <div className="mb-8">
-              <h2 className="text-2xl font-black text-slate-900 tracking-tight uppercase mb-1">{steps[step-1].title}</h2>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Multimodal Agent Analysis System</p>
+            <div className="mb-8 flex justify-between items-start">
+              <div>
+                <h2 className="text-2xl font-black text-slate-900 tracking-tight uppercase mb-1">{steps[step-1].title}</h2>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Hybrid Symbolic-Generative MAS</p>
+              </div>
+              {step > 1 && (
+                <div className="px-3 py-1 bg-indigo-50 text-indigo-600 text-[8px] font-black uppercase tracking-widest rounded-lg flex items-center gap-1.5">
+                  <Sparkles size={10} /> Smart Autofill Active
+                </div>
+              )}
             </div>
 
             {error && (
-              <div className="mb-6 p-3 bg-rose-50 border border-rose-100 rounded-xl flex items-center gap-2 text-rose-600 font-bold text-[10px] uppercase tracking-wider">
-                <AlertCircle size={14} /> {error}
+              <div className="mb-6 p-4 bg-rose-50 border border-rose-100 rounded-xl flex items-start gap-3 text-rose-600">
+                <AlertCircle size={18} className="shrink-0 mt-0.5" />
+                <div className="flex flex-col gap-1">
+                  <p className="text-[10px] font-black uppercase tracking-wider">System Alert</p>
+                  <p className="text-xs font-bold leading-relaxed">{error}</p>
+                </div>
               </div>
             )}
 
@@ -419,7 +488,7 @@ const SchemeFinderWizard = () => {
                 <button
                   type="button"
                   onClick={prevStep}
-                  disabled={step === 1 || loading}
+                  disabled={step === 1 || loading || visionLoading}
                   className="px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 disabled:opacity-20 transition-all"
                 >
                   <ChevronLeft size={16} className="inline mr-1" /> Back
@@ -429,16 +498,17 @@ const SchemeFinderWizard = () => {
                   <button
                     type="button"
                     onClick={nextStep}
-                    className="px-8 py-3 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl shadow-slate-100"
+                    disabled={visionLoading}
+                    className="px-8 py-3 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl shadow-slate-100 disabled:opacity-50"
                   >
-                    Continue <ChevronRight size={16} className="inline ml-1" />
+                    {step === 1 && document ? 'Verify Data' : 'Continue'} <ChevronRight size={16} className="inline ml-1" />
                   </button>
                 ) : (
                   <button
                     type="submit"
                     className="px-10 py-4 bg-primary-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary-700 transition-all shadow-xl shadow-primary-100"
                   >
-                    Start Analysis <Brain size={16} className="inline ml-2" />
+                    Final Analysis <Brain size={16} className="inline ml-2" />
                   </button>
                 )}
               </div>
