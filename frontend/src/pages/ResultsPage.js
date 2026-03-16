@@ -73,14 +73,10 @@ const ResultsPage = () => {
               {/* Card Footer */}
               <div className="p-6 pt-4 mt-auto">
                 <div className="mb-4">
-                  <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Why this match?</h4>
-                  <ul className="space-y-1">
-                    {scheme.matchReasons.slice(0, 2).map((reason, rIdx) => (
-                      <li key={rIdx} className="text-xs text-gray-600 flex items-center">
-                        <Info size={12} className="mr-1 text-primary-400" /> {reason}
-                      </li>
-                    ))}
-                  </ul>
+                  <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Policy Reasoning</h4>
+                  <div className="text-xs text-gray-600 line-clamp-3">
+                    {scheme.reasoningChain || "Matched based on profile eligibility rules."}
+                  </div>
                 </div>
                 <button
                   onClick={() => navigate(`/scheme/${scheme.id}`)}

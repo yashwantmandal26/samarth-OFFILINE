@@ -1,59 +1,69 @@
 const userProfilingAgent = require('./userProfilingAgent');
-const schemeMatchingAgent = require('./schemeMatchingAgent');
-const explanationAgent = require('./explanationAgent');
-const chatAgent = require('./chatAgent');
+const visionAgent = require('./visionAgent');
+const reasoningAgent = require('./reasoningAgent');
+const translationAgent = require('./translationAgent');
 const fs = require('fs');
 const path = require('path');
 
 const SCHEMES_PATH = path.join(__dirname, '../dataset/jharkhand_schemes.json');
 
 /**
- * Orchestrates interaction between all agents.
+ * Orchestrates the Multimodal Multi-Agent flow.
  */
 const orchestrator = {
-    getRecommendations: async (rawUserData) => {
+    getRecommendations: async (rawUserData, fileBuffer = null) => {
         try {
-            // 1. Profiling
-            const profile = userProfilingAgent.processProfile(rawUserData);
+            let extractedProfile = {};
+            let agentStatus = [];
 
-            // 2. Load Schemes
+            // 1. Vision Agent (If file provided)
+            if (fileBuffer) {
+                agentStatus.push({ agent: 'Vision Agent', status: 'Reading document...' });
+                const visionData = await visionAgent.extractData(fileBuffer);
+                if (visionData) {
+                    extractedProfile = visionData;
+                    agentStatus.push({ agent: 'Vision Agent', status: 'Data extracted successfully.' });
+                }
+            }
+
+            // 2. Profiling Agent (Merge manual + vision data)
+            const manualProfile = userProfilingAgent.processProfile(rawUserData);
+            const finalProfile = { ...manualProfile, ...extractedProfile };
+
+            // 3. Reasoning Agent (RAG-based matching)
+            agentStatus.push({ agent: 'Reasoning Agent', status: 'Evaluating eligibility via policy reasoning...' });
             const rawSchemes = JSON.parse(fs.readFileSync(SCHEMES_PATH, 'utf8'));
+            const matches = await reasoningAgent.evaluateEligibility(finalProfile, rawSchemes);
 
-            // 3. Matching
-            const recommendedSchemes = schemeMatchingAgent.calculateMatch(profile, rawSchemes);
-
-            // 4. Explanation for Top Recommended
-            // (Only for top 3 to keep performance high)
-            const top3 = recommendedSchemes.slice(0, 3);
-            const explainedTop3 = await Promise.all(top3.map(async (scheme) => {
-                const aiExplanation = await explanationAgent.explain(
-                    scheme.scheme_name, 
-                    scheme.description, 
-                    scheme.benefits, 
-                    profile
+            // 4. Translation Agent (Simplification)
+            agentStatus.push({ agent: 'Translation Agent', status: 'Simplifying output for accessibility...' });
+            const top3 = matches.slice(0, 3);
+            const processedTop3 = await Promise.all(top3.map(async (scheme) => {
+                const vernacularExplanation = await translationAgent.simplifyAndTranslate(
+                    scheme.scheme_name,
+                    scheme.reasoningChain,
+                    scheme.benefits,
+                    finalProfile
                 );
-                return { ...scheme, aiExplanation };
+                return { ...scheme, aiExplanation: vernacularExplanation };
             }));
 
-            // Reconstruct full list with explanations for top 3
-            const fullResult = [
-                ...explainedTop3,
-                ...recommendedSchemes.slice(3)
+            const finalResults = [
+                ...processedTop3,
+                ...matches.slice(3)
             ];
 
             return {
-                profile,
-                recommendations: fullResult,
-                totalMatches: recommendedSchemes.length
+                profile: finalProfile,
+                recommendations: finalResults,
+                totalMatches: matches.length,
+                agentWorkflow: agentStatus
             };
+
         } catch (error) {
             console.error('Orchestrator Error:', error);
             throw error;
         }
-    },
-
-    handleChat: async (userMessage, userProfile, topSchemes) => {
-        return await chatAgent.chat(userMessage, userProfile, topSchemes);
     }
 };
 

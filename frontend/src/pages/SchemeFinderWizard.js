@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { schemeService } from '../services/api';
+import api from '../services/api';
 import { 
   ChevronRight, 
   ChevronLeft, 
@@ -11,7 +11,12 @@ import {
   Briefcase, 
   IndianRupee,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Upload,
+  FileText,
+  Eye,
+  Brain,
+  Languages
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -20,6 +25,10 @@ const SchemeFinderWizard = () => {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [document, setDocument] = useState(null);
+  const [documentPreview, setDocumentPreview] = useState(null);
+  const [agentWorkflow, setAgentWorkflow] = useState([]);
+
   const [formData, setFormData] = useState({
     name: '',
     age: '',
@@ -37,13 +46,19 @@ const SchemeFinderWizard = () => {
 
   const steps = [
     { title: 'Personal', icon: User, color: 'bg-blue-500' },
+    { title: 'Documents', icon: Upload, color: 'bg-indigo-500' },
     { title: 'Location', icon: MapPin, color: 'bg-emerald-500' },
     { title: 'Social', icon: Users, color: 'bg-purple-500' },
-    { title: 'Education', icon: Briefcase, color: 'bg-orange-500' },
-    { title: 'Economic', icon: IndianRupee, color: 'bg-rose-500' }
+    { title: 'Status', icon: Briefcase, color: 'bg-orange-500' }
   ];
 
-  const districts = ['Ranchi', 'Dhanbad', 'Jamshedpur', 'Bokaro', 'Deoghar', 'Hazaribagh', 'Giridih', 'Dumka', 'Palamu', 'Garhwa', 'Godda', 'Sahebganj', 'Pakur', 'Jamtara', 'Khunti', 'Lohardaga', 'Gumla', 'Simdega', 'Latehar', 'Chatra', 'Ramgarh', 'Koderma', 'Saraikela Kharsawan', 'West Singhbhum', 'East Singhbhum'];
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setDocument(file);
+      setDocumentPreview(URL.createObjectURL(file));
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -73,26 +88,22 @@ const SchemeFinderWizard = () => {
         }
         return true;
       case 2:
+        return true; // Document is optional
+      case 3:
         if (!formData.district) {
           setError('Please select your district.');
           return false;
         }
         return true;
-      case 3:
+      case 4:
         if (!formData.socialCategory) {
           setError('Please select your social category.');
           return false;
         }
         return true;
-      case 4:
-        if (!formData.qualification || !formData.occupation) {
-          setError('Please select both qualification and occupation.');
-          return false;
-        }
-        return true;
       case 5:
-        if (!formData.income) {
-          setError('Please provide your annual income.');
+        if (!formData.income || !formData.occupation) {
+          setError('Please fill in all status details.');
           return false;
         }
         return true;
@@ -106,13 +117,31 @@ const SchemeFinderWizard = () => {
     if (!validateStep()) return;
     
     setLoading(true);
+    setAgentWorkflow([
+        { agent: 'Vision Agent', status: document ? 'Scanning document...' : 'Skipped (no document)' },
+        { agent: 'Reasoning Agent', status: 'Pending...' },
+        { agent: 'Translation Agent', status: 'Pending...' }
+    ]);
+
     try {
-      const response = await schemeService.getRecommendations(formData);
-      navigate('/results', { state: { results: response.data } });
+      const data = new FormData();
+      if (document) data.append('document', document);
+      data.append('userData', JSON.stringify(formData));
+
+      const response = await api.post('/recommendations', data, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      
+      setAgentWorkflow(response.data.agentWorkflow || []);
+      
+      // Delay slightly for UX to show completion
+      setTimeout(() => {
+        navigate('/results', { state: { results: response.data } });
+      }, 1500);
+
     } catch (error) {
       console.error('Error fetching recommendations:', error);
-      setError('Something went wrong. Please check if the backend and Ollama are running.');
-    } finally {
+      setError('Something went wrong. Ensure Ollama is running LLaVA and Llama3 models.');
       setLoading(false);
     }
   };
@@ -185,6 +214,43 @@ const SchemeFinderWizard = () => {
 
           {step === 2 && (
             <div className="space-y-6">
+              <div className="p-8 border-2 border-dashed border-gray-200 rounded-3xl bg-gray-50 flex flex-col items-center justify-center gap-4 hover:border-indigo-400 transition-all">
+                <div className="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center">
+                  <Upload size={32} />
+                </div>
+                <div className="text-center">
+                  <h4 className="font-bold text-gray-900">Upload Aadhaar or Certificate</h4>
+                  <p className="text-sm text-gray-500">AI will automatically extract your details</p>
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  id="doc-upload"
+                />
+                <label
+                  htmlFor="doc-upload"
+                  className="px-6 py-2 bg-indigo-600 text-white rounded-xl font-bold cursor-pointer hover:bg-indigo-700 transition-all"
+                >
+                  Choose Image
+                </label>
+              </div>
+              {documentPreview && (
+                <div className="mt-4 p-4 bg-white border-2 border-indigo-100 rounded-2xl flex items-center gap-4">
+                  <img src={documentPreview} alt="Preview" className="w-20 h-20 object-cover rounded-xl border border-gray-100" />
+                  <div className="flex-1">
+                    <p className="font-bold text-gray-900">{document.name}</p>
+                    <p className="text-xs text-gray-500 uppercase tracking-widest font-black">Ready for AI Vision</p>
+                  </div>
+                  <button onClick={() => {setDocument(null); setDocumentPreview(null);}} className="text-rose-500 font-bold text-sm">Remove</button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {step === 3 && (
+            <div className="space-y-6">
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">District</label>
                 <select
@@ -194,7 +260,7 @@ const SchemeFinderWizard = () => {
                   className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-emerald-500 focus:bg-white focus:ring-0 transition-all text-lg font-medium"
                 >
                   <option value="">Select your district</option>
-                  {districts.map(d => <option key={d} value={d}>{d}</option>)}
+                  {['Ranchi', 'Dhanbad', 'Jamshedpur', 'Bokaro', 'Deoghar', 'Hazaribagh'].map(d => <option key={d} value={d}>{d}</option>)}
                 </select>
               </div>
               <div>
@@ -220,7 +286,7 @@ const SchemeFinderWizard = () => {
             </div>
           )}
 
-          {step === 3 && (
+          {step === 4 && (
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wider">Social Category</label>
@@ -251,48 +317,10 @@ const SchemeFinderWizard = () => {
               >
                 <div>
                   <h4 className={`font-bold ${formData.isBPL ? 'text-purple-700' : 'text-gray-700'}`}>BPL Status</h4>
-                  <p className="text-sm text-gray-500 font-medium">Do you have a BPL card or belong to BPL?</p>
+                  <p className="text-sm text-gray-500 font-medium">Do you have a BPL card?</p>
                 </div>
                 <div className={`w-12 h-6 rounded-full transition-colors relative ${formData.isBPL ? 'bg-purple-600' : 'bg-gray-300'}`}>
                   <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${formData.isBPL ? 'left-7' : 'left-1'}`}></div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {step === 4 && (
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Educational Qualification</label>
-                <select
-                  name="qualification"
-                  value={formData.qualification}
-                  onChange={handleInputChange}
-                  className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-orange-500 focus:bg-white focus:ring-0 transition-all text-lg font-medium"
-                >
-                  <option value="">Select Qualification</option>
-                  {['Below 8th', '8th Pass', '10th Pass', '12th Pass', 'Graduate', 'Post-Graduate', 'PhD'].map(q => (
-                    <option key={q} value={q}>{q}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Current Occupation</label>
-                <div className="grid grid-cols-2 gap-3">
-                  {['Farmer', 'Student', 'Laborer', 'Unemployed', 'Entrepreneur', 'Self Employed'].map(o => (
-                    <button
-                      key={o}
-                      type="button"
-                      onClick={() => setFormData(p => ({ ...p, occupation: o }))}
-                      className={`p-4 rounded-2xl border-2 font-bold text-sm transition-all ${
-                        formData.occupation === o 
-                        ? 'border-orange-600 bg-orange-50 text-orange-700 shadow-sm' 
-                        : 'border-gray-100 bg-gray-50 text-gray-600 hover:border-orange-200'
-                      }`}
-                    >
-                      {o}
-                    </button>
-                  ))}
                 </div>
               </div>
             </div>
@@ -302,53 +330,31 @@ const SchemeFinderWizard = () => {
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Annual Family Income (₹)</label>
-                <div className="relative">
-                  <span className="absolute left-4 top-4 text-gray-400 font-bold">₹</span>
-                  <input
-                    type="number"
-                    name="income"
-                    value={formData.income}
-                    onChange={handleInputChange}
-                    className="w-full p-4 pl-10 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-rose-500 focus:bg-white focus:ring-0 transition-all text-lg font-medium"
-                    placeholder="e.g. 75000"
-                    required
-                  />
-                </div>
+                <input
+                  type="number"
+                  name="income"
+                  value={formData.income}
+                  onChange={handleInputChange}
+                  className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-rose-500 focus:bg-white focus:ring-0 transition-all text-lg font-medium"
+                  placeholder="e.g. 75000"
+                  required
+                />
               </div>
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wider">Land Holding</label>
+                <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Current Occupation</label>
                 <div className="grid grid-cols-2 gap-3">
-                  {['None', 'Small (0-2 acres)', 'Medium (2-5 acres)', 'Large (5+ acres)'].map(l => (
+                  {['Farmer', 'Student', 'Laborer', 'Unemployed', 'Entrepreneur'].map(o => (
                     <button
-                      key={l}
+                      key={o}
                       type="button"
-                      onClick={() => setFormData(p => ({ ...p, landHolding: l }))}
-                      className={`p-4 rounded-2xl border-2 font-bold text-xs transition-all ${
-                        formData.landHolding === l 
-                        ? 'border-rose-600 bg-rose-50 text-rose-700 shadow-sm' 
-                        : 'border-gray-100 bg-gray-50 text-gray-600 hover:border-rose-200'
-                      }`}
-                    >
-                      {l}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wider">Housing Status</label>
-                <div className="grid grid-cols-2 gap-3">
-                  {['Own House', 'Rented', 'Houseless', 'Kutcha House'].map(h => (
-                    <button
-                      key={h}
-                      type="button"
-                      onClick={() => setFormData(p => ({ ...p, housingStatus: h }))}
+                      onClick={() => setFormData(p => ({ ...p, occupation: o }))}
                       className={`p-4 rounded-2xl border-2 font-bold text-sm transition-all ${
-                        formData.housingStatus === h 
+                        formData.occupation === o 
                         ? 'border-rose-600 bg-rose-50 text-rose-700 shadow-sm' 
                         : 'border-gray-100 bg-gray-50 text-gray-600 hover:border-rose-200'
                       }`}
                     >
-                      {h}
+                      {o}
                     </button>
                   ))}
                 </div>
@@ -360,15 +366,49 @@ const SchemeFinderWizard = () => {
     );
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl p-10 text-center">
+          <div className="w-20 h-20 bg-primary-50 text-primary-600 rounded-3xl flex items-center justify-center mx-auto mb-8 animate-bounce">
+            <Brain size={40} />
+          </div>
+          <h2 className="text-2xl font-black text-gray-900 mb-6 uppercase tracking-tighter">MAS in Action</h2>
+          
+          <div className="space-y-4 text-left">
+            {agentWorkflow.map((agent, i) => (
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.5 }}
+                className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100"
+              >
+                <div className="w-8 h-8 bg-white rounded-lg shadow-sm flex items-center justify-center text-primary-600">
+                  {agent.agent === 'Vision Agent' ? <Eye size={18} /> : 
+                   agent.agent === 'Reasoning Agent' ? <Brain size={18} /> : <Languages size={18} />}
+                </div>
+                <div>
+                  <p className="text-xs font-black text-gray-400 uppercase tracking-widest">{agent.agent}</p>
+                  <p className="text-sm font-bold text-gray-700">{agent.status}</p>
+                </div>
+                {agent.status.includes('...') && <Loader className="animate-spin ml-auto text-primary-400" size={16} />}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 md:py-20">
       <div className="max-w-4xl mx-auto">
-        {/* Progress Header */}
         <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
           <div className="flex flex-col md:flex-row">
-            {/* Sidebar Steps */}
+            {/* Sidebar */}
             <div className="md:w-72 bg-gray-900 p-8 text-white hidden md:block">
-              <h2 className="text-2xl font-black mb-10 tracking-tighter uppercase text-primary-400">Finder</h2>
+              <h2 className="text-2xl font-black mb-10 tracking-tighter uppercase text-primary-400">Samarth</h2>
               <div className="space-y-8">
                 {steps.map((s, idx) => {
                   const Icon = s.icon;
@@ -395,38 +435,17 @@ const SchemeFinderWizard = () => {
               </div>
             </div>
 
-            {/* Mobile Header */}
-            <div className="md:hidden bg-gray-900 p-6 flex items-center justify-between text-white">
-              <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${steps[step-1].color}`}>
-                  {React.createElement(steps[step-1].icon, { size: 20 })}
-                </div>
-                <div>
-                  <h2 className="font-black uppercase tracking-tighter">Step {step}</h2>
-                  <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">{steps[step-1].title}</p>
-                </div>
-              </div>
-              <div className="text-sm font-black text-primary-400">{step}/5</div>
-            </div>
-
-            {/* Form Content */}
+            {/* Content */}
             <div className="flex-1 p-8 md:p-12">
               <div className="mb-10">
-                <h2 className="text-3xl font-black text-gray-900 tracking-tight mb-2">
-                  {steps[step-1].title} Details
-                </h2>
-                <p className="text-gray-500 font-medium">Please provide your details for accurate scheme matching.</p>
+                <h2 className="text-3xl font-black text-gray-900 tracking-tight mb-2">{steps[step-1].title} Details</h2>
+                <p className="text-gray-500 font-medium">Multimodal AI is ready to help you.</p>
               </div>
 
               {error && (
-                <motion.div 
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mb-8 p-4 bg-rose-50 border-2 border-rose-100 rounded-2xl flex items-center gap-3 text-rose-700 font-bold text-sm"
-                >
-                  <AlertCircle size={20} />
-                  {error}
-                </motion.div>
+                <div className="mb-8 p-4 bg-rose-50 border-2 border-rose-100 rounded-2xl flex items-center gap-3 text-rose-700 font-bold text-sm">
+                  <AlertCircle size={20} /> {error}
+                </div>
               )}
 
               <form onSubmit={handleSubmit}>
@@ -437,11 +456,7 @@ const SchemeFinderWizard = () => {
                     type="button"
                     onClick={prevStep}
                     disabled={step === 1 || loading}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-sm transition-all ${
-                      step === 1 || loading 
-                      ? 'text-gray-300 cursor-not-allowed' 
-                      : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
-                    }`}
+                    className="flex items-center gap-2 px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-sm text-gray-500 hover:bg-gray-100 disabled:opacity-30"
                   >
                     <ChevronLeft size={20} /> Back
                   </button>
@@ -450,7 +465,7 @@ const SchemeFinderWizard = () => {
                     <button
                       type="button"
                       onClick={nextStep}
-                      className="flex items-center gap-2 px-10 py-4 bg-gray-900 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-gray-800 shadow-xl shadow-gray-200 transition-all active:scale-95"
+                      className="flex items-center gap-2 px-10 py-4 bg-gray-900 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-gray-800 transition-all active:scale-95 shadow-xl"
                     >
                       Continue <ChevronRight size={20} />
                     </button>
@@ -458,32 +473,15 @@ const SchemeFinderWizard = () => {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="flex items-center gap-2 px-12 py-5 bg-primary-600 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-primary-700 shadow-xl shadow-primary-100 transition-all active:scale-95 disabled:bg-primary-300"
+                      className="flex items-center gap-2 px-12 py-5 bg-primary-600 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-primary-700 transition-all active:scale-95 shadow-xl shadow-primary-100"
                     >
-                      {loading ? (
-                        <>
-                          <Loader className="animate-spin" size={20} /> Processing...
-                        </>
-                      ) : (
-                        <>
-                          Get Schemes <CheckCircle2 size={20} />
-                        </>
-                      )}
+                      Start Analysis <Brain size={20} />
                     </button>
                   )}
                 </div>
               </form>
             </div>
           </div>
-        </div>
-
-        {/* Support Info */}
-        <div className="mt-8 flex items-center justify-center gap-4 text-gray-400 font-bold text-[10px] uppercase tracking-[0.2em]">
-          <span>Secure</span>
-          <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-          <span>Private</span>
-          <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-          <span>Government Data</span>
         </div>
       </div>
     </div>
