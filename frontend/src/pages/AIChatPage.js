@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { schemeService } from '../services/api';
-import { Send, User, Bot, Sparkles, ArrowLeft, Trash2, Mic, Volume2, VolumeX, MicOff } from 'lucide-react';
+import { Send, User, Bot, Sparkles, ArrowLeft, Trash2, Mic, Volume2, VolumeX, MicOff, Globe } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 
 const AIChatPage = () => {
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: "Hello! I am **Samarth**, your Jharkhand Government Scheme assistant. How can I help you today?" }
+    { 
+      role: 'assistant', 
+      content: "🙏 **Namaskar! I'm Samarth** — your Jharkhand Government Schemes Assistant.\n\nI'll ask you a few simple questions, and then recommend the **best government schemes** for you — housing, health, education, pension, farming, and much more!\n\n**Let's get started** — What is your name?" 
+    }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -142,73 +145,75 @@ const AIChatPage = () => {
 
   const clearChat = () => {
     if (window.confirm('Are you sure you want to clear the conversation?')) {
-      setMessages([{ role: 'assistant', content: "Hello! I am **Samarth**, your Jharkhand Government Scheme assistant. How can I help you today?" }]);
+      setMessages([{ 
+        role: 'assistant', 
+        content: "🙏 **Namaskar! I'm Samarth** — your Jharkhand Government Schemes Assistant.\n\nI'll ask you a few simple questions, and then recommend the **best government schemes** for you — housing, health, education, pension, farming, and much more!\n\n**Let's get started** — What is your name?" 
+      }]);
       stopSpeaking();
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col font-sans">
       {/* Chat Header */}
       <div className="bg-white border-b border-slate-100 py-4 px-6 sticky top-20 z-40">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
+        <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link to="/" className="p-2 text-slate-400 hover:text-slate-900 transition-colors">
               <ArrowLeft size={20} />
             </Link>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-primary-400 shadow-lg">
-                <Bot size={24} />
+              <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center text-white shadow-md">
+                <span className="text-xl font-black">स</span>
               </div>
               <div>
-                <h2 className="text-sm font-black text-slate-900 uppercase tracking-tight">Samarth AI</h2>
-                <div className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-                  <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Local Intelligence</span>
-                </div>
+                <h2 className="text-sm font-black text-slate-900 tracking-tight leading-none mb-1">Samarth AI</h2>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Find schemes you're eligible for</p>
               </div>
             </div>
           </div>
-          <button 
-            onClick={clearChat}
-            className="p-2 text-slate-300 hover:text-rose-500 transition-colors"
-            title="Clear Chat"
-          >
-            <Trash2 size={18} />
-          </button>
+          <div className="flex items-center gap-4">
+             <button className="flex items-center gap-2 px-3 py-1.5 text-emerald-700 bg-emerald-50 rounded-full text-[10px] font-black uppercase tracking-widest border border-emerald-100">
+                <Globe size={12} /> English
+             </button>
+             <button 
+               onClick={clearChat}
+               className="p-2 text-slate-300 hover:text-rose-500 transition-colors"
+               title="Clear Chat"
+             >
+               <Trash2 size={18} />
+             </button>
+          </div>
         </div>
       </div>
 
       {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto p-6">
-        <div className="max-w-4xl mx-auto space-y-8 pb-32">
+      <div className="flex-1 overflow-y-auto p-6 bg-slate-50/30">
+        <div className="max-w-5xl mx-auto space-y-10 pb-40 pt-10">
           <AnimatePresence initial={false}>
             {messages.map((m, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
                 className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
-                <div className={`flex gap-3 max-w-[85%] ${m.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 shadow-sm ${m.role === 'user' ? 'bg-slate-900 text-white' : 'bg-white text-slate-900 border border-slate-100'}`}>
-                    {m.role === 'user' ? <User size={14} /> : <Bot size={14} />}
-                  </div>
+                <div className={`flex gap-4 max-w-[70%] ${m.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                  {!m.role.includes('user') && (
+                    <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-sm mt-1">
+                      <Bot size={16} />
+                    </div>
+                  )}
                   <div className="flex flex-col gap-2">
-                    <div className={`p-4 rounded-2xl shadow-sm border text-sm font-sans leading-relaxed not-italic ${
+                    <div className={`p-6 rounded-[1.5rem] shadow-sm text-sm font-medium leading-relaxed ${
                       m.role === 'user' 
-                      ? 'bg-slate-900 text-white border-slate-800 rounded-tr-none' 
-                      : 'bg-white text-slate-800 border-slate-50 rounded-tl-none'
+                      ? 'bg-slate-900 text-white rounded-tr-none' 
+                      : 'bg-white text-slate-800 border border-slate-100 rounded-tl-none'
                     }`}>
                       <ReactMarkdown 
                         components={{
-                          strong: ({node, ...props}) => <span className="font-semibold text-slate-900" {...props} />,
-                          b: ({node, ...props}) => <span className="font-semibold text-slate-900" {...props} />,
-                          code: ({node, inline, ...props}) => (
-                            <code className="bg-blue-50 text-blue-800 px-1.5 py-0.5 rounded text-xs font-mono" {...props} />
-                          ),
-                          ul: ({node, ...props}) => <ul className="list-disc ml-4 space-y-1 my-2" {...props} />,
-                          ol: ({node, ...props}) => <ol className="list-decimal ml-4 space-y-1 my-2" {...props} />,
+                          strong: ({node, ...props}) => <span className="font-black text-slate-900" {...props} />,
+                          b: ({node, ...props}) => <span className="font-black text-slate-900" {...props} />,
                           p: ({node, ...props}) => <p className="mb-2 last:mb-0" {...props} />,
                         }}
                       >
@@ -218,24 +223,29 @@ const AIChatPage = () => {
                     {m.role === 'assistant' && (
                       <button 
                         onClick={() => activeSpeechIndex === i ? stopSpeaking() : speak(m.content, i)}
-                        className={`self-start p-1.5 rounded-full transition-all ${activeSpeechIndex === i ? 'bg-primary-50 text-primary-600 animate-pulse' : 'text-slate-300 hover:text-primary-500 hover:bg-slate-50'}`}
-                        title={activeSpeechIndex === i ? "Stop speaking" : "Read aloud"}
+                        className="self-start flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest transition-all text-slate-400 hover:text-emerald-600"
                       >
                         {activeSpeechIndex === i ? <VolumeX size={14} /> : <Volume2 size={14} />}
+                        {activeSpeechIndex === i ? "Stop" : "Listen"}
                       </button>
                     )}
                   </div>
+                  {m.role === 'user' && (
+                    <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center shrink-0 shadow-sm mt-1">
+                      <User size={16} />
+                    </div>
+                  )}
                 </div>
               </motion.div>
             ))}
           </AnimatePresence>
           {loading && (
             <div className="flex justify-start">
-              <div className="flex gap-3">
-                <div className="w-8 h-8 rounded-lg bg-white border border-slate-100 flex items-center justify-center shrink-0 shadow-sm">
-                  <Bot size={14} className="text-slate-900" />
+              <div className="flex gap-4">
+                <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-sm">
+                  <Bot size={16} />
                 </div>
-                <div className="bg-white p-4 rounded-2xl rounded-tl-none border border-slate-50 shadow-sm">
+                <div className="bg-white p-4 rounded-2xl rounded-tl-none border border-slate-100 shadow-sm">
                   <div className="flex gap-1.5">
                     <span className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
                     <span className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
@@ -250,51 +260,57 @@ const AIChatPage = () => {
       </div>
 
       {/* Chat Input Area */}
-      <div className="bg-white border-t border-slate-100 p-6 fixed bottom-0 left-0 right-0 z-40 md:left-auto md:right-auto md:w-full md:max-w-4xl md:mx-auto md:rounded-t-[2rem] shadow-2xl">
-        <div className="max-w-4xl mx-auto">
+      <div className="bg-white border-t border-slate-100 p-6 fixed bottom-0 left-0 right-0 z-40">
+        <div className="max-w-4xl mx-auto flex flex-col items-center">
           {/* Quick Suggestions */}
-          <div className="flex flex-wrap gap-2 mb-4 overflow-x-auto pb-2 no-scrollbar">
-            {['Student Schemes', 'Farmer Loans', 'Scholarships', 'Ayushman Bharat?'].map(q => (
+          <div className="flex flex-wrap justify-center gap-3 mb-8">
+            {[
+              "Help me find schemes I'm eligible for", 
+              "I'm a farmer, what schemes can I get?", 
+              "I'm a student looking for scholarships", 
+              "Show me pension schemes"
+            ].map(q => (
               <button
                 key={q}
                 onClick={() => handleSend(null, q)}
-                className="px-4 py-1.5 bg-slate-50 border border-slate-100 text-[9px] font-black uppercase tracking-widest text-slate-400 rounded-full hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all whitespace-nowrap"
+                className="px-6 py-2.5 bg-white border border-slate-200 text-[11px] font-bold text-slate-600 rounded-full hover:bg-slate-50 hover:border-emerald-200 hover:text-emerald-700 transition-all shadow-sm"
               >
                 {q}
               </button>
             ))}
           </div>
 
-          <form onSubmit={handleSend} className="relative group">
+          <form onSubmit={handleSend} className="w-full flex items-center gap-4 bg-white border border-slate-200 rounded-2xl p-2 shadow-xl focus-within:border-emerald-500 transition-all">
+            <button
+              type="button"
+              onClick={toggleListening}
+              className={`p-3 rounded-xl transition-all ${isListening ? 'bg-rose-50 text-rose-600 animate-pulse' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-900'}`}
+              title={isListening ? "Stop listening" : "Voice input"}
+            >
+              {isListening ? <MicOff size={20} /> : <Mic size={20} />}
+            </button>
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder={isListening ? "Listening..." : "Ask anything about Jharkhand policies..."}
-              className={`w-full p-4 pr-24 bg-slate-50 border ${isListening ? 'border-primary-500 ring-2 ring-primary-100' : 'border-slate-200'} rounded-2xl focus:border-primary-500 focus:bg-white focus:ring-0 text-sm font-bold text-slate-900 placeholder-slate-300 transition-all`}
+              placeholder={isListening ? "Listening..." : "Type your answer here..."}
+              className="flex-1 bg-transparent border-none focus:ring-0 text-sm font-medium text-slate-800 placeholder-slate-400"
             />
-            <div className="absolute right-2 top-2 flex gap-1.5">
-              <button
-                type="button"
-                onClick={toggleListening}
-                className={`p-2.5 rounded-xl transition-all shadow-lg ${isListening ? 'bg-rose-500 text-white animate-pulse' : 'bg-white text-slate-400 hover:text-primary-600 border border-slate-100'}`}
-                title={isListening ? "Stop listening" : "Voice input"}
-              >
-                {isListening ? <MicOff size={18} /> : <Mic size={18} />}
-              </button>
-              <button
-                type="submit"
-                disabled={loading || (!input.trim() && !isListening)}
-                className="p-2.5 bg-slate-900 text-white rounded-xl hover:bg-primary-600 disabled:bg-slate-100 disabled:text-slate-300 transition-all shadow-xl"
-              >
-                <Send size={18} />
-              </button>
-            </div>
+            <button
+              type="submit"
+              disabled={loading || (!input.trim() && !isListening)}
+              className="p-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 disabled:bg-slate-100 disabled:text-slate-300 transition-all shadow-lg shadow-emerald-100 active:scale-95"
+            >
+              <Send size={20} />
+            </button>
           </form>
-          <div className="mt-4 text-center">
-            <p className="inline-flex items-center gap-1.5 text-[8px] font-black text-slate-300 uppercase tracking-[0.2em]">
-              <Sparkles size={10} className="text-primary-400" /> Powered by Local Llama3 • Private Analysis
-            </p>
+          
+          <div className="mt-4 flex items-center gap-4 text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+             <span className="flex items-center gap-1.5"><Mic size={10} /> Tap mic to speak</span>
+             <span className="w-1 h-1 bg-slate-200 rounded-full"></span>
+             <span>Click scheme names for details</span>
+             <span className="w-1 h-1 bg-slate-200 rounded-full"></span>
+             <span>Your data is private</span>
           </div>
         </div>
       </div>

@@ -101,13 +101,13 @@ const SchemeDetailPage = () => {
           >
             <div className="p-12 border-b border-slate-50 text-center md:text-left relative overflow-hidden">
               {/* Subtle background icon */}
-              <div className="absolute -top-10 -right-10 opacity-5 rotate-12">
-                <Sparkles size={200} />
+              <div className="absolute -top-10 -right-10 opacity-5 rotate-12 text-emerald-600">
+                <span className="text-[200px] font-black">स</span>
               </div>
               
               <div className="relative z-10">
                 <div className="flex flex-wrap justify-center md:justify-start gap-3 mb-8">
-                  <span className="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-primary-50 text-primary-700 border border-primary-100">
+                  <span className="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-700 border border-emerald-100">
                     {scheme.category}
                   </span>
                   <span className="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-slate-50 text-slate-500 border border-slate-100">
@@ -117,7 +117,7 @@ const SchemeDetailPage = () => {
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 mb-6 tracking-tight leading-[1.1]">
                   {scheme.scheme_name}
                 </h1>
-                <p className="text-lg md:text-xl text-slate-500 font-medium leading-relaxed italic max-w-2xl">
+                <p className="text-lg md:text-xl text-slate-500 font-medium leading-relaxed max-w-2xl">
                   {scheme.description}
                 </p>
                 <div className="mt-10 flex flex-wrap justify-center md:justify-start gap-4">
@@ -125,7 +125,7 @@ const SchemeDetailPage = () => {
                     href={scheme.official_portal} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="w-full md:w-auto flex items-center justify-center gap-3 px-10 py-5 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-slate-800 transition-all shadow-2xl shadow-slate-200 active:scale-95"
+                    className="w-full md:w-auto flex items-center justify-center gap-3 px-10 py-5 bg-emerald-600 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-emerald-700 transition-all shadow-2xl shadow-emerald-100 active:scale-95"
                   >
                     Apply on Portal <ExternalLink size={20} />
                   </a>
@@ -136,11 +136,11 @@ const SchemeDetailPage = () => {
 
           {/* Content Sections */}
           <div className="space-y-4">
-            <DetailSection title="Key Benefits" icon={Award}>
+            <DetailSection title="Key Benefits" icon={Award} colorClass="text-emerald-600">
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {(Array.isArray(scheme.benefits) ? scheme.benefits : [scheme.benefits]).map((b, i) => (
-                  <li key={i} className="flex items-start gap-3 p-5 bg-slate-50 rounded-2xl border border-slate-100 hover:border-primary-200 transition-colors">
-                    <div className="w-6 h-6 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <li key={i} className="flex items-start gap-3 p-5 bg-slate-50 rounded-2xl border border-slate-100 hover:border-emerald-200 transition-colors">
+                    <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
                       <CheckCircle size={14} />
                     </div>
                     <span className="text-sm font-bold text-slate-700 leading-tight">{b}</span>
@@ -160,11 +160,11 @@ const SchemeDetailPage = () => {
               </div>
             </DetailSection>
 
-            <DetailSection title="Required Documents" icon={FileText} colorClass="text-blue-600">
+            <DetailSection title="Required Documents" icon={FileText} colorClass="text-emerald-600">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {scheme.documents_required.map((doc, i) => (
-                  <div key={i} className="flex items-center gap-4 p-5 bg-white border border-slate-100 rounded-2xl shadow-sm hover:border-blue-200 hover:shadow-blue-50/50 transition-all group">
-                    <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-black text-xs shrink-0 group-hover:scale-110 transition-transform">
+                  <div key={i} className="flex items-center gap-4 p-5 bg-white border border-slate-100 rounded-2xl shadow-sm hover:border-emerald-200 hover:shadow-emerald-50/50 transition-all group">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-black text-xs shrink-0 group-hover:scale-110 transition-transform">
                       {i + 1}
                     </div>
                     <span className="text-sm font-bold text-slate-700 uppercase tracking-tight">{doc}</span>
@@ -173,15 +173,15 @@ const SchemeDetailPage = () => {
               </div>
             </DetailSection>
 
-            <DetailSection title="Step-by-Step Application" icon={MapPin} colorClass="text-orange-600">
-              <div className="p-10 bg-orange-50/30 rounded-[2.5rem] border border-orange-100 text-slate-700 font-bold text-base leading-relaxed">
+            <DetailSection title="Step-by-Step Application" icon={MapPin} colorClass="text-emerald-600">
+              <div className="p-10 bg-emerald-50/30 rounded-[2.5rem] border border-emerald-100 text-slate-700 font-bold text-base leading-relaxed">
                 {scheme.application_process}
               </div>
             </DetailSection>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pb-12">
               <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 p-8 flex items-center gap-6 group hover:shadow-xl transition-all">
-                <div className="w-14 h-14 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                   <Wallet size={28} />
                 </div>
                 <div>
@@ -190,7 +190,7 @@ const SchemeDetailPage = () => {
                 </div>
               </div>
               <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 p-8 flex items-center gap-6 group hover:shadow-xl transition-all">
-                <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
                   <Clock size={28} />
                 </div>
                 <div>

@@ -21,19 +21,19 @@ const TypewriterSummary = ({ text }) => {
     <motion.div 
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-slate-900 text-white p-8 rounded-[2rem] shadow-2xl mb-12 relative overflow-hidden group"
+      className="bg-emerald-900 text-white p-8 rounded-[2rem] shadow-2xl mb-12 relative overflow-hidden group"
     >
       <div className="absolute top-0 right-0 p-8 opacity-10">
-        <Brain size={120} className="text-white" />
+        <span className="text-[120px] font-black text-white">स</span>
       </div>
       
       <div className="relative z-10">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-primary-500/20 rounded-xl flex items-center justify-center border border-primary-500/30">
-            <Sparkles size={20} className="text-primary-400 animate-pulse" />
+          <div className="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center border border-emerald-500/30 text-white">
+            <Sparkles size={20} className="text-emerald-400 animate-pulse" />
           </div>
           <div>
-            <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary-400 mb-1">AI Executive Summary</h2>
+            <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400 mb-1">AI Executive Summary</h2>
             <div className="flex items-center gap-2">
                 <span className="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span>
                 <span className="text-[8px] font-black uppercase tracking-widest text-emerald-500">Live Synthesis Active</span>
@@ -41,14 +41,14 @@ const TypewriterSummary = ({ text }) => {
           </div>
         </div>
         
-        <p className="text-lg md:text-xl font-medium leading-relaxed text-slate-100 max-w-3xl">
+        <p className="text-lg md:text-xl font-medium leading-relaxed text-emerald-50 max-w-3xl">
           {displayedText}
-          <span className="inline-block w-2 h-6 bg-primary-500 ml-1 animate-pulse align-middle"></span>
+          <span className="inline-block w-2 h-6 bg-emerald-500 ml-1 animate-pulse align-middle"></span>
         </p>
       </div>
 
       {/* Decorative Gradient */}
-      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 via-purple-500 to-blue-500 opacity-50"></div>
+      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-500 opacity-50"></div>
     </motion.div>
   );
 };
@@ -137,7 +137,7 @@ const ResultsPage = () => {
                       {scheme.department}
                     </span>
                     <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
-                    <span className="text-xs font-semibold text-primary-600 uppercase tracking-wider">
+                    <span className="text-xs font-semibold text-emerald-600 uppercase tracking-wider">
                       {scheme.category}
                     </span>
                   </div>
@@ -162,7 +162,7 @@ const ResultsPage = () => {
                       </div>
                       <div className="flex flex-col">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Benefit</span>
-                        <span className="text-sm">{scheme.benefits}</span>
+                        <span className="text-sm font-bold text-slate-700">{scheme.benefits}</span>
                       </div>
                     </div>
                     
@@ -172,7 +172,7 @@ const ResultsPage = () => {
                       </div>
                       <div className="flex flex-col">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Target Group</span>
-                        <span className="text-sm">{scheme.category}</span>
+                        <span className="text-sm font-bold text-slate-700">{scheme.category}</span>
                       </div>
                     </div>
 
@@ -182,7 +182,7 @@ const ResultsPage = () => {
                       </div>
                       <div className="flex flex-col">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Income Eligibility</span>
-                        <span className="text-sm">
+                        <span className="text-sm font-bold text-slate-700">
                           {scheme.eligibility.income_limit ? `Up to ₹${scheme.eligibility.income_limit.toLocaleString()}` : "Variable/No Limit"}
                         </span>
                       </div>
@@ -191,21 +191,21 @@ const ResultsPage = () => {
                 </div>
 
                 {/* Column 2: AI Agent Analysis */}
-                <div className="bg-blue-50/50 border border-blue-100 rounded-lg p-5 flex flex-col">
+                <div className="bg-emerald-50/30 border border-emerald-100 rounded-lg p-5 flex flex-col">
                   <div className="flex items-center gap-2 mb-4">
-                    <Sparkles size={14} className="text-blue-600" />
-                    <span className="text-xs font-bold text-blue-800 tracking-wider uppercase">✦ AI Reasoning Engine</span>
+                    <Sparkles size={14} className="text-emerald-600" />
+                    <span className="text-xs font-bold text-emerald-800 tracking-wider uppercase">✦ AI Reasoning Engine</span>
                   </div>
                   <div className="text-xs flex-1">
                     {formatAIExplanation(scheme.aiExplanation) || (
                       <ul className="space-y-2">
                         <li className="flex items-start gap-2">
-                          <span className="text-blue-500 mt-1 text-[10px]">✦</span>
-                          <span className="text-slate-700 font-medium leading-relaxed">Profile matches deterministic eligibility rules.</span>
+                          <span className="text-emerald-500 mt-1 text-[10px]">✦</span>
+                          <span className="text-slate-700 font-bold leading-relaxed">Profile matches deterministic eligibility rules.</span>
                         </li>
                         <li className="flex items-start gap-2">
-                          <span className="text-blue-500 mt-1 text-[10px]">✦</span>
-                          <span className="text-slate-700 font-medium leading-relaxed">Policy reasoning verified by backend agent protocol.</span>
+                          <span className="text-emerald-500 mt-1 text-[10px]">✦</span>
+                          <span className="text-slate-700 font-bold leading-relaxed">Policy reasoning verified by backend agent protocol.</span>
                         </li>
                       </ul>
                     )}
@@ -217,7 +217,7 @@ const ResultsPage = () => {
               <div className="px-8 py-4 bg-white flex justify-end items-center gap-6">
                 <button
                   onClick={() => navigate(`/scheme/${scheme.id}`)}
-                  className="text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors"
+                  className="text-sm font-bold text-slate-500 hover:text-emerald-600 transition-colors uppercase tracking-widest"
                 >
                   View Full Details
                 </button>
@@ -225,7 +225,7 @@ const ResultsPage = () => {
                   href={scheme.official_portal}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-slate-900 hover:bg-slate-800 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-sm active:scale-95 flex items-center gap-2"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-lg text-sm font-bold transition-all shadow-lg shadow-emerald-50 active:scale-95 flex items-center gap-2"
                 >
                   Apply Now <ExternalLink size={16} />
                 </a>

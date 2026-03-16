@@ -81,8 +81,8 @@ const SchemeExplorerPage = () => {
                 onClick={() => setActiveCategory(cat)}
                 className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${
                   activeCategory === cat 
-                  ? 'bg-slate-900 text-white border-slate-900 shadow-xl shadow-slate-200' 
-                  : 'bg-white text-slate-400 border-slate-100 hover:border-slate-300 hover:text-slate-600'
+                  ? 'bg-emerald-600 text-white border-emerald-600 shadow-xl shadow-emerald-100' 
+                  : 'bg-white text-slate-400 border-slate-100 hover:border-emerald-300 hover:text-emerald-600'
                 }`}
               >
                 {cat}
@@ -107,13 +107,13 @@ const SchemeExplorerPage = () => {
                 className="bg-white rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-500 border border-slate-50 overflow-hidden flex flex-col group"
               >
                 <div className="p-8 flex-1">
-                  <span className="inline-block px-3 py-1 rounded-lg text-[8px] font-black bg-slate-50 text-slate-400 uppercase tracking-widest mb-6 group-hover:bg-primary-50 group-hover:text-primary-600 transition-colors">
+                  <span className="inline-block px-3 py-1 rounded-lg text-[8px] font-black bg-emerald-50 text-emerald-600 uppercase tracking-widest mb-6 group-hover:bg-emerald-100 transition-colors">
                     {scheme.category}
                   </span>
-                  <h3 className="text-xl font-black text-slate-900 mb-3 leading-tight group-hover:text-primary-600 transition-colors">
+                  <h3 className="text-xl font-black text-slate-900 mb-3 leading-tight group-hover:text-emerald-600 transition-colors">
                     {scheme.scheme_name}
                   </h3>
-                  <p className="text-xs text-slate-500 font-medium leading-relaxed line-clamp-3 italic">
+                  <p className="text-xs text-slate-500 font-medium leading-relaxed line-clamp-3">
                     {scheme.description}
                   </p>
                 </div>
@@ -124,7 +124,7 @@ const SchemeExplorerPage = () => {
                   </div>
                   <Link
                     to={`/scheme/${scheme.id}`}
-                    className="flex items-center gap-2 px-6 py-2.5 bg-white border border-slate-100 text-slate-900 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-sm active:scale-95"
+                    className="flex items-center gap-2 px-6 py-2.5 bg-white border border-slate-100 text-slate-900 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 hover:text-white hover:border-emerald-600 transition-all shadow-sm active:scale-95"
                   >
                     View <ChevronRight size={14} />
                   </Link>
