@@ -1,7 +1,57 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { ChevronRight, Award, Sparkles, Brain, ArrowLeft, IndianRupee, Users, FileText, ExternalLink, ShieldCheck, Target, Wallet } from 'lucide-react';
 import { motion } from 'framer-motion';
+
+const TypewriterSummary = ({ text }) => {
+  const [displayedText, setDisplayedText] = useState('');
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (index < text.length) {
+      const timeout = setTimeout(() => {
+        setDisplayedText((prev) => prev + text[index]);
+        setIndex((prev) => prev + 1);
+      }, 15); // Adjust speed here
+      return () => clearTimeout(timeout);
+    }
+  }, [index, text]);
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-slate-900 text-white p-8 rounded-[2rem] shadow-2xl mb-12 relative overflow-hidden group"
+    >
+      <div className="absolute top-0 right-0 p-8 opacity-10">
+        <Brain size={120} className="text-white" />
+      </div>
+      
+      <div className="relative z-10">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 bg-primary-500/20 rounded-xl flex items-center justify-center border border-primary-500/30">
+            <Sparkles size={20} className="text-primary-400 animate-pulse" />
+          </div>
+          <div>
+            <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary-400 mb-1">AI Executive Summary</h2>
+            <div className="flex items-center gap-2">
+                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span>
+                <span className="text-[8px] font-black uppercase tracking-widest text-emerald-500">Live Synthesis Active</span>
+            </div>
+          </div>
+        </div>
+        
+        <p className="text-lg md:text-xl font-medium leading-relaxed text-slate-100 max-w-3xl">
+          {displayedText}
+          <span className="inline-block w-2 h-6 bg-primary-500 ml-1 animate-pulse align-middle"></span>
+        </p>
+      </div>
+
+      {/* Decorative Gradient */}
+      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 via-purple-500 to-blue-500 opacity-50"></div>
+    </motion.div>
+  );
+};
 
 const ResultsPage = () => {
   const location = useLocation();
@@ -39,6 +89,8 @@ const ResultsPage = () => {
 
   const { recommendations, profile, totalMatches } = results;
 
+  const summaryText = `Analysis complete. Based on your socio-economic profile as a ${profile.occupation} in ${profile.district}, our Multi-Agent System has identified high-probability matches primarily in ${recommendations[0]?.category || 'Education and Skill Development'} sectors. Below is the refined list of eligible schemes ranked by match accuracy.`;
+
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-6">
       <div className="max-w-5xl mx-auto">
@@ -60,6 +112,9 @@ const ResultsPage = () => {
             <span className="px-3 py-1 bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-widest rounded-full border border-emerald-200">Analysis Verified</span>
           </div>
         </div>
+
+        {/* AI Executive Summary with Typewriter Effect */}
+        <TypewriterSummary text={summaryText} />
 
         {/* Results List */}
         <div className="flex flex-col gap-8">

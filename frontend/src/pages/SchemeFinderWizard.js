@@ -147,21 +147,45 @@ const SchemeFinderWizard = () => {
     if (!validateStep()) return;
     
     setLoading(true);
+    // Initial state for the sequential animation
     setAgentWorkflow([
-        { agent: 'Vision Agent', status: 'Analysis verified' },
-        { agent: 'Reasoning Agent', status: 'Processing policies...' },
-        { agent: 'Translation Agent', status: 'Pending...' }
+        { agent: 'Vision Agent', status: 'Pending', active: false },
+        { agent: 'Reasoning Agent', status: 'Pending', active: false },
+        { agent: 'Translation Agent', status: 'Pending', active: false }
     ]);
 
     try {
-      // Final submission (no file needed if already processed, but we send anyway for consistency or just the data)
       const response = await api.post('/recommendations', formData);
       
-      setAgentWorkflow(response.data.agentWorkflow || []);
-      
+      // Sequential animation logic (3 seconds total)
+      // Step 1: Vision Agent (0s - 1s)
+      setAgentWorkflow([
+        { agent: 'Vision Agent', status: 'Scanning document...', active: true },
+        { agent: 'Reasoning Agent', status: 'Pending', active: false },
+        { agent: 'Translation Agent', status: 'Pending', active: false }
+      ]);
+
+      setTimeout(() => {
+        // Step 2: Reasoning Agent (1s - 2s)
+        setAgentWorkflow([
+          { agent: 'Vision Agent', status: 'Analysis verified', active: false },
+          { agent: 'Reasoning Agent', status: 'Matching policies...', active: true },
+          { agent: 'Translation Agent', status: 'Pending', active: false }
+        ]);
+      }, 1000);
+
+      setTimeout(() => {
+        // Step 3: Translation Agent (2s - 3s)
+        setAgentWorkflow([
+          { agent: 'Vision Agent', status: 'Analysis verified', active: false },
+          { agent: 'Reasoning Agent', status: 'Logic verified', active: false },
+          { agent: 'Translation Agent', status: 'Simplifying output...', active: true }
+        ]);
+      }, 2000);
+
       setTimeout(() => {
         navigate('/results', { state: { results: response.data } });
-      }, 1200);
+      }, 3000);
 
     } catch (err) {
       console.error('Final Analysis Error:', err);
@@ -406,24 +430,50 @@ const SchemeFinderWizard = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
-        <div className="max-w-xs w-full bg-white rounded-3xl shadow-2xl p-8 text-center border border-slate-100">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="max-w-xs w-full bg-white rounded-3xl shadow-2xl p-8 text-center border border-slate-100"
+        >
           <div className="w-16 h-16 bg-primary-50 text-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
             <Brain size={32} className="animate-pulse" />
           </div>
-          <h2 className="text-sm font-black text-slate-900 mb-6 uppercase tracking-widest">MAS Analysis</h2>
+          <h2 className="text-sm font-black text-slate-900 mb-6 uppercase tracking-[0.2em]">MAS Analysis</h2>
           <div className="space-y-3">
             {agentWorkflow.map((agent, i) => (
-              <div key={i} className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
-                <div className="text-primary-600">{agent.agent === 'Vision Agent' ? <Eye size={16} /> : agent.agent === 'Reasoning Agent' ? <Brain size={16} /> : <Languages size={16} />}</div>
-                <div className="text-left flex-1">
-                  <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{agent.agent}</p>
-                  <p className="text-[10px] font-bold text-slate-700 leading-tight">{agent.status}</p>
+              <motion.div 
+                key={i} 
+                animate={{ 
+                  scale: agent.active ? 1.05 : 1,
+                  backgroundColor: agent.active ? 'rgba(79, 70, 229, 0.05)' : 'rgba(248, 250, 252, 1)',
+                  borderColor: agent.active ? 'rgba(79, 70, 229, 0.2)' : 'rgba(241, 245, 249, 1)'
+                }}
+                className="flex items-center gap-3 p-4 rounded-xl border transition-all duration-300"
+              >
+                <div className={`${agent.active ? 'text-primary-600' : 'text-slate-300'}`}>
+                  {agent.agent === 'Vision Agent' ? <Eye size={16} /> : agent.agent === 'Reasoning Agent' ? <Brain size={16} /> : <Languages size={16} />}
                 </div>
-                {agent.status.includes('...') && <Loader className="animate-spin text-slate-300" size={12} />}
-              </div>
+                <div className="text-left flex-1">
+                  <p className={`text-[8px] font-black uppercase tracking-widest leading-none mb-1 ${agent.active ? 'text-primary-600' : 'text-slate-400'}`}>{agent.agent}</p>
+                  <p className={`text-[10px] font-bold leading-tight ${agent.active ? 'text-slate-900' : 'text-slate-500'}`}>{agent.status}</p>
+                </div>
+                {agent.active && <Loader className="animate-spin text-primary-600" size={12} />}
+                {!agent.active && agent.status !== 'Pending' && <CheckCircle2 size={12} className="text-emerald-500" />}
+              </motion.div>
             ))}
           </div>
-        </div>
+          <div className="mt-8">
+            <div className="w-full bg-slate-100 h-1 rounded-full overflow-hidden">
+                <motion.div 
+                    initial={{ width: "0%" }}
+                    animate={{ width: "100%" }}
+                    transition={{ duration: 3, ease: "linear" }}
+                    className="bg-primary-600 h-full"
+                ></motion.div>
+            </div>
+            <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest mt-2">Processing Protocols</p>
+          </div>
+        </motion.div>
       </div>
     );
   }
