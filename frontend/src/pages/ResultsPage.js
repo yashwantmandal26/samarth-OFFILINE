@@ -128,17 +128,22 @@ const ResultsPage = () => {
             >
               {/* Section A: Header */}
               <div className="px-10 py-8 border-b border-slate-50 flex items-center justify-between">
-                <div>
-                  <h3 className="text-2xl font-black text-slate-900 tracking-tight mb-2 uppercase">
-                    {scheme.scheme_name}
-                  </h3>
-                  <div className="flex items-center gap-3">
-                    <span className="badge-slate">
-                      {scheme.department}
-                    </span>
-                    <span className="badge-primary">
-                      {scheme.category}
-                    </span>
+                <div className="flex items-center gap-6">
+                  <div className="w-12 h-12 bg-slate-900 text-white rounded-2xl flex items-center justify-center font-black text-xl shadow-xl shrink-0">
+                    {index + 1}
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-black text-slate-900 tracking-tight mb-2 uppercase">
+                      {scheme.scheme_name}
+                    </h3>
+                    <div className="flex items-center gap-3">
+                      <span className="badge-slate">
+                        {scheme.department}
+                      </span>
+                      <span className="badge-primary">
+                        {scheme.category}
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <div className="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl font-black text-xs border border-emerald-100 shadow-sm uppercase tracking-widest">
