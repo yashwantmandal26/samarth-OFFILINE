@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { schemeService } from '../services/api';
-import { Send, User, Bot, Loader, MessageSquare, Sparkles } from 'lucide-react';
+import { Send, User, Bot, Loader, Sparkles, ArrowLeft, Trash2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const AIChatPage = () => {
   const [messages, setMessages] = useState([
@@ -33,63 +35,86 @@ const AIChatPage = () => {
       setMessages([...newMessages, { role: 'assistant', content: response.data.response }]);
     } catch (error) {
       console.error('Chat error:', error);
-      setMessages([...newMessages, { role: 'assistant', content: "Sorry, I'm having trouble connecting to my brain right now. Please make sure Ollama is running." }]);
+      setMessages([...newMessages, { role: 'assistant', content: "Offline Error. Please ensure Ollama is running Llama3." }]);
     } finally {
       setLoading(false);
     }
   };
 
+  const clearChat = () => {
+    setMessages([{ role: 'assistant', content: "Chat cleared. How can I assist you further?" }]);
+  };
+
   const suggestions = [
-    "Show student schemes",
-    "Show farmer schemes",
-    "Show scholarship schemes",
-    "How to apply for Ayushman Bharat?"
+    "Student schemes",
+    "Farmer loans",
+    "Scholarships",
+    "Ayushman Bharat?"
   ];
 
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)] bg-gray-50">
+    <div className="flex flex-col h-[calc(100vh-64px)] bg-slate-50">
       {/* Chat Header */}
-      <div className="bg-white border-b border-gray-200 p-6 shadow-sm">
+      <div className="bg-white border-b border-slate-100 px-6 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-primary-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
-              <Bot size={28} />
-            </div>
-            <div>
-              <h1 className="text-xl font-extrabold text-gray-900 tracking-tight">Samarth AI Assistant</h1>
-              <div className="flex items-center gap-2 text-xs text-green-600 font-bold uppercase tracking-widest">
-                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                Online & Ready to Help
+            <Link to="/" className="text-slate-400 hover:text-slate-900 transition-colors">
+              <ArrowLeft size={20} />
+            </Link>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-primary-400 shadow-lg">
+                <Bot size={20} />
+              </div>
+              <div>
+                <h1 className="text-sm font-black text-slate-900 uppercase tracking-tight leading-none mb-1">Samarth AI</h1>
+                <div className="flex items-center gap-1.5 text-[8px] font-black text-emerald-500 uppercase tracking-widest">
+                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                  Local Intelligence
+                </div>
               </div>
             </div>
           </div>
+          <button onClick={clearChat} className="p-2 text-slate-300 hover:text-rose-500 transition-colors" title="Clear Chat">
+            <Trash2 size={18} />
+          </button>
         </div>
       </div>
 
-      {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 md:p-8">
-        <div className="max-w-4xl mx-auto space-y-8">
-          {messages.map((m, i) => (
-            <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
-              <div className={`flex gap-4 max-w-[85%] ${m.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-md ${m.role === 'user' ? 'bg-primary-600 text-white' : 'bg-white text-primary-600 border border-primary-100'}`}>
-                  {m.role === 'user' ? <User size={20} /> : <Bot size={20} />}
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto px-6 py-10">
+        <div className="max-w-3xl mx-auto space-y-8">
+          <AnimatePresence initial={false}>
+            {messages.map((m, i) => (
+              <motion.div 
+                key={i} 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div className={`flex gap-3 max-w-[85%] ${m.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 shadow-sm ${m.role === 'user' ? 'bg-slate-900 text-white' : 'bg-white text-slate-900 border border-slate-100'}`}>
+                    {m.role === 'user' ? <User size={14} /> : <Bot size={14} />}
+                  </div>
+                  <div className={`p-4 rounded-2xl shadow-sm border text-sm font-medium leading-relaxed ${m.role === 'user' ? 'bg-slate-900 text-white border-slate-800 rounded-tr-none' : 'bg-white text-slate-700 border-slate-50 rounded-tl-none italic'}`}>
+                    {m.content}
+                  </div>
                 </div>
-                <div className={`p-5 rounded-2xl shadow-sm border ${m.role === 'user' ? 'bg-primary-600 text-white border-primary-500 rounded-tr-none' : 'bg-white text-gray-800 border-gray-100 rounded-tl-none'}`}>
-                  <p className="text-sm md:text-base leading-relaxed whitespace-pre-wrap">{m.content}</p>
-                </div>
-              </div>
-            </div>
-          ))}
+              </motion.div>
+            ))}
+          </AnimatePresence>
           {loading && (
-            <div className="flex justify-start animate-pulse">
-              <div className="flex gap-4">
-                <div className="w-10 h-10 bg-white border border-gray-100 rounded-xl flex items-center justify-center text-primary-400">
-                  <Bot size={20} />
+            <div className="flex justify-start">
+              <div className="flex gap-3">
+                <div className="w-8 h-8 bg-white border border-slate-100 rounded-lg flex items-center justify-center text-slate-300">
+                  <Bot size={14} />
                 </div>
-                <div className="p-5 bg-white border border-gray-100 rounded-2xl rounded-tl-none flex items-center gap-2">
-                  <Loader className="animate-spin text-primary-600" size={18} />
-                  <span className="text-gray-400 text-sm font-medium">Samarth is thinking...</span>
+                <div className="p-4 bg-white border border-slate-50 rounded-2xl rounded-tl-none flex items-center gap-3 shadow-sm">
+                  <div className="flex gap-1">
+                    <span className="w-1.5 h-1.5 bg-slate-200 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></span>
+                    <span className="w-1.5 h-1.5 bg-slate-200 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
+                    <span className="w-1.5 h-1.5 bg-slate-200 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></span>
+                  </div>
+                  <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Processing</span>
                 </div>
               </div>
             </div>
@@ -98,16 +123,15 @@ const AIChatPage = () => {
         </div>
       </div>
 
-      {/* Input Area */}
-      <div className="bg-white border-t border-gray-200 p-6 md:p-8">
-        <div className="max-w-4xl mx-auto">
-          {/* Suggestions */}
+      {/* Input */}
+      <div className="bg-white border-t border-slate-100 p-6">
+        <div className="max-w-3xl mx-auto">
           <div className="flex flex-wrap gap-2 mb-6">
             {suggestions.map((s, i) => (
               <button
                 key={i}
                 onClick={(e) => handleSend(e, s)}
-                className="px-4 py-2 bg-gray-50 text-gray-600 text-xs font-bold uppercase tracking-wider rounded-full border border-gray-200 hover:border-primary-400 hover:text-primary-600 hover:bg-primary-50 transition-all shadow-sm"
+                className="px-4 py-1.5 bg-slate-50 text-slate-400 text-[9px] font-black uppercase tracking-widest rounded-full border border-slate-100 hover:border-primary-400 hover:text-primary-600 hover:bg-white transition-all shadow-sm"
               >
                 {s}
               </button>
@@ -119,20 +143,22 @@ const AIChatPage = () => {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask anything about Jharkhand schemes..."
-              className="w-full p-5 pr-16 border-2 border-gray-100 rounded-2xl focus:border-primary-500 focus:ring-0 text-gray-900 placeholder-gray-400 text-lg transition-all shadow-sm group-hover:shadow-md"
+              placeholder="Ask anything about Jharkhand policies..."
+              className="w-full p-4 pr-14 bg-slate-50 border border-slate-200 rounded-2xl focus:border-primary-500 focus:bg-white focus:ring-0 text-sm font-bold text-slate-900 placeholder-slate-300 transition-all"
             />
             <button
               type="submit"
               disabled={loading || !input.trim()}
-              className="absolute right-3 top-3 p-3 bg-primary-600 text-white rounded-xl hover:bg-primary-500 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all shadow-lg shadow-primary-100"
+              className="absolute right-2 top-2 p-2.5 bg-slate-900 text-white rounded-xl hover:bg-primary-600 disabled:bg-slate-100 disabled:text-slate-300 transition-all shadow-xl"
             >
-              <Send size={24} />
+              <Send size={18} />
             </button>
           </form>
-          <p className="mt-4 text-center text-xs text-gray-400 font-medium flex items-center justify-center gap-1 uppercase tracking-widest">
-            <Sparkles size={12} className="text-primary-400" /> Powered by Local LLM (Llama3) • Fully Offline
-          </p>
+          <div className="mt-4 text-center">
+            <p className="inline-flex items-center gap-1.5 text-[8px] font-black text-slate-300 uppercase tracking-[0.2em]">
+              <Sparkles size={10} className="text-primary-400" /> Powered by Local Llama3 • Private Analysis
+            </p>
+          </div>
         </div>
       </div>
     </div>
