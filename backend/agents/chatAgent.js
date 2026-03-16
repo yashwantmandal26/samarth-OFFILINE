@@ -1,25 +1,65 @@
 const { generateResponse } = require('../services/ollamaService');
+const fs = require('fs');
+const path = require('path');
+
+const SCHEMES_PATH = path.join(__dirname, '../dataset/jharkhand_schemes.json');
 
 /**
  * Handles natural language queries from users about schemes.
  */
 const chatAgent = {
     chat: async (userMessage, userProfile, topSchemes) => {
-        const top3Names = topSchemes.slice(0, 3).map(s => s.scheme_name).join(', ');
+        // Load full dataset for RAG-like context if topSchemes is empty
+        let contextSchemes = topSchemes;
+        if (!contextSchemes || contextSchemes.length === 0) {
+            try {
+                const allSchemes = JSON.parse(fs.readFileSync(SCHEMES_PATH, 'utf8'));
+                // Filter some relevant schemes based on simple keyword match in query
+                const keywords = userMessage.toLowerCase().split(' ');
+                contextSchemes = allSchemes.filter(s => 
+                    keywords.some(k => s.scheme_name.toLowerCase().includes(k) || 
+                                     s.category.toLowerCase().includes(k) ||
+                                     s.keywords.some(kw => kw.toLowerCase().includes(k)))
+                ).slice(0, 5);
+                
+                // If still empty, just take first 3 for basic context
+                if (contextSchemes.length === 0) {
+                    contextSchemes = allSchemes.slice(0, 3);
+                }
+            } catch (err) {
+                console.error("ChatAgent: Error loading dataset", err);
+                contextSchemes = [];
+            }
+        }
+
+        const schemeContext = contextSchemes.map(s => 
+            `- ${s.scheme_name}: ${s.description}. Benefits: ${s.benefits}. Eligibility: ${JSON.stringify(s.eligibility)}`
+        ).join('\n');
+
         const prompt = `
-        System: You are Samarth, an AI assistant for Jharkhand government schemes. 
-        User Name: ${userProfile.name}
-        User Context: Age: ${userProfile.age}, Occupation: ${userProfile.occupation}, Category: ${userProfile.socialCategory}.
-        Top Recommended Schemes: ${top3Names}
+        System: You are Samarth, a professional AI assistant for Jharkhand E-Governance.
+        User Name: ${userProfile.name || 'Citizen'}
+        User Context: ${JSON.stringify(userProfile)}
+        
+        Knowledge Base (Relevant Schemes):
+        ${schemeContext}
+
         User Query: "${userMessage}"
+
         Instructions:
-        1. Answer based on Jharkhand government schemes and the user's context.
+        1. Answer based on the Knowledge Base and the user's context.
         2. Be helpful, professional, and empathetic.
-        3. If the user asks for more schemes, mention the ones listed in the recommended section.
-        4. If you don't know the exact answer, suggest contacting the local Block Office or Pragya Kendra.
-        5. Keep responses concise and informative.
+        3. If the user asks for eligibility, check the 'Eligibility' section in context.
+        4. If you don't know the exact answer, suggest visiting a Pragya Kendra (CSC) or Block Office in Jharkhand.
+        5. Respond in a clear, conversational tone.
+        6. Keep responses under 100 words unless detail is requested.
         `;
-        return await generateResponse(prompt);
+        
+        try {
+            return await generateResponse(prompt);
+        } catch (error) {
+            return "I apologize, but my connection to the AI engine is currently slow. Please ensure Ollama is running Llama3:8b and try again in a moment.";
+        }
     }
 };
 

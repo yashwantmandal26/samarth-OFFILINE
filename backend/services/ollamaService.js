@@ -10,11 +10,13 @@ const generateResponse = async (prompt) => {
             model: MODEL,
             prompt: prompt,
             stream: false
+        }, {
+            timeout: 60000 // 60 seconds timeout
         });
         return response.data.response;
     } catch (error) {
         console.error('Ollama API Error:', error.message);
-        return "I'm sorry, I'm having trouble connecting to the AI model right now. Please ensure Ollama is running locally with llama3:8b.";
+        throw error; // Let the caller handle it
     }
 };
 

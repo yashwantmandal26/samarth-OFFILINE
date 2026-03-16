@@ -9,6 +9,7 @@ const path = require('path');
 // NEW: Hybrid Symbolic-Generative MAS Orchestration
 const CoordinatorAgent = require('./agents/CoordinatorAgent');
 const SimulationAgent = require('./agents/SimulationAgent');
+const chatAgent = require('./agents/chatAgent');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -18,6 +19,19 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 app.use(cors());
 app.use(bodyParser.json());
+
+// 0. AI Chat Endpoint
+app.post('/api/chat', async (req, res) => {
+    try {
+        const { message, userProfile, topSchemes } = req.body;
+        console.log("[API] Received Chat Request. Delegating to ChatAgent...");
+        const response = await chatAgent.chat(message, userProfile || {}, topSchemes || []);
+        res.json({ response });
+    } catch (error) {
+        console.error('[API] Chat Error:', error);
+        res.status(500).json({ error: 'Chat Protocol Failed' });
+    }
+});
 
 // 1. Policy Recommendation Endpoint (MAS Workflow)
 app.post('/api/recommendations', upload.single('document'), async (req, res) => {

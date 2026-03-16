@@ -3290,5 +3290,70 @@
       "Udyam",
       "manufacturing"
     ]
+  },
+  {
+    "id": "jh-093",
+    "scheme_name": "Maiyan Balwan Yojana",
+    "department": "Women, Child Development and Social Security",
+    "category": "Women",
+    "description": "Enhanced financial assistance for women, especially those linked with Self-Help Groups (SHGs).",
+    "benefits": "Stronger financial support for SHG-linked women. Part of the 25th Foundation Day initiatives.",
+    "eligibility": {
+      "gender": "Female",
+      "domicile": "Jharkhand",
+      "social_category": [
+        "SHG Member",
+        "BPL"
+      ]
+    },
+    "documents_required": [
+      "Aadhar Card",
+      "SHG Membership Proof",
+      "Bank Account"
+    ],
+    "application_process": "Apply through local SHG or Aanganwadi centers.",
+    "fees": "Free",
+    "processing_time": "30-45 days",
+    "official_portal": "https://socialsecurity.jharkhand.gov.in/",
+    "reference_links": [
+      "https://www.jharkhand.gov.in/"
+    ],
+    "keywords": [
+      "women",
+      "SHG",
+      "financial assistance",
+      "foundation day"
+    ]
+  },
+  {
+    "id": "jh-094",
+    "scheme_name": "Birsa Pradhanmantri Fasal Bima Yojana",
+    "department": "Agriculture, Animal Husbandry & Cooperative",
+    "category": "Agriculture",
+    "description": "Crop insurance scheme to protect farmers against financial loss due to natural calamities.",
+    "benefits": "Financial compensation for crop failure due to drought, floods, etc.",
+    "eligibility": {
+      "occupation": "Farmer",
+      "domicile": "Jharkhand"
+    },
+    "documents_required": [
+      "Land Records",
+      "Aadhar Card",
+      "Bank Passbook",
+      "Crop Sowing Certificate"
+    ],
+    "application_process": "Register on the dedicated portal or visit CSC/Bank.",
+    "fees": "Nominal Premium",
+    "processing_time": "Variable",
+    "official_portal": "https://agriculture.jharkhand.gov.in/",
+    "reference_links": [
+      "https://www.jharkhand.gov.in/"
+    ],
+    "keywords": [
+      "crop insurance",
+      "farmers",
+      "agriculture",
+      "disaster relief"
+    ]
   }
 ]
