@@ -4,6 +4,7 @@ import { Send, User, Bot, Sparkles, ArrowLeft, Trash2, Mic, Volume2, VolumeX, Mi
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
+import logoImg from '../assets/logo.png';
 
 const AIChatPage = () => {
   const [messages, setMessages] = useState([
@@ -163,8 +164,8 @@ const AIChatPage = () => {
               <ArrowLeft size={20} />
             </Link>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center text-white shadow-md">
-                <span className="text-xl font-black">स</span>
+              <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center text-white shadow-md overflow-hidden p-1">
+                <img src={logoImg} alt="Logo" className="h-full w-full object-contain" />
               </div>
               <div>
                 <h2 className="text-sm font-black text-slate-900 tracking-tight leading-none mb-1">Samarth AI</h2>

@@ -9,6 +9,7 @@ import ResultsPage from './pages/ResultsPage';
 import SchemeDetailPage from './pages/SchemeDetailPage';
 import SchemeExplorerPage from './pages/SchemeExplorerPage';
 import AIChatPage from './pages/AIChatPage';
+import logoImg from './assets/logo.png';
 
 // Scroll to top on route change
 const ScrollToTop = () => {
@@ -19,10 +20,10 @@ const ScrollToTop = () => {
   return null;
 };
 
-// Logo Component with Devanagari 'Sa'
-const Logo = ({ size = "12", iconSize = 24 }) => (
-  <div className={`w-${size} h-${size} bg-emerald-600 rounded-lg flex items-center justify-center text-white shadow-lg`}>
-    <span className="text-2xl font-black">स</span>
+// Logo Component
+const Logo = ({ size = "10", imgSize = "h-8" }) => (
+  <div className={`w-${size} h-${size} bg-emerald-600 rounded-lg flex items-center justify-center text-white shadow-lg overflow-hidden p-1.5`}>
+    <img src={logoImg} alt="Samarth Logo" className={`${imgSize} object-contain`} />
   </div>
 );
 

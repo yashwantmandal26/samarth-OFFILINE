@@ -12,6 +12,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import logoImg from '../assets/logo.png';
 
 const LandingPage = () => {
   return (
@@ -150,7 +151,9 @@ const LandingPage = () => {
       <section className="py-24 bg-white border-t border-slate-50">
         <div className="container mx-auto px-6 text-center">
            <div className="max-w-3xl mx-auto flex flex-col items-center gap-8">
-              <div className="w-16 h-16 bg-emerald-600 rounded-2xl flex items-center justify-center text-white text-3xl font-black shadow-xl shadow-emerald-100"> स </div>
+              <div className="w-16 h-16 bg-emerald-600 rounded-2xl flex items-center justify-center text-white overflow-hidden shadow-xl shadow-emerald-100"> 
+                <img src={logoImg} alt="Samarth Logo" className="h-12 w-12 object-contain" />
+              </div>
               <p className="text-xs font-bold text-slate-400 uppercase tracking-[0.4em]">© 2026 Samarth. Built for Jharkhand citizens.</p>
            </div>
         </div>

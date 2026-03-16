@@ -20,6 +20,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import logoImg from '../assets/logo.png';
 
 const SchemeFinderWizard = () => {
   const navigate = useNavigate();
@@ -437,8 +438,8 @@ const SchemeFinderWizard = () => {
           animate={{ opacity: 1, scale: 1 }}
           className="max-w-xs w-full bg-white rounded-[2rem] shadow-2xl p-8 text-center border border-slate-100"
         >
-          <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm">
-            <span className="text-3xl font-black">स</span>
+          <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center text-white backdrop-blur-xl mb-6 overflow-hidden">
+            <img src={logoImg} alt="Samarth Logo" className="h-10 w-10 object-contain" />
           </div>
           <h2 className="text-xs font-black text-slate-900 mb-6 uppercase tracking-[0.3em]">MAS Analysis</h2>
           <div className="space-y-3">
@@ -487,12 +488,12 @@ const SchemeFinderWizard = () => {
           {/* Sidebar */}
           <div className="md:w-80 bg-emerald-600 p-10 text-white flex flex-col justify-between relative overflow-hidden">
             <div className="absolute -bottom-10 -left-10 opacity-10 rotate-12">
-               <span className="text-[200px] font-black">स</span>
+               <img src={logoImg} alt="" className="w-64 h-64 object-contain grayscale brightness-200" />
             </div>
             <div className="relative z-10">
               <div className="flex items-center gap-3 mb-12">
-                <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white">
-                  <span className="text-xl font-black">स</span>
+                <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white overflow-hidden p-1.5">
+                  <img src={logoImg} alt="Samarth Logo" className="w-full h-full object-contain" />
                 </div>
                 <span className="text-xl font-black tracking-tight">Samarth</span>
               </div>

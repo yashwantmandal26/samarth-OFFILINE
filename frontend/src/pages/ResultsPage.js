@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { Award, Sparkles, Brain, ArrowLeft, ShieldCheck, Target, Wallet, ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
+import logoImg from '../assets/logo.png';
 
 const TypewriterSummary = ({ text }) => {
   const [displayedText, setDisplayedText] = useState('');
@@ -24,7 +25,7 @@ const TypewriterSummary = ({ text }) => {
       className="bg-emerald-900 text-white p-8 rounded-[2rem] shadow-2xl mb-12 relative overflow-hidden group"
     >
       <div className="absolute top-0 right-0 p-8 opacity-10">
-        <span className="text-[120px] font-black text-white">स</span>
+        <img src={logoImg} alt="" className="w-32 h-32 object-contain grayscale brightness-200" />
       </div>
       
       <div className="relative z-10">

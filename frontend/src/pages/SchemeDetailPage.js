@@ -6,6 +6,7 @@ import {
   Clock, Info, MapPin, Sparkles, AlertCircle, Award, ArrowLeft, Wallet
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import logoImg from '../assets/logo.png';
 
 const Loader = ({ className, size }) => {
   return (
@@ -102,7 +103,7 @@ const SchemeDetailPage = () => {
             <div className="p-12 border-b border-slate-50 text-center md:text-left relative overflow-hidden">
               {/* Subtle background icon */}
               <div className="absolute -top-10 -right-10 opacity-5 rotate-12 text-emerald-600">
-                <span className="text-[200px] font-black">स</span>
+                <img src={logoImg} alt="" className="w-64 h-64 object-contain grayscale" />
               </div>
               
               <div className="relative z-10">
