@@ -10,7 +10,7 @@
 const axios = require('axios');
 require('dotenv').config();
 
-const OLLAMA_URL = process.env.OLLAMA_API_URL || 'http://localhost:11434/api/generate';
+const OLLAMA_URL = process.env.OLLAMA_API_URL || 'http://127.0.0.1:11434/api/generate';
 
 const ExplanationAgent = {
     /**
@@ -48,6 +48,7 @@ const ExplanationAgent = {
         5. Use the bullet point character "•".
         6. Each bullet should be one sentence maximum.
         7. Base your response STRICTLY on the Symbolic Reasoning Path provided.
+        8. You can use Markdown for formatting (e.g. **bold** for key terms).
         `;
 
         try {
@@ -61,6 +62,9 @@ const ExplanationAgent = {
             return response.data.response;
         } catch (error) {
             console.error('[ExplanationAgent] Generation Error:', error.message);
+            if (error.code === 'ECONNREFUSED') {
+                return "• Connection refused. Please ensure Ollama is running at 127.0.0.1:11434.";
+            }
             if (error.code === 'ECONNABORTED') {
                 return "• Analysis processing timed out. Please refresh to try again.";
             }

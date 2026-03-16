@@ -3,10 +3,11 @@ import { schemeService } from '../services/api';
 import { Send, User, Bot, Sparkles, ArrowLeft, Trash2, Mic, Volume2, VolumeX, MicOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
 
 const AIChatPage = () => {
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: "Hello! I am Samarth, your Jharkhand Government Scheme assistant. How can I help you today?" }
+    { role: 'assistant', content: "Hello! I am **Samarth**, your Jharkhand Government Scheme assistant. How can I help you today?" }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -61,7 +62,9 @@ const AIChatPage = () => {
       synthRef.current.cancel();
     }
 
-    const utterance = new SpeechSynthesisUtterance(text);
+    // Remove markdown symbols for cleaner TTS
+    const cleanText = text.replace(/[*_#]/g, '');
+    const utterance = new SpeechSynthesisUtterance(cleanText);
     
     // Voice selection logic
     const voices = synthRef.current.getVoices();
@@ -127,7 +130,10 @@ const AIChatPage = () => {
       setTimeout(() => speak(assistantMessage.content, updatedMessages.length - 1), 500);
     } catch (error) {
       console.error('Chat error:', error);
-      const errorMessage = { role: 'assistant', content: "Offline Error. Please ensure Ollama is running Llama3." };
+      const errorMessage = { 
+        role: 'assistant', 
+        content: "### Connection Issue\nI apologize, but I am currently unable to reach my knowledge base. \n\n**Possible reasons:**\n1. Ollama is not running at `127.0.0.1:11434`.\n2. The `llama3` model is not installed.\n3. CORS origins are not set to `*`." 
+      };
       setMessages([...newMessages, errorMessage]);
     } finally {
       setLoading(false);
@@ -135,53 +141,53 @@ const AIChatPage = () => {
   };
 
   const clearChat = () => {
-    setMessages([{ role: 'assistant', content: "Chat cleared. How can I assist you further?" }]);
+    if (window.confirm('Are you sure you want to clear the conversation?')) {
+      setMessages([{ role: 'assistant', content: "Hello! I am **Samarth**, your Jharkhand Government Scheme assistant. How can I help you today?" }]);
+      stopSpeaking();
+    }
   };
 
-  const suggestions = [
-    "Student schemes",
-    "Farmer loans",
-    "Scholarships",
-    "Ayushman Bharat?"
-  ];
-
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)] bg-slate-50">
+    <div className="min-h-screen bg-slate-50 flex flex-col">
       {/* Chat Header */}
-      <div className="bg-white border-b border-slate-100 px-6 py-4">
+      <div className="bg-white border-b border-slate-100 py-4 px-6 sticky top-20 z-40">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link to="/" className="text-slate-400 hover:text-slate-900 transition-colors">
+            <Link to="/" className="p-2 text-slate-400 hover:text-slate-900 transition-colors">
               <ArrowLeft size={20} />
             </Link>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-primary-400 shadow-lg">
-                <Bot size={20} />
+                <Bot size={24} />
               </div>
               <div>
-                <h1 className="text-sm font-black text-slate-900 uppercase tracking-tight leading-none mb-1">Samarth AI</h1>
-                <div className="flex items-center gap-1.5 text-[8px] font-black text-emerald-500 uppercase tracking-widest">
+                <h2 className="text-sm font-black text-slate-900 uppercase tracking-tight">Samarth AI</h2>
+                <div className="flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-                  Local Intelligence
+                  <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Local Intelligence</span>
                 </div>
               </div>
             </div>
           </div>
-          <button onClick={clearChat} className="p-2 text-slate-300 hover:text-rose-500 transition-colors" title="Clear Chat">
+          <button 
+            onClick={clearChat}
+            className="p-2 text-slate-300 hover:text-rose-500 transition-colors"
+            title="Clear Chat"
+          >
             <Trash2 size={18} />
           </button>
         </div>
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-6 py-10">
-        <div className="max-w-3xl mx-auto space-y-8">
+      {/* Chat Messages */}
+      <div className="flex-1 overflow-y-auto p-6">
+        <div className="max-w-4xl mx-auto space-y-8 pb-32">
           <AnimatePresence initial={false}>
             {messages.map((m, i) => (
-              <motion.div 
-                key={i} 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
                 className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div className={`flex gap-3 max-w-[85%] ${m.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
@@ -189,8 +195,25 @@ const AIChatPage = () => {
                     {m.role === 'user' ? <User size={14} /> : <Bot size={14} />}
                   </div>
                   <div className="flex flex-col gap-2">
-                    <div className={`p-4 rounded-2xl shadow-sm border text-sm font-medium leading-relaxed ${m.role === 'user' ? 'bg-slate-900 text-white border-slate-800 rounded-tr-none' : 'bg-white text-slate-700 border-slate-50 rounded-tl-none italic'}`}>
-                      {m.content}
+                    <div className={`p-4 rounded-2xl shadow-sm border text-sm font-sans leading-relaxed not-italic ${
+                      m.role === 'user' 
+                      ? 'bg-slate-900 text-white border-slate-800 rounded-tr-none' 
+                      : 'bg-white text-slate-800 border-slate-50 rounded-tl-none'
+                    }`}>
+                      <ReactMarkdown 
+                        components={{
+                          strong: ({node, ...props}) => <span className="font-semibold text-slate-900" {...props} />,
+                          b: ({node, ...props}) => <span className="font-semibold text-slate-900" {...props} />,
+                          code: ({node, inline, ...props}) => (
+                            <code className="bg-blue-50 text-blue-800 px-1.5 py-0.5 rounded text-xs font-mono" {...props} />
+                          ),
+                          ul: ({node, ...props}) => <ul className="list-disc ml-4 space-y-1 my-2" {...props} />,
+                          ol: ({node, ...props}) => <ol className="list-decimal ml-4 space-y-1 my-2" {...props} />,
+                          p: ({node, ...props}) => <p className="mb-2 last:mb-0" {...props} />,
+                        }}
+                      >
+                        {m.content}
+                      </ReactMarkdown>
                     </div>
                     {m.role === 'assistant' && (
                       <button 
@@ -209,16 +232,15 @@ const AIChatPage = () => {
           {loading && (
             <div className="flex justify-start">
               <div className="flex gap-3">
-                <div className="w-8 h-8 bg-white border border-slate-100 rounded-lg flex items-center justify-center text-slate-300">
-                  <Bot size={14} />
+                <div className="w-8 h-8 rounded-lg bg-white border border-slate-100 flex items-center justify-center shrink-0 shadow-sm">
+                  <Bot size={14} className="text-slate-900" />
                 </div>
-                <div className="p-4 bg-white border border-slate-50 rounded-2xl rounded-tl-none flex items-center gap-3 shadow-sm">
-                  <div className="flex gap-1">
-                    <span className="w-1.5 h-1.5 bg-slate-200 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></span>
-                    <span className="w-1.5 h-1.5 bg-slate-200 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
-                    <span className="w-1.5 h-1.5 bg-slate-200 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></span>
+                <div className="bg-white p-4 rounded-2xl rounded-tl-none border border-slate-50 shadow-sm">
+                  <div className="flex gap-1.5">
+                    <span className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                    <span className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                    <span className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
                   </div>
-                  <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Processing</span>
                 </div>
               </div>
             </div>
@@ -227,17 +249,18 @@ const AIChatPage = () => {
         </div>
       </div>
 
-      {/* Input */}
-      <div className="bg-white border-t border-slate-100 p-6">
-        <div className="max-w-3xl mx-auto">
-          <div className="flex flex-wrap gap-2 mb-6">
-            {suggestions.map((s, i) => (
+      {/* Chat Input Area */}
+      <div className="bg-white border-t border-slate-100 p-6 fixed bottom-0 left-0 right-0 z-40 md:left-auto md:right-auto md:w-full md:max-w-4xl md:mx-auto md:rounded-t-[2rem] shadow-2xl">
+        <div className="max-w-4xl mx-auto">
+          {/* Quick Suggestions */}
+          <div className="flex flex-wrap gap-2 mb-4 overflow-x-auto pb-2 no-scrollbar">
+            {['Student Schemes', 'Farmer Loans', 'Scholarships', 'Ayushman Bharat?'].map(q => (
               <button
-                key={i}
-                onClick={(e) => handleSend(e, s)}
-                className="px-4 py-1.5 bg-slate-50 text-slate-400 text-[9px] font-black uppercase tracking-widest rounded-full border border-slate-100 hover:border-primary-400 hover:text-primary-600 hover:bg-white transition-all shadow-sm"
+                key={q}
+                onClick={() => handleSend(null, q)}
+                className="px-4 py-1.5 bg-slate-50 border border-slate-100 text-[9px] font-black uppercase tracking-widest text-slate-400 rounded-full hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all whitespace-nowrap"
               >
-                {s}
+                {q}
               </button>
             ))}
           </div>
