@@ -4,6 +4,7 @@ import { Send, User, Bot, Sparkles, ArrowLeft, Trash2, Mic, Volume2, VolumeX, Mi
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
+import logo from '../assets/logo.png';
 
 const AIChatPage = () => {
   const [messages, setMessages] = useState([
@@ -157,8 +158,8 @@ const AIChatPage = () => {
               <ArrowLeft size={20} />
             </Link>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-primary-400 shadow-lg">
-                <Bot size={24} />
+              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-xl border border-slate-100 overflow-hidden">
+                <img src={logo} alt="Samarth Logo" className="w-full h-full object-contain p-1.5" />
               </div>
               <div>
                 <h2 className="text-sm font-black text-slate-900 uppercase tracking-tight">Samarth AI</h2>
@@ -192,7 +193,7 @@ const AIChatPage = () => {
               >
                 <div className={`flex gap-3 max-w-[85%] ${m.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 shadow-sm ${m.role === 'user' ? 'bg-slate-900 text-white' : 'bg-white text-slate-900 border border-slate-100'}`}>
-                    {m.role === 'user' ? <User size={14} /> : <Bot size={14} />}
+                    {m.role === 'user' ? <User size={14} /> : <img src={logo} alt="Bot" className="w-full h-full object-contain" />}
                   </div>
                   <div className="flex flex-col gap-2">
                     <div className={`p-4 rounded-2xl shadow-sm border text-sm font-sans leading-relaxed not-italic ${
@@ -232,8 +233,8 @@ const AIChatPage = () => {
           {loading && (
             <div className="flex justify-start">
               <div className="flex gap-3">
-                <div className="w-8 h-8 rounded-lg bg-white border border-slate-100 flex items-center justify-center shrink-0 shadow-sm">
-                  <Bot size={14} className="text-slate-900" />
+                <div className="w-8 h-8 bg-white border border-slate-100 rounded-lg flex items-center justify-center shrink-0 shadow-sm overflow-hidden">
+                  <img src={logo} alt="Bot" className="w-full h-full object-contain" />
                 </div>
                 <div className="bg-white p-4 rounded-2xl rounded-tl-none border border-slate-50 shadow-sm">
                   <div className="flex gap-1.5">

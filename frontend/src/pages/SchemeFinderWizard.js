@@ -18,6 +18,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import logo from '../assets/logo.png';
 
 const SchemeFinderWizard = () => {
   const navigate = useNavigate();
@@ -528,9 +529,14 @@ const SchemeFinderWizard = () => {
         <div className="bg-white rounded-[2rem] shadow-2xl overflow-hidden border border-slate-200 flex flex-col md:flex-row min-h-[600px]">
           {/* Sidebar */}
           <div className="md:w-80 bg-slate-900 p-10 text-white hidden md:flex flex-col">
-            <div className="mb-12">
-              <h2 className="text-2xl font-black tracking-tighter uppercase text-primary-400">Samarth</h2>
-              <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] mt-1">E-Governance MAS</p>
+            <div className="mb-12 flex items-center gap-3">
+              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center overflow-hidden border border-slate-800 shadow-xl">
+                <img src={logo} alt="Samarth Logo" className="w-full h-full object-contain p-1.5" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-black tracking-tighter uppercase text-primary-400 leading-none">Samarth</h2>
+                <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] mt-1">E-Governance MAS</p>
+              </div>
             </div>
             
             <div className="flex-1 flex flex-col gap-8 justify-center">

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { Home, Search, MessageSquare, BookOpen, Bot, Github, ExternalLink } from 'lucide-react';
+import logo from './assets/logo.png';
 
 // Pages
 import LandingPage from './pages/LandingPage';
@@ -50,8 +51,8 @@ function App() {
             <div className="flex justify-between h-20 items-center">
               <div className="flex items-center gap-2">
                 <Link to="/" className="flex items-center gap-3 group">
-                  <div className="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center text-primary-400 shadow-xl group-hover:scale-105 transition-transform duration-300">
-                    <Bot size={28} />
+                  <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-105 transition-transform duration-300 overflow-hidden border border-slate-100">
+                    <img src={logo} alt="Samarth Logo" className="w-full h-full object-contain p-1.5" />
                   </div>
                   <div>
                     <span className="block text-2xl font-black text-slate-900 tracking-tighter uppercase leading-none">Samarth</span>
@@ -87,8 +88,8 @@ function App() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
               <div className="col-span-1 md:col-span-2">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-primary-400">
-                    <Bot size={22} />
+                  <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-slate-100 overflow-hidden shadow-sm">
+                    <img src={logo} alt="Samarth Logo" className="w-full h-full object-contain p-1" />
                   </div>
                   <span className="text-2xl font-black text-slate-900 tracking-tighter uppercase">Samarth</span>
                 </div>
