@@ -37,6 +37,7 @@ const SchemeFinderWizard = () => {
   const [documentPreview, setDocumentPreview] = useState(null);
   const [extractedSummary, setExtractedSummary] = useState(null);
   const [agentWorkflow, setAgentWorkflow] = useState([]);
+  const [analysisProgress, setAnalysisProgress] = useState(0);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -50,8 +51,12 @@ const SchemeFinderWizard = () => {
     qualification: '',
     isBPL: false,
     housingStatus: 'Own',
-    landHolding: 'None'
+    landHolding: 'None',
+    pincode: '',
+    state: 'Jharkhand'
   });
+
+  const [missingFields, setMissingFields] = useState([]);
 
   const steps = [
     { title: t('wizard_step_1'), icon: Sparkles, color: 'bg-primary-500' },
@@ -60,6 +65,13 @@ const SchemeFinderWizard = () => {
     { title: t('wizard_step_4'), icon: Users, color: 'bg-purple-500' },
     { title: t('wizard_step_5'), icon: Briefcase, color: 'bg-orange-500' }
   ];
+
+  const checkMissingData = (profile) => {
+    const required = ['name', 'age', 'gender', 'district', 'socialCategory', 'income', 'occupation'];
+    const missing = required.filter(field => !profile[field] || profile[field] === 'Not specified' || profile[field] === 0);
+    setMissingFields(missing);
+    return missing;
+  };
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
@@ -80,23 +92,42 @@ const SchemeFinderWizard = () => {
 
         if (response.data.profile) {
           const extracted = response.data.profile;
-          setFormData(prev => ({
-            ...prev,
-            name: extracted.name || prev.name,
-            age: extracted.age || prev.age,
-            gender: extracted.gender || prev.gender,
-            income: extracted.income || prev.income,
-            socialCategory: extracted.socialCategory || prev.socialCategory,
-            isBPL: extracted.isBPL !== undefined ? extracted.isBPL : prev.isBPL
-          }));
+          const newFormData = {
+            ...formData,
+            name: extracted.name && extracted.name !== 'Citizen' ? extracted.name : formData.name,
+            age: extracted.age || formData.age,
+            gender: extracted.gender && extracted.gender !== 'Not specified' ? extracted.gender : formData.gender,
+            income: extracted.income || formData.income,
+            socialCategory: extracted.socialCategory || formData.socialCategory,
+            isBPL: extracted.isBPL !== undefined ? extracted.isBPL : formData.isBPL,
+            district: extracted.district && extracted.district !== 'Not specified' ? extracted.district : formData.district,
+            pincode: extracted.pincode || formData.pincode,
+            state: extracted.state || formData.state
+          };
+          
+          setFormData(newFormData);
+          const missing = checkMissingData(newFormData);
           
           // Set short summary for UI
           setExtractedSummary({
             name: extracted.name,
             age: extracted.age,
             district: extracted.district,
-            income: extracted.income
+            gender: extracted.gender,
+            missing: missing.length
           });
+
+          // If most data is present, skip to the first missing field's step
+          if (missing.length > 0) {
+            // Logic to find which step the first missing field belongs to
+            if (missing.some(f => ['name', 'age', 'gender'].includes(f))) setStep(2);
+            else if (missing.some(f => ['district'].includes(f))) setStep(3);
+            else if (missing.some(f => ['socialCategory'].includes(f))) setStep(4);
+            else if (missing.some(f => ['income', 'occupation'].includes(f))) setStep(5);
+          } else {
+            // All data found!
+            setStep(5); // Go to final step for review
+          }
         }
       } catch (err) {
         console.error('Vision Extraction Error:', err);
@@ -181,6 +212,7 @@ const SchemeFinderWizard = () => {
     if (!validateStep()) return;
     
     setLoading(true);
+    setAnalysisProgress(0);
     // Initial state for the sequential animation
     setAgentWorkflow([
         { agent: 'Vision Agent', status: 'Pending', active: false },
@@ -190,37 +222,52 @@ const SchemeFinderWizard = () => {
 
     try {
       setError(null);
-      const response = await schemeService.getRecommendations(formData, userLanguage);
       
-      // Sequential animation logic (3 seconds total)
-      // Step 1: Vision Agent (0s - 1s)
+      // Start API call in background
+      const responsePromise = schemeService.getRecommendations(formData, userLanguage);
+      
+      // Sequential animation logic
+      // Step 1: Vision Agent
       setAgentWorkflow([
         { agent: 'Vision Agent', status: 'Scanning document...', active: true },
         { agent: 'Reasoning Agent', status: 'Pending', active: false },
         { agent: 'Translation Agent', status: 'Pending', active: false }
       ]);
+      setAnalysisProgress(20);
 
-      setTimeout(() => {
-        // Step 2: Reasoning Agent (1s - 2s)
-        setAgentWorkflow([
-          { agent: 'Vision Agent', status: 'Analysis verified', active: false },
-          { agent: 'Reasoning Agent', status: 'Matching policies...', active: true },
-          { agent: 'Translation Agent', status: 'Pending', active: false }
-        ]);
-      }, 1000);
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Step 2: Reasoning Agent
+      setAgentWorkflow([
+        { agent: 'Vision Agent', status: 'Complete', active: false },
+        { agent: 'Reasoning Agent', status: 'Matching policies...', active: true },
+        { agent: 'Translation Agent', status: 'Pending', active: false }
+      ]);
+      setAnalysisProgress(50);
 
-      setTimeout(() => {
-        // Step 3: Translation Agent (2s - 3s)
-        setAgentWorkflow([
-          { agent: 'Vision Agent', status: 'Analysis verified', active: false },
-          { agent: 'Reasoning Agent', status: 'Logic verified', active: false },
-          { agent: 'Translation Agent', status: 'Simplifying output...', active: true }
-        ]);
-      }, 2000);
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      // Step 3: Translation Agent
+      setAgentWorkflow([
+        { agent: 'Vision Agent', status: 'Complete', active: false },
+        { agent: 'Reasoning Agent', status: 'Complete', active: false },
+        { agent: 'Translation Agent', status: 'Simplifying output...', active: true }
+      ]);
+      setAnalysisProgress(80);
+
+      // Wait for actual API response
+      const response = await responsePromise;
+      
+      setAgentWorkflow([
+        { agent: 'Vision Agent', status: 'Complete', active: false },
+        { agent: 'Reasoning Agent', status: 'Complete', active: false },
+        { agent: 'Translation Agent', status: 'Complete', active: false }
+      ]);
+      setAnalysisProgress(100);
 
       setTimeout(() => {
         navigate('/results', { state: { results: response.data } });
-      }, 3000);
+      }, 800);
 
     } catch (err) {
       console.error('Final Analysis Error:', err);
@@ -299,16 +346,37 @@ const SchemeFinderWizard = () => {
                     <motion.div 
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="grid grid-cols-2 gap-3"
+                      className="w-full space-y-4"
                     >
-                      {Object.entries(extractedSummary).map(([key, value]) => value && (
-                        <div key={key} className="p-4 bg-slate-50 border border-slate-100 rounded-2xl">
-                          <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">{key}</p>
-                          <p className="text-xs font-black text-slate-900 uppercase truncate">
-                            {key === 'income' ? formatIncome(value) : value}
+                      <div className="grid grid-cols-2 gap-3">
+                        {Object.entries(extractedSummary).map(([key, value]) => (key !== 'missing' && value) && (
+                          <div key={key} className="p-4 bg-slate-50 border border-slate-100 rounded-2xl">
+                            <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">{key}</p>
+                            <p className="text-xs font-black text-slate-900 uppercase truncate">
+                              {value === 'Not specified' ? 'Not found' : value}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+
+                      {missingFields.length > 0 ? (
+                        <div className="p-4 bg-amber-50 border border-amber-100 rounded-2xl">
+                          <div className="flex items-center gap-2 mb-2">
+                            <AlertCircle size={14} className="text-amber-600" />
+                            <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest">Incomplete Data</p>
+                          </div>
+                          <p className="text-[11px] text-amber-700 font-bold">
+                            I couldn't find your <span className="text-amber-900">{missingFields.join(', ')}</span>. Please fill them in the next steps.
                           </p>
                         </div>
-                      ))}
+                      ) : (
+                        <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-2xl">
+                          <div className="flex items-center gap-2">
+                            <CheckCircle2 size={14} className="text-emerald-600" />
+                            <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Complete Profile Found</p>
+                          </div>
+                        </div>
+                      )}
                     </motion.div>
                   )}
                 </div>
@@ -495,7 +563,18 @@ const SchemeFinderWizard = () => {
           <div className="w-16 h-16 bg-primary-50 text-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
             <Brain size={32} className="animate-pulse" />
           </div>
-          <h2 className="text-sm font-black text-slate-900 mb-6 uppercase tracking-[0.2em]">Samarth Analysis</h2>
+          <h2 className="text-sm font-black text-slate-900 mb-2 uppercase tracking-[0.2em]">Samarth Analysis</h2>
+          
+          {/* Progress Bar */}
+          <div className="w-full h-1.5 bg-slate-100 rounded-full mb-6 overflow-hidden">
+            <motion.div 
+              className="h-full bg-primary-500"
+              initial={{ width: 0 }}
+              animate={{ width: `${analysisProgress}%` }}
+              transition={{ duration: 0.5 }}
+            />
+          </div>
+
           <div className="space-y-4 mb-8">
             {agentWorkflow.map((agent, i) => (
               <motion.div 
@@ -520,7 +599,7 @@ const SchemeFinderWizard = () => {
                       {agent.agent === 'Vision Agent' ? <Eye size={20} /> : 
                        agent.agent === 'Reasoning Agent' ? <Brain size={20} /> : <Sparkles size={20} />}
                     </div>
-                    <div>
+                    <div className="text-left">
                       <p className={`text-[10px] font-black uppercase tracking-widest ${
                         agent.active ? 'text-primary-600' : 
                         agent.status === 'Complete' ? 'text-emerald-600' : 'text-slate-400'
@@ -548,7 +627,7 @@ const SchemeFinderWizard = () => {
           <div className="text-center">
             <div className="inline-flex flex-col items-center">
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg border border-slate-100 p-1.5">
+                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-slate-100 p-1.5">
                   <img src={logo} alt="Samarth" className="w-full h-full object-contain" />
                 </div>
                 <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">Samarth Engine</h3>
@@ -568,7 +647,7 @@ const SchemeFinderWizard = () => {
           {/* Sidebar */}
           <div className="md:w-80 bg-slate-900 p-10 text-white hidden md:flex flex-col">
             <div className="mb-12 flex items-center gap-3">
-              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center overflow-hidden border border-slate-800 shadow-xl">
+              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center overflow-hidden border border-slate-800">
                 <img src={logo} alt="Samarth Logo" className="w-full h-full object-contain p-1.5" />
               </div>
               <div>

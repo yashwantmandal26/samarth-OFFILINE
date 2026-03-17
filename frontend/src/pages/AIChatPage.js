@@ -110,7 +110,7 @@ const AIChatPage = () => {
                           voices[0];
     
     if (preferredVoice) utterance.voice = preferredVoice;
-    utterance.rate = 0.9; // Slightly slower for clarity
+    utterance.rate = 1.1; // Quickened for faster response
     utterance.pitch = 1;
 
     utterance.onstart = () => {
@@ -178,9 +178,6 @@ const AIChatPage = () => {
       
       const updatedMessages = [...newMessages, assistantMessage];
       setMessages(updatedMessages);
-      
-      // Auto-play TTS for the new response
-      setTimeout(() => speak(assistantMessage.content, updatedMessages.length - 1), 500);
     } catch (error) {
       console.error('Chat error:', error);
       const errorMessage = { 
@@ -210,7 +207,7 @@ const AIChatPage = () => {
               <ArrowLeft size={20} />
             </Link>
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-xl border border-slate-100 overflow-hidden">
+              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center border border-slate-100 overflow-hidden">
                 <img src={logo} alt="Samarth Logo" className="w-full h-full object-contain p-1.5" />
               </div>
               <div>
