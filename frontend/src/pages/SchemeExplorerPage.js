@@ -48,7 +48,19 @@ const SchemeExplorerPage = () => {
   useEffect(() => {
     let result = schemes;
     if (activeCategory !== 'All') {
-      result = result.filter(s => s.category === activeCategory);
+      const categoryMap = {
+        'Students': ['Students', 'Education'],
+        'Farmers': ['Farmers', 'Agriculture'],
+        'Women': ['Women'],
+        'Entrepreneurs': ['Entrepreneurs'],
+        'Housing': ['Housing'],
+        'Healthcare': ['Healthcare'],
+        'Pension': ['Pension'],
+        'Employment': ['Employment'],
+        'Social Welfare': ['Social Welfare', 'Social Security']
+      };
+      const mappedCategories = categoryMap[activeCategory] || [activeCategory];
+      result = result.filter(s => mappedCategories.includes(s.category));
     }
     if (searchTerm) {
       result = result.filter(s => 

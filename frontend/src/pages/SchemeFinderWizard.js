@@ -35,6 +35,7 @@ const SchemeFinderWizard = () => {
   const [error, setError] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [documentPreview, setDocumentPreview] = useState(null);
+  const [extractedSummary, setExtractedSummary] = useState(null);
   const [agentWorkflow, setAgentWorkflow] = useState([]);
 
   const [formData, setFormData] = useState({
@@ -49,8 +50,7 @@ const SchemeFinderWizard = () => {
     qualification: '',
     isBPL: false,
     housingStatus: 'Own',
-    landHolding: 'None',
-    preferredField: 'Any'
+    landHolding: 'None'
   });
 
   const steps = [
@@ -89,6 +89,14 @@ const SchemeFinderWizard = () => {
             socialCategory: extracted.socialCategory || prev.socialCategory,
             isBPL: extracted.isBPL !== undefined ? extracted.isBPL : prev.isBPL
           }));
+          
+          // Set short summary for UI
+          setExtractedSummary({
+            name: extracted.name,
+            age: extracted.age,
+            district: extracted.district,
+            income: extracted.income
+          });
         }
       } catch (err) {
         console.error('Vision Extraction Error:', err);
@@ -240,16 +248,17 @@ const SchemeFinderWizard = () => {
           className="space-y-4"
         >
           {step === 1 && (
-            <div className="space-y-6">
-              <div className="text-center mb-6">
-                <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">Smart Intake</h3>
-                <p className="text-xs text-slate-500 font-medium">Upload a document to pre-fill your profile automatically.</p>
+            <div className="flex flex-col items-center justify-center space-y-10 py-6">
+              <div className="text-center space-y-2">
+                <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">Smart Intake</h3>
+                <p className="text-sm text-slate-500 font-medium">Upload a document to pre-fill your profile automatically.</p>
               </div>
-              <div className={`p-8 border-2 border-dashed rounded-[2rem] flex flex-col items-center justify-center gap-4 transition-all ${visionLoading ? 'bg-primary-50 border-primary-200' : 'bg-slate-50 border-slate-200 hover:border-primary-400'}`}>
+              
+              <div className={`w-full max-w-sm p-12 border-2 border-dashed rounded-[3rem] flex flex-col items-center justify-center gap-6 transition-all ${visionLoading ? 'bg-primary-50 border-primary-200 shadow-xl shadow-primary-50' : 'bg-slate-50 border-slate-200 hover:border-primary-400 hover:bg-white hover:shadow-2xl hover:shadow-slate-100'}`}>
                 {visionLoading ? (
                   <div className="flex flex-col items-center gap-4">
-                    <div className="w-16 h-16 bg-primary-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-primary-200 animate-pulse">
-                      <Eye size={32} />
+                    <div className="w-20 h-20 bg-primary-600 rounded-3xl flex items-center justify-center text-white shadow-2xl shadow-primary-200 animate-pulse">
+                      <Eye size={40} />
                     </div>
                     <div className="text-center">
                       <p className="text-xs font-black text-primary-600 uppercase tracking-widest">Vision Agent Active</p>
@@ -258,84 +267,50 @@ const SchemeFinderWizard = () => {
                   </div>
                 ) : (
                   <>
-                    <div className="w-16 h-16 bg-primary-50 text-primary-600 rounded-2xl flex items-center justify-center">
-                      <Upload size={32} />
+                    <div className="w-20 h-20 bg-primary-50 text-primary-600 rounded-3xl flex items-center justify-center">
+                      <Upload size={40} />
                     </div>
                     <div className="text-center">
-                      <h4 className="text-sm font-black text-slate-900 uppercase tracking-tight">Aadhaar or Certificate</h4>
+                      <h4 className="text-base font-black text-slate-900 uppercase tracking-tight">Aadhaar or Certificate</h4>
                       <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">JPG, PNG supported</p>
                     </div>
                     <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" id="smart-upload" />
-                    <label htmlFor="smart-upload" className="px-8 py-3 bg-primary-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl cursor-pointer hover:bg-primary-700 transition-all shadow-lg shadow-primary-100">
+                    <label htmlFor="smart-upload" className="px-10 py-4 bg-primary-600 text-white text-[11px] font-black uppercase tracking-widest rounded-2xl cursor-pointer hover:bg-primary-700 transition-all shadow-xl shadow-primary-100 active:scale-95">
                       Select Document
                     </label>
                   </>
                 )}
               </div>
-              
-              {!visionLoading && (
-                <div className="space-y-6">
-                  <div className="text-center">
-                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">Or</span>
-                  </div>
-
-                  <div className="space-y-4">
-                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Select Preferred Field (Optional)</label>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                      {[
-                        { label: 'Any / All Fields', value: 'Any' },
-                        { label: 'Student / Education', value: 'Students' },
-                        { label: 'Scholarship / Higher Studies', value: 'Education' },
-                        { label: 'Farmer / Agriculture', value: 'Farmers' },
-                        { label: 'Employment / Jobs', value: 'Employment' },
-                        { label: 'Skill Development', value: 'Skill Development' },
-                        { label: 'Business / Startup', value: 'Business / Startup' },
-                        { label: 'Women Welfare', value: 'Women' },
-                        { label: 'Healthcare', value: 'Healthcare' },
-                        { label: 'Housing', value: 'Housing' },
-                        { label: 'Pension / Senior Citizen', value: 'Pension' },
-                        { label: 'Entrepreneurship', value: 'Entrepreneurship' },
-                        { label: 'Digital Services', value: 'Digital Services' },
-                        { label: 'General Welfare', value: 'General Welfare' }
-                      ].map((field) => (
-                        <button
-                          key={field.label}
-                          type="button"
-                          onClick={() => {
-                            // Single selection logic with toggle off
-                            setFormData(prev => ({
-                              ...prev,
-                              preferredField: prev.preferredField === field.value ? 'Any' : field.value
-                            }));
-                          }}
-                          className={`p-2 rounded-xl border text-[9px] font-black uppercase tracking-tight transition-all text-center flex items-center justify-center min-h-[44px] ${
-                            formData.preferredField === field.value
-                            ? 'border-primary-600 bg-primary-600 text-white shadow-md shadow-primary-100' 
-                            : 'border-slate-100 bg-slate-50 text-slate-500 hover:border-primary-200'
-                          }`}
-                        >
-                          {field.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <button onClick={() => setStep(2)} className="block w-full mt-4 text-[10px] font-black text-primary-600 uppercase tracking-widest hover:text-primary-800">
-                    Skip and enter manually
-                  </button>
-                </div>
-              )}
 
               {documentPreview && !visionLoading && (
-                <div className="p-4 bg-white border border-emerald-100 rounded-2xl flex items-center gap-4">
-                  <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center shrink-0">
-                    <CheckCircle2 size={20} />
+                <div className="w-full space-y-4">
+                  <div className="w-full p-5 bg-white border border-emerald-100 rounded-3xl flex items-center gap-4 shadow-lg shadow-emerald-50">
+                    <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center shrink-0">
+                      <CheckCircle2 size={24} />
+                    </div>
+                    <div className="flex-1 overflow-hidden">
+                      <p className="text-sm font-black text-slate-900 truncate">Extraction Complete</p>
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Verify the extracted data below</p>
+                    </div>
+                    <button onClick={() => {setUploadedFile(null); setDocumentPreview(null); setExtractedSummary(null);}} className="text-rose-500 font-black text-[10px] uppercase hover:underline">Reset</button>
                   </div>
-                  <div className="flex-1 overflow-hidden">
-                    <p className="text-xs font-black text-slate-900 truncate">Extraction Complete</p>
-                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Click continue to verify data</p>
-                  </div>
-                  <button onClick={() => {setUploadedFile(null); setDocumentPreview(null);}} className="text-rose-500 font-black text-[10px] uppercase">Reset</button>
+
+                  {extractedSummary && (
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="grid grid-cols-2 gap-3"
+                    >
+                      {Object.entries(extractedSummary).map(([key, value]) => value && (
+                        <div key={key} className="p-4 bg-slate-50 border border-slate-100 rounded-2xl">
+                          <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">{key}</p>
+                          <p className="text-xs font-black text-slate-900 uppercase truncate">
+                            {key === 'income' ? formatIncome(value) : value}
+                          </p>
+                        </div>
+                      ))}
+                    </motion.div>
+                  )}
                 </div>
               )}
             </div>
@@ -698,7 +673,7 @@ const SchemeFinderWizard = () => {
                       disabled={visionLoading}
                       className="flex items-center gap-3 px-10 py-4 bg-slate-900 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-2xl shadow-slate-200 active:scale-95 disabled:opacity-50 group"
                     >
-                      {step === 1 && uploadedFile ? 'Verify Profile' : 'Continue'} <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                      {step === 1 ? (uploadedFile ? 'Verify Profile' : 'Skip') : 'Continue'} <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
                     </button>
                   ) : (
                     <button

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { Award, Sparkles, Brain, ArrowLeft, ShieldCheck, Target, Wallet, ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
+import ReactMarkdown from 'react-markdown';
+import { useLanguage } from '../context/LanguageContext';
 
 const TypewriterSummary = ({ text }) => {
   const [displayedText, setDisplayedText] = useState('');
@@ -56,7 +58,21 @@ const TypewriterSummary = ({ text }) => {
 const ResultsPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const { results } = location.state || { results: null };
+  const [activeCategory, setActiveCategory] = useState('All');
+
+  const categories = [
+    { id: 'All', label: t('cat_all') },
+    { id: 'Students', label: t('cat_students') },
+    { id: 'Farmers', label: t('cat_farmers') },
+    { id: 'Women', label: t('cat_women') },
+    { id: 'Entrepreneurs', label: t('cat_entrepreneurs') },
+    { id: 'Housing', label: t('cat_housing') },
+    { id: 'Healthcare', label: t('cat_healthcare') },
+    { id: 'Pension', label: t('cat_pension') },
+    { id: 'Employment', label: t('cat_employment') }
+  ];
 
   useEffect(() => {
     if (results) {
@@ -97,6 +113,26 @@ const ResultsPage = () => {
 
   const { recommendations, profile, totalMatches } = results;
 
+  // Robust filtering logic to handle inconsistent dataset categories
+  const categoryMap = {
+    'Students': ['Students', 'Education'],
+    'Farmers': ['Farmers', 'Agriculture'],
+    'Women': ['Women'],
+    'Entrepreneurs': ['Entrepreneurs'],
+    'Housing': ['Housing'],
+    'Healthcare': ['Healthcare'],
+    'Pension': ['Pension'],
+    'Employment': ['Employment'],
+    'Social Welfare': ['Social Welfare', 'Social Security']
+  };
+
+  const filteredRecommendations = activeCategory === 'All' 
+    ? recommendations 
+    : recommendations.filter(r => {
+        const mappedCategories = categoryMap[activeCategory] || [activeCategory];
+        return mappedCategories.includes(r.category);
+      });
+
   const summaryText = `Analysis complete, ${profile.name ? profile.name : 'Citizen'}. Based on your socio-economic profile as a ${profile.occupation} in ${profile.district}, Samarth has identified high-probability matches primarily in the ${recommendations[0]?.category || 'Education and Skill Development'} sector. Below is the refined list of eligible schemes ranked by match accuracy.`;
 
   return (
@@ -112,7 +148,7 @@ const ResultsPage = () => {
               Recommended Schemes
             </h1>
             <p className="text-sm text-slate-500 font-medium">
-              Showing {totalMatches} matches tailored for <span className="text-slate-900 font-bold">{profile.name}</span>
+              Showing {filteredRecommendations.length} matches tailored for <span className="text-slate-900 font-bold">{profile.name}</span>
             </p>
           </div>
           <div className="hidden md:block text-right">
@@ -124,9 +160,26 @@ const ResultsPage = () => {
         {/* AI Executive Summary with Typewriter Effect */}
         <TypewriterSummary text={summaryText} />
 
+        {/* Categories Filter (Same as Explorer) */}
+        <div className="flex flex-wrap gap-2 mb-12 overflow-x-auto pb-2 no-scrollbar">
+          {categories.map(cat => (
+            <button
+              key={cat.id}
+              onClick={() => setActiveCategory(cat.id)}
+              className={`px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all whitespace-nowrap ${
+                activeCategory === cat.id 
+                ? 'bg-slate-900 text-white border-slate-900 shadow-xl shadow-slate-200 scale-105' 
+                : 'bg-white text-slate-400 border-slate-100 hover:border-slate-300 hover:text-slate-600 active:scale-95'
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+
         {/* Results List */}
         <div className="flex flex-col gap-10">
-          {recommendations.map((scheme, index) => (
+          {filteredRecommendations.map((scheme, index) => (
             <motion.div 
               key={scheme.id}
               initial={{ opacity: 0, y: 20 }}
@@ -153,13 +206,6 @@ const ResultsPage = () => {
                       </span>
                     </div>
                   </div>
-                </div>
-                <div className={`px-4 py-2 rounded-xl font-black text-xs border shadow-sm uppercase tracking-widest ${
-                  scheme.matchScore > 75 
-                  ? 'bg-emerald-50 text-emerald-700 border-emerald-100' 
-                  : 'bg-blue-50 text-blue-700 border-blue-100'
-                }`}>
-                  {scheme.matchScore > 75 ? 'Highly Recommended' : 'Eligible'}
                 </div>
               </div>
 
@@ -220,30 +266,53 @@ const ResultsPage = () => {
                     <span className="text-[10px] font-black text-primary-800 tracking-[0.2em] uppercase">AI Reasoning Protocol</span>
                   </div>
                   <div className="text-xs flex-1 relative z-10">
-                    {formatAIExplanation(scheme.aiExplanation) || (
-                      <ul className="space-y-3">
-                        <li className="flex items-start gap-3">
-                          <span className="text-primary-500 mt-1 text-[10px]">✦</span>
-                          <span className="text-slate-700 font-bold leading-relaxed uppercase tracking-tight">Socio-economic profile verified by symbolic engine.</span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <span className="text-primary-500 mt-1 text-[10px]">✦</span>
-                          <span className="text-slate-700 font-bold leading-relaxed uppercase tracking-tight">Eligibility criteria matched with 100% deterministic accuracy.</span>
-                        </li>
-                      </ul>
+                    {scheme.aiExplanation ? (
+                      <div className="prose prose-sm max-w-none">
+                        <ReactMarkdown 
+                          components={{
+                            ul: ({node, ...props}) => <ul className="space-y-3" {...props} />,
+                            li: ({node, ...props}) => (
+                              <li className="flex items-start gap-3">
+                                <span className="text-primary-500 mt-1 text-[10px]">✦</span>
+                                <span className="text-slate-700 font-bold leading-relaxed uppercase tracking-tight">{props.children}</span>
+                              </li>
+                            ),
+                            p: ({node, ...props}) => <span className="text-slate-700 font-bold leading-relaxed uppercase tracking-tight">{props.children}</span>
+                          }}
+                        >
+                          {scheme.aiExplanation}
+                        </ReactMarkdown>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center h-full py-4 gap-3 opacity-70">
+                        <div className="w-6 h-6 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+                        <span className="text-[10px] font-black text-primary-600 uppercase tracking-widest animate-pulse">Synthesizing logical proof...</span>
+                      </div>
                     )}
                   </div>
                 </div>
               </div>
 
               {/* Section C: Footer */}
-              <div className="px-10 py-6 bg-white flex justify-end items-center gap-8">
+              <div className="px-10 py-6 bg-white flex justify-end items-center gap-4">
                 <button
                   onClick={() => navigate(`/scheme/${scheme.id}`)}
-                  className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors"
+                  className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors mr-4"
                 >
                   Deep Detail View
                 </button>
+                
+                <button
+                  onClick={() => navigate('/chat', { 
+                    state: { 
+                      initialMessage: `I want to know more about ${scheme.scheme_name}. What are the required documents and benefits?` 
+                    } 
+                  })}
+                  className="flex items-center gap-2 px-6 py-3 bg-white border border-primary-200 text-primary-700 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary-50 hover:border-primary-300 transition-all shadow-sm active:scale-95"
+                >
+                  <Sparkles size={14} /> Ask AI
+                </button>
+
                 <a 
                   href={scheme.official_portal}
                   target="_blank"

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { schemeService } from '../services/api';
 import { Send, User, Bot, Sparkles, ArrowLeft, Trash2, Mic, Volume2, VolumeX, MicOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -9,6 +9,7 @@ import { useLanguage } from '../context/LanguageContext';
 
 const AIChatPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { userLanguage, t } = useLanguage();
   
   useEffect(() => {
@@ -143,6 +144,14 @@ const AIChatPage = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    if (location.state?.initialMessage) {
+      handleSend(null, location.state.initialMessage);
+      // Clear state to prevent re-sending on refresh
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   const handleSend = async (e, customMessage = null) => {
     if (e) e.preventDefault();
