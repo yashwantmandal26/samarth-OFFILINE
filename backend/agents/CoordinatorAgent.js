@@ -30,9 +30,9 @@ const CoordinatorAgent = {
     /**
      * Main workflow orchestration (Agent Interaction Protocol)
      */
-    requestRecommendations: async (rawUserData, fileBuffer = null) => {
+    requestRecommendations: async (rawUserData, fileBuffer = null, language = 'en') => {
         try {
-            console.log("[CoordinatorAgent] Initiating Recommendation Interaction Protocol...");
+            console.log(`[CoordinatorAgent] Initiating Recommendation Interaction Protocol (${language})...`);
             let currentProfile = userProfilingAgent.processProfile(rawUserData);
             let messageLog = [];
 
@@ -69,7 +69,7 @@ const CoordinatorAgent = {
                     "CoordinatorAgent",
                     "ExplanationAgent",
                     "REQUEST_XAI_EXPLANATION",
-                    { match, profile: currentProfile }
+                    { match, profile: currentProfile, language }
                 );
                 messageLog.push(explanationMsg);
                 

@@ -1,7 +1,5 @@
-const axios = require('axios');
+const { generateResponse } = require('../services/ollamaService');
 require('dotenv').config();
-
-const OLLAMA_URL = process.env.OLLAMA_API_URL || 'http://localhost:11434/api/generate';
 
 /**
  * Reasoning Agent: Uses RAG-style logic to match user profile with scheme policies.
@@ -39,14 +37,9 @@ const reasoningAgent = {
             }
             `;
 
-            const response = await axios.post(OLLAMA_URL, {
-                model: 'llama3:8b',
-                prompt: prompt,
-                stream: false,
+            const evaluation = await generateResponse(prompt, {
                 format: 'json'
             });
-
-            const evaluation = JSON.parse(response.data.response);
             
             // Merge evaluation back with full scheme details
             return evaluation.matches

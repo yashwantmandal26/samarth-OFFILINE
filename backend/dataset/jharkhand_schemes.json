@@ -53,7 +53,8 @@
       "occupation": "Farmer",
       "land_holding": "Small/Marginal",
       "domicile": "Jharkhand",
-      "age_min": 18
+      "age_min": 18,
+      "income_limit": null
     },
     "documents_required": [
       "Aadhar Card",
@@ -92,7 +93,8 @@
       ],
       "age_max": 35,
       "qualification": "Graduate",
-      "domicile": "Jharkhand"
+      "domicile": "Jharkhand",
+      "income_limit": null
     },
     "documents_required": [
       "Aadhar Card",
@@ -127,7 +129,8 @@
       "employment_status": "Unemployed",
       "domicile": "Jharkhand",
       "age_min": 18,
-      "age_max": 35
+      "age_max": 35,
+      "income_limit": null
     },
     "documents_required": [
       "Aadhar Card",
@@ -160,7 +163,8 @@
     "eligibility": {
       "occupation": "Farmer/Rural Laborer",
       "land_availability": "0.5 to 1 acre",
-      "domicile": "Jharkhand"
+      "domicile": "Jharkhand",
+      "income_limit": null
     },
     "documents_required": [
       "Aadhar Card",
@@ -198,7 +202,8 @@
         "Minority",
         "BPL"
       ],
-      "domicile": "Jharkhand"
+      "domicile": "Jharkhand",
+      "income_limit": null
     },
     "documents_required": [
       "Aadhar Card",
@@ -228,10 +233,11 @@
     "description": "World's largest health insurance scheme providing cashless treatment at empanelled hospitals.",
     "benefits": "Health cover of \u20b95 lakh per family per year for secondary and tertiary care.",
     "eligibility": {
-      "income_limit": "BPL/Low Income",
+      "income_limit": 100000,
       "domicile": "Jharkhand",
       "social_category": [
-        "SECC listed"
+        "SECC listed",
+        "BPL"
       ]
     },
     "documents_required": [
@@ -263,7 +269,8 @@
     "eligibility": {
       "age_min": 60,
       "domicile": "Jharkhand",
-      "income_limit": "Low Income"
+      "income_limit": 150000,
+      "social_category": ["Low Income"]
     },
     "documents_required": [
       "Aadhar Card",
@@ -299,7 +306,8 @@
       "age_min": 18,
       "age_max": 50,
       "domicile": "Jharkhand",
-      "income_limit": "Economically Weaker Sections"
+      "income_limit": 800000,
+      "social_category": ["EWS"]
     },
     "documents_required": [
       "Aadhar Card",
@@ -335,7 +343,8 @@
       "age_min": 18,
       "age_max": 35,
       "domicile": "Jharkhand",
-      "qualification": "8th Pass and above"
+      "qualification": "8th Pass and above",
+      "income_limit": null
     },
     "documents_required": [
       "Aadhar Card",
@@ -406,7 +415,8 @@
     "eligibility": {
       "gender": "Female",
       "occupation": "Liquor Seller (Traditional)",
-      "domicile": "Jharkhand"
+      "domicile": "Jharkhand",
+      "income_limit": null
     },
     "documents_required": [
       "Aadhar Card",
@@ -437,7 +447,8 @@
     "benefits": "Creation of water harvesting structures; labor employment via MGNREGA.",
     "eligibility": {
       "occupation": "Farmer/Rural Laborer",
-      "domicile": "Jharkhand"
+      "domicile": "Jharkhand",
+      "income_limit": null
     },
     "documents_required": [
       "Aadhar Card",
@@ -474,7 +485,8 @@
         "ST",
         "Widows",
         "Disabled prioritized"
-      ]
+      ],
+      "income_limit": null
     },
     "documents_required": [
       "Aadhar Card",
@@ -510,7 +522,8 @@
       "age_min": 10,
       "age_max": 19,
       "domicile": "Jharkhand",
-      "qualification": "Student (Class 8-12)"
+      "qualification": "Student (Class 8-12)",
+      "income_limit": null
     },
     "documents_required": [
       "Aadhar Card",
@@ -544,7 +557,8 @@
       "residence": "Urban",
       "age_min": 18,
       "domicile": "Jharkhand",
-      "occupation": "Unskilled Laborer"
+      "occupation": "Unskilled Laborer",
+      "income_limit": null
     },
     "documents_required": [
       "Aadhar Card",
@@ -576,7 +590,8 @@
     "eligibility": {
       "domicile": "Jharkhand",
       "qualification": "10th/12th Pass",
-      "age_max": 40
+      "age_max": 40,
+      "income_limit": null
     },
     "documents_required": [
       "Aadhar Card",
@@ -607,8 +622,9 @@
     "description": "Distribution of subsidized clothes to BPL families in Jharkhand.",
     "benefits": "One Dhoti/Lungi and one Saree at \u20b910 each, twice a year.",
     "eligibility": {
-      "income_limit": "BPL",
+      "income_limit": 72000,
       "domicile": "Jharkhand",
+      "social_category": ["BPL"],
       "documents_required": [
         "Ration Card"
       ]
@@ -641,7 +657,8 @@
     "eligibility": {
       "domicile": "Jharkhand",
       "occupation": "Unemployed Youth/Entrepreneur",
-      "age_min": 18
+      "age_min": 18,
+      "income_limit": null
     },
     "documents_required": [
       "Aadhar Card",
@@ -672,7 +689,8 @@
     "benefits": "5 kg of food grains per person per month at \u20b91 per kg.",
     "eligibility": {
       "domicile": "Jharkhand",
-      "income_limit": "Low Income/Poor",
+      "income_limit": 120000,
+      "social_category": ["Low Income"],
       "excluded": "Not covered under NFSA"
     },
     "documents_required": [
@@ -707,7 +725,8 @@
         "Ration Card",
         "Driving License",
         "Vehicle Registration (JH)"
-      ]
+      ],
+      "income_limit": null
     },
     "documents_required": [
       "Aadhar Card",
@@ -739,7 +758,8 @@
     "benefits": "Direct income support of \u20b96,000 per year (\u20b92,000 per installment). Complementary to PM-KISAN scheme. Additional state support for agricultural inputs.",
     "eligibility": {
       "domicile": "Jharkhand",
-      "land_holding": "Small/Marginal"
+      "land_holding": "Small/Marginal",
+      "income_limit": null
     },
     "documents_required": [
       "Land records (ROR)",
@@ -775,7 +795,8 @@
     "benefits": "Monthly pension of \u20b91,000 for senior citizens and widows. \u20b91,000 per month for disabled persons. Direct bank transfer every month.",
     "eligibility": {
       "domicile": "Jharkhand",
-      "age_min": 60
+      "age_min": 60,
+      "income_limit": null
     },
     "documents_required": [
       "Age proof (birth certificate/Aadhaar)",
@@ -812,7 +833,8 @@
     "benefits": "Free coaching for JPSC, JSSC, Bank PO, SSC, UPSC exams. Stipend of \u20b92,500 per month. Study material provided. Hostel facility for outstation students.",
     "eligibility": {
       "domicile": "Jharkhand",
-      "age_min": 18
+      "age_min": 18,
+      "income_limit": null
     },
     "documents_required": [
       "Graduation certificate",
@@ -851,7 +873,8 @@
     "description": "Homeless and kutcha house dwellers in Jharkhand",
     "benefits": "Financial assistance of \u20b92 lakh for construction of pucca house. Additional \u20b912,000 for toilet construction. Technical support from government engineers.",
     "eligibility": {
-      "domicile": "Jharkhand"
+      "domicile": "Jharkhand",
+      "income_limit": null
     },
     "documents_required": [
       "Ration card",
@@ -888,7 +911,8 @@
     "description": "Meritorious students from poor families for higher education",
     "benefits": "Scholarship up to \u20b915,000 per year for UG. Up to \u20b925,000 per year for PG. Covers tuition fee, books, and living expenses.",
     "eligibility": {
-      "domicile": "Jharkhand"
+      "domicile": "Jharkhand",
+      "income_limit": null
     },
     "documents_required": [
       "Class 12 marksheet",
@@ -926,7 +950,8 @@
     "description": "Rural households seeking employment in Jharkhand",
     "benefits": "Guaranteed 100 days of employment per year. Current wage rate \u20b9225 per day in Jharkhand. Payment directly to bank/post office account.",
     "eligibility": {
-      "domicile": "Jharkhand"
+      "domicile": "Jharkhand",
+      "income_limit": null
     },
     "documents_required": [
       "Job card (obtained from Gram Panchayat)",
@@ -961,7 +986,8 @@
     "description": "Unbanked households across India including Jharkhand",
     "benefits": "Zero balance bank account. RuPay debit card with \u20b92 lakh accident insurance. Overdraft up to \u20b910,000 after 6 months. Life insurance cover of \u20b930,000.",
     "eligibility": {
-      "domicile": "Any"
+      "domicile": "Any",
+      "income_limit": null
     },
     "documents_required": [
       "Aadhaar card or any valid ID proof",

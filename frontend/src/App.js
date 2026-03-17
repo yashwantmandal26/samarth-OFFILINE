@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { Home, Search, MessageSquare, BookOpen, Bot, Github, ExternalLink } from 'lucide-react';
+import { Home, Search, MessageSquare, BookOpen, Bot, Github, ExternalLink, Globe, ChevronDown, Check } from 'lucide-react';
 import logo from './assets/logo.png';
+import { useLanguage, languages } from './context/LanguageContext';
+import LanguageModal from './components/LanguageModal';
 
 // Pages
 import LandingPage from './pages/LandingPage';
@@ -40,10 +42,55 @@ const NavLink = ({ to, icon: Icon, label }) => {
   );
 };
 
+// Language Toggle Component
+const LanguageToggle = () => {
+  const { userLanguage, changeLanguage } = useLanguage();
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-3 px-6 py-2 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all uppercase tracking-widest border border-slate-100 bg-white"
+      >
+        <Globe size={18} />
+        {languages[userLanguage].nativeLabel}
+        <ChevronDown size={14} className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+
+      {isOpen && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+          <div className="absolute right-0 mt-3 w-48 bg-white rounded-2xl shadow-2xl shadow-slate-200 border border-slate-100 p-2 z-50 overflow-hidden">
+            {Object.values(languages).map((lang) => (
+              <button
+                key={lang.code}
+                onClick={() => {
+                  changeLanguage(lang.code);
+                  setIsOpen(false);
+                }}
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
+                  userLanguage === lang.code 
+                  ? "bg-primary-50 text-primary-700" 
+                  : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                }`}
+              >
+                {lang.nativeLabel}
+                {userLanguage === lang.code && <Check size={14} />}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
 function App() {
   return (
     <Router>
       <ScrollToTop />
+      <LanguageModal />
       <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-primary-100 selection:text-primary-900">
         {/* Navigation Bar */}
         <nav className="bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-50">
@@ -60,11 +107,13 @@ function App() {
                   </div>
                 </Link>
               </div>
-              <div className="hidden lg:flex items-center gap-2">
+              <div className="hidden lg:flex items-center gap-4">
                 <NavLink to="/" icon={Home} label="Home" />
                 <NavLink to="/finder" icon={Search} label="Find Schemes" />
                 <NavLink to="/explorer" icon={BookOpen} label="Explorer" />
                 <NavLink to="/chat" icon={MessageSquare} label="AI Assistant" />
+                <div className="w-px h-8 bg-slate-100 mx-2" />
+                <LanguageToggle />
               </div>
             </div>
           </div>

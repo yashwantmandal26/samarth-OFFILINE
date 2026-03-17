@@ -23,9 +23,9 @@ app.use(bodyParser.json());
 // 0. AI Chat Endpoint
 app.post('/api/chat', async (req, res) => {
     try {
-        const { message, userProfile, topSchemes } = req.body;
-        console.log("[API] Received Chat Request. Delegating to ChatAgent...");
-        const response = await chatAgent.chat(message, userProfile || {}, topSchemes || []);
+        const { message, userProfile, topSchemes, language } = req.body;
+        console.log(`[API] Received Chat Request (${language}). Delegating to ChatAgent...`);
+        const response = await chatAgent.chat(message, userProfile || {}, topSchemes || [], language || 'en');
         res.json({ response });
     } catch (error) {
         console.error('[API] Chat Error:', error);
@@ -38,9 +38,10 @@ app.post('/api/recommendations', upload.single('document'), async (req, res) => 
     try {
         const rawUserData = req.body.userData ? JSON.parse(req.body.userData) : req.body;
         const fileBuffer = req.file ? req.file.buffer : null;
+        const language = req.body.language || 'en';
 
-        console.log("[API] Received Request for Recommendation. Delegating to CoordinatorAgent...");
-        const result = await CoordinatorAgent.requestRecommendations(rawUserData, fileBuffer);
+        console.log(`[API] Received Request for Recommendation (${language}). Delegating to CoordinatorAgent...`);
+        const result = await CoordinatorAgent.requestRecommendations(rawUserData, fileBuffer, language);
         res.json(result);
     } catch (error) {
         console.error('[API] Recommendation Error:', error);

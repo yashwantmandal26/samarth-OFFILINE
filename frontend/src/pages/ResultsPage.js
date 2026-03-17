@@ -199,7 +199,9 @@ const ResultsPage = () => {
                       <div className="flex flex-col">
                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Income Eligibility</span>
                         <span className="text-sm font-bold text-slate-700">
-                          {scheme.eligibility.income_limit ? `Up to ₹${scheme.eligibility.income_limit.toLocaleString()}` : "Variable Eligibility"}
+                          {scheme.eligibility.income_limit 
+                            ? `Up to ${new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(scheme.eligibility.income_limit)}` 
+                            : "No Limit"}
                         </span>
                       </div>
                     </div>

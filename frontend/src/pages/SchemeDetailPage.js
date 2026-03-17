@@ -50,6 +50,21 @@ const SchemeDetailPage = () => {
   const [scheme, setScheme] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Helper to format values based on key
+  const formatValue = (key, value) => {
+    if (value === null || value === undefined) return "No Limit";
+    
+    if (key === 'income_limit' && typeof value === 'number') {
+      return new Intl.NumberFormat('en-IN', { 
+        style: 'currency', 
+        currency: 'INR', 
+        maximumFractionDigits: 0 
+      }).format(value);
+    }
+    
+    return Array.isArray(value) ? value.join(', ') : value.toString();
+  };
+
   useEffect(() => {
     if (scheme) {
       document.title = `Samarth | ${scheme.scheme_name}`;
@@ -162,7 +177,9 @@ const SchemeDetailPage = () => {
                 {Object.entries(scheme.eligibility).map(([key, value]) => (
                   <div key={key} className="p-6 bg-slate-50 rounded-2xl border border-slate-100 group hover:bg-white hover:shadow-lg hover:shadow-slate-100 transition-all">
                     <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">{key.replace('_', ' ')}</h4>
-                    <p className="text-base font-black text-slate-900 uppercase tracking-tight">{Array.isArray(value) ? value.join(', ') : value.toString()}</p>
+                    <p className="text-base font-black text-slate-900 uppercase tracking-tight">
+                      {formatValue(key, value)}
+                    </p>
                   </div>
                 ))}
               </div>

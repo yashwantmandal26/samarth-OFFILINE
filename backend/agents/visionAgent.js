@@ -7,10 +7,8 @@
  * DESIGN PATTERN: Perception Agent / Feature Extraction.
  */
 
-const axios = require('axios');
+const { generateResponse } = require('../services/ollamaService');
 require('dotenv').config();
-
-const OLLAMA_URL = process.env.OLLAMA_API_URL || 'http://localhost:11434/api/generate';
 
 const VisionAgent = {
     /**
@@ -50,17 +48,11 @@ const VisionAgent = {
             Only return the JSON object.
             `;
 
-            const response = await axios.post(OLLAMA_URL, {
-                model: 'llava', // Specifically calling llava for multimodal
-                prompt: prompt,
+            return await generateResponse(prompt, {
+                model: 'llava',
                 images: [base64Image],
-                stream: false,
                 format: 'json'
-            }, {
-                timeout: 60000 // 60 second timeout
             });
-
-            return JSON.parse(response.data.response);
         } catch (error) {
             console.error('[VisionAgent] Extraction Error:', error.message);
             if (error.code === 'ECONNABORTED') {

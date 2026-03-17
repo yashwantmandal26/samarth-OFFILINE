@@ -5,14 +5,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import logo from '../assets/logo.png';
+import { useLanguage } from '../context/LanguageContext';
 
 const AIChatPage = () => {
+  const { userLanguage } = useLanguage();
+  
   useEffect(() => {
     document.title = "Samarth | AI Assistant";
   }, []);
 
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: "Hello! I am **Samarth**, your Jharkhand Government Scheme assistant. How can I help you today?" }
+    { role: 'assistant', content: userLanguage === 'hi' ? "नमस्ते! मैं **समर्थ** हूँ, आपका झारखंड सरकारी योजना सहायक। मैं आज आपकी क्या मदद कर सकता हूँ?" : (userLanguage === 'hinglish' ? "Namaste! Main **Samarth** hoon, aapka Jharkhand Government Scheme assistant. Main aaj aapki kya madad kar sakta hoon?" : "Hello! I am **Samarth**, your Jharkhand Government Scheme assistant. How can I help you today?") }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -30,7 +33,9 @@ const AIChatPage = () => {
       recognitionRef.current = new SpeechRecognition();
       recognitionRef.current.continuous = false;
       recognitionRef.current.interimResults = false;
-      recognitionRef.current.lang = 'en-IN'; // Default to Indian English, can be 'hi-IN'
+      
+      // Update language based on user selection
+      recognitionRef.current.lang = userLanguage === 'hi' ? 'hi-IN' : 'en-IN';
 
       recognitionRef.current.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
@@ -49,7 +54,7 @@ const AIChatPage = () => {
         setIsListening(false);
       };
     }
-  }, []);
+  }, [userLanguage]);
 
   const toggleListening = () => {
     if (isListening) {
@@ -71,9 +76,17 @@ const AIChatPage = () => {
     const cleanText = text.replace(/[*_#]/g, '');
     const utterance = new SpeechSynthesisUtterance(cleanText);
     
+    // Set language for TTS
+    if (userLanguage === 'hi') {
+      utterance.lang = 'hi-IN';
+    } else {
+      utterance.lang = 'en-IN'; // Natural for English and Hinglish
+    }
+    
     // Voice selection logic
     const voices = synthRef.current.getVoices();
-    const preferredVoice = voices.find(v => v.lang === 'hi-IN') || 
+    const preferredVoice = voices.find(v => v.lang === utterance.lang) || 
+                          voices.find(v => v.lang === 'hi-IN') || 
                           voices.find(v => v.lang === 'en-IN') || 
                           voices[0];
     
@@ -97,7 +110,7 @@ const AIChatPage = () => {
     };
 
     synthRef.current.speak(utterance);
-  }, []);
+  }, [userLanguage]);
 
   const stopSpeaking = () => {
     synthRef.current.cancel();
@@ -126,7 +139,9 @@ const AIChatPage = () => {
     setLoading(true);
 
     try {
-      const response = await schemeService.chat(messageToSend, {}, []);
+      // Optional: Get user profile from localStorage if available
+      const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+      const response = await schemeService.chat(messageToSend, userProfile, [], userLanguage);
       const assistantMessage = { role: 'assistant', content: response.data.response };
       const updatedMessages = [...newMessages, assistantMessage];
       setMessages(updatedMessages);
@@ -146,8 +161,10 @@ const AIChatPage = () => {
   };
 
   const clearChat = () => {
-    if (window.confirm('Are you sure you want to clear the conversation?')) {
-      setMessages([{ role: 'assistant', content: "Hello! I am **Samarth**, your Jharkhand Government Scheme assistant. How can I help you today?" }]);
+    const confirmMsg = userLanguage === 'hi' ? 'क्या आप बातचीत मिटाना चाहते हैं?' : (userLanguage === 'hinglish' ? 'Kya aap conversation clear karna chahte hain?' : 'Are you sure you want to clear the conversation?');
+    if (window.confirm(confirmMsg)) {
+      const initialMsg = userLanguage === 'hi' ? "नमस्ते! मैं **समर्थ** हूँ, आपका झारखंड सरकारी योजना सहायक। मैं आज आपकी क्या मदद कर सकता हूँ?" : (userLanguage === 'hinglish' ? "Namaste! Main **Samarth** hoon, aapka Jharkhand Government Scheme assistant. Main aaj aapki kya madad kar sakta hoon?" : "Hello! I am **Samarth**, your Jharkhand Government Scheme assistant. How can I help you today?");
+      setMessages([{ role: 'assistant', content: initialMsg }]);
       stopSpeaking();
     }
   };
@@ -298,7 +315,7 @@ const AIChatPage = () => {
           </form>
           <div className="mt-4 text-center">
             <p className="inline-flex items-center gap-1.5 text-[8px] font-black text-slate-300 uppercase tracking-[0.2em]">
-              <Sparkles size={10} className="text-primary-400" /> Powered by Local Llama3 • Private Analysis
+              <Sparkles size={10} className="text-primary-400" /> Powered by Local Llama3:8b • Private Analysis
             </p>
           </div>
         </div>

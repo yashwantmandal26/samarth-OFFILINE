@@ -8,7 +8,7 @@ const SCHEMES_PATH = path.join(__dirname, '../dataset/jharkhand_schemes.json');
  * Handles natural language queries from users about schemes.
  */
 const chatAgent = {
-    chat: async (userMessage, userProfile, topSchemes) => {
+    chat: async (userMessage, userProfile, topSchemes, language = 'en') => {
         // Load full dataset for RAG-like context if topSchemes is empty
         let contextSchemes = topSchemes;
         if (!contextSchemes || contextSchemes.length === 0) {
@@ -39,6 +39,15 @@ const chatAgent = {
             `- ${s.scheme_name}: ${s.description}. Benefits: ${s.benefits}. Eligibility: ${JSON.stringify(s.eligibility)}`
         ).join('\n');
 
+        let languageInstruction = "";
+        if (language === 'hi') {
+            languageInstruction = "IMPORTANT: You MUST generate your entire response in pure Hindi script (Devanagari). Do not use English.";
+        } else if (language === 'hinglish') {
+            languageInstruction = "IMPORTANT: You MUST generate your entire response in Hinglish. Use the Latin/English alphabet, but speak in conversational Hindi (e.g., 'Aap is scheme ke liye eligible hain kyunki...').";
+        } else {
+            languageInstruction = "Respond in clear, professional English.";
+        }
+
         const prompt = `
         System: You are Samarth, a professional AI assistant for Jharkhand E-Governance.
         User Name: ${userProfile.name || 'Citizen'}
@@ -56,11 +65,13 @@ const chatAgent = {
         4. If you don't know the exact answer, suggest visiting a Pragya Kendra (CSC) or Block Office in Jharkhand.
         5. Respond in a clear, conversational tone.
         6. Keep responses under 100 words unless detail is requested.
+        7. ${languageInstruction}
         `;
         
         try {
             return await generateResponse(prompt);
         } catch (error) {
+            console.error("ChatAgent: Error generating response", error);
             return "I apologize, but my connection to the AI engine is currently slow. Please ensure Ollama is running Llama3:8b and try again in a moment.";
         }
     }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../services/api';
+import api, { schemeService } from '../services/api';
 import { 
   ChevronRight, 
   ChevronLeft, 
@@ -19,9 +19,11 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import logo from '../assets/logo.png';
+import { useLanguage } from '../context/LanguageContext';
 
 const SchemeFinderWizard = () => {
   const navigate = useNavigate();
+  const { userLanguage } = useLanguage();
   const [step, setStep] = useState(1);
   
   useEffect(() => {
@@ -74,9 +76,7 @@ const SchemeFinderWizard = () => {
         data.append('document', file);
         data.append('userData', JSON.stringify(formData)); // Send current form data
 
-        const response = await api.post('/recommendations', data, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
+        const response = await schemeService.getRecommendations(data, userLanguage);
 
         if (response.data.profile) {
           const extracted = response.data.profile;
@@ -162,7 +162,8 @@ const SchemeFinderWizard = () => {
     ]);
 
     try {
-      const response = await api.post('/recommendations', formData);
+      setError(null);
+      const response = await schemeService.getRecommendations(formData, userLanguage);
       
       // Sequential animation logic (3 seconds total)
       // Step 1: Vision Agent (0s - 1s)

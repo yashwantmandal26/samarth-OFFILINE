@@ -97,7 +97,7 @@ set OLLAMA_ORIGINS="*"
 ollama serve
 
 # Pull models
-ollama pull llama3
+ollama pull llama3:8b
 ollama pull llava
 ```
 

@@ -1,7 +1,5 @@
-const axios = require('axios');
+const { generateResponse } = require('../services/ollamaService');
 require('dotenv').config();
-
-const OLLAMA_URL = process.env.OLLAMA_API_URL || 'http://127.0.0.1:11434/api/generate';
 
 const translationAgent = {
     simplify: async (complexExplanation, userProfile) => {
@@ -22,15 +20,7 @@ const translationAgent = {
         `;
 
         try {
-            const response = await axios.post(OLLAMA_URL, {
-                model: 'llama3',
-                prompt: prompt,
-                stream: false
-            }, {
-                timeout: 60000 // 60s timeout
-            });
-
-            return response.data.response;
+            return await generateResponse(prompt);
         } catch (error) {
             console.error('Translation Agent Error:', error.message);
             if (error.code === 'ECONNREFUSED') {

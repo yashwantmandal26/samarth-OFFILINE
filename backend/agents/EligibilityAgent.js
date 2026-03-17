@@ -55,13 +55,21 @@ const EligibilityAgent = {
                 }
             }
 
-            // Rule 2: Income Threshold
-            if (eligibility.income_limit) {
+            // Rule 2: Income Threshold (Normalized Logic)
+            if (eligibility.income_limit !== undefined && eligibility.income_limit !== null) {
                 totalPossibleWeight += WEIGHTS.INCOME;
-                if (userProfile.income <= eligibility.income_limit || userProfile.isBPL) {
-                    score += WEIGHTS.INCOME;
-                    reasoning_path.push(`RULE_INCOME_VALID: UserIncome(${userProfile.income}) <= Limit(${eligibility.income_limit})`);
+                if (typeof eligibility.income_limit === 'number') {
+                    if (userProfile.income <= eligibility.income_limit || userProfile.isBPL) {
+                        score += WEIGHTS.INCOME;
+                        reasoning_path.push(`RULE_INCOME_VALID: UserIncome(${userProfile.income}) <= Limit(${eligibility.income_limit})`);
+                    }
                 }
+            } else {
+                // No income limit defined (null or undefined) - citizen is eligible by default for this rule
+                // We don't add to totalPossibleWeight, effectively ignoring this rule in the score calculation
+                // OR we could give full marks for this weight. Let's follow the "do not penalize" instruction.
+                // By not adding to totalPossibleWeight, the denominator is smaller, so other rules carry more weight.
+                reasoning_path.push(`RULE_INCOME_SKIP: No Income Limit Defined for this scheme.`);
             }
 
             // Rule 3: Social Category Inclusion

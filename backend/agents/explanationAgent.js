@@ -7,10 +7,8 @@
  * DESIGN PATTERN: Natural Language Generation (NLG) for transparency.
  */
 
-const axios = require('axios');
+const { generateResponse } = require('../services/ollamaService');
 require('dotenv').config();
-
-const OLLAMA_URL = process.env.OLLAMA_API_URL || 'http://127.0.0.1:11434/api/generate';
 
 const ExplanationAgent = {
     /**
@@ -21,8 +19,8 @@ const ExplanationAgent = {
 
         switch (intent) {
             case "REQUEST_XAI_EXPLANATION":
-                console.log("[ExplanationAgent] Translating Symbolic Path to Natural Language...");
-                return await ExplanationAgent.generateExplanation(content.match, content.profile);
+                console.log(`[ExplanationAgent] Translating Symbolic Path to Natural Language (${content.language})...`);
+                return await ExplanationAgent.generateExplanation(content.match, content.profile, content.language);
             default:
                 throw new Error(`[ExplanationAgent] Unknown Intent: ${intent}`);
         }
@@ -32,7 +30,16 @@ const ExplanationAgent = {
      * Generative Reasoning Layer
      * Communicates with local Llama3 via Ollama API.
      */
-    generateExplanation: async (match, profile) => {
+    generateExplanation: async (match, profile, language = 'en') => {
+        let languageInstruction = "";
+        if (language === 'hi') {
+            languageInstruction = "IMPORTANT: You MUST generate your entire response in pure Hindi script (Devanagari). Do not use English.";
+        } else if (language === 'hinglish') {
+            languageInstruction = "IMPORTANT: You MUST generate your entire response in Hinglish. Use the Latin/English alphabet, but speak in conversational Hindi (e.g., 'Aap is scheme ke liye eligible hain kyunki...').";
+        } else {
+            languageInstruction = "Respond in clear, professional English.";
+        }
+
         const prompt = `
         System: You are an Explainable AI (XAI) agent for Jharkhand E-Governance.
         User Profile: Name: ${profile.name}, Age: ${profile.age}, Occupation: ${profile.occupation}.
@@ -49,17 +56,11 @@ const ExplanationAgent = {
         6. Each bullet should be one sentence maximum.
         7. Base your response STRICTLY on the Symbolic Reasoning Path provided.
         8. You can use Markdown for formatting (e.g. **bold** for key terms).
+        9. ${languageInstruction}
         `;
 
         try {
-            const response = await axios.post(OLLAMA_URL, {
-                model: 'llama3',
-                prompt: prompt,
-                stream: false
-            }, {
-                timeout: 60000 // 60 second timeout
-            });
-            return response.data.response;
+            return await generateResponse(prompt);
         } catch (error) {
             console.error('[ExplanationAgent] Generation Error:', error.message);
             if (error.code === 'ECONNREFUSED') {
@@ -68,7 +69,7 @@ const ExplanationAgent = {
             if (error.code === 'ECONNABORTED') {
                 return "• Analysis processing timed out. Please refresh to try again.";
             }
-            return "• Ollama server unreachable. Please ensure it is running with 'llama3' model.";
+            return "• Ollama server unreachable. Please ensure it is running with 'llama3:8b' model.";
         }
     }
 };
