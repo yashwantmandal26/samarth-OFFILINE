@@ -1,7 +1,7 @@
 # Samarth: Hybrid Symbolic-Generative Platform
 ### Research-Grade Digital Assistant for Jharkhand E-Governance
 
-Samarth is a research-oriented, full-stack E-Governance platform designed for the dissertation project of MCA. It addresses the complexity of government policy accessibility in Jharkhand by combining **Symbolic AI** (deterministic rule engines) with **Generative AI** (Large Language Models) to provide accurate, explainable, and accessible scheme recommendations.
+Samarth is a research-oriented, full-stack Scheme Identification platform designed for the dissertation project of MCA. It addresses the complexity of government policy accessibility in Jharkhand by combining **Symbolic AI** (deterministic rule engines) with **Generative AI** (Large Language Models) to provide accurate, explainable, and accessible scheme recommendations.
 
 ---
 

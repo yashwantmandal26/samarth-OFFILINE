@@ -34,7 +34,7 @@ const LandingPage = () => {
             >
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-50 text-primary-700 rounded-full text-[10px] font-black uppercase tracking-widest mb-8 border border-primary-100 shadow-sm">
                 <Sparkles size={12} className="animate-pulse" />
-                Next-Gen E-Governance Platform
+                Next-Gen Scheme Identification
               </div>
               <h1 className="text-6xl md:text-7xl lg:text-8xl font-black text-slate-900 mb-8 tracking-tighter leading-[0.9]">
                 {t('hero_title').split(' ').map((word, i) => (

@@ -553,7 +553,7 @@ const SchemeFinderWizard = () => {
                 </div>
                 <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">Samarth Engine</h3>
               </div>
-              <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] mt-1">E-Governance Platform</p>
+              <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] mt-1">Scheme Identification</p>
             </div>
           </div>
         </motion.div>
@@ -573,7 +573,7 @@ const SchemeFinderWizard = () => {
               </div>
               <div>
                 <h2 className="text-2xl font-black tracking-tighter uppercase text-primary-400 leading-none">Samarth</h2>
-                <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] mt-1">E-Governance Platform</p>
+                <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] mt-1">Scheme Identification</p>
               </div>
             </div>
             

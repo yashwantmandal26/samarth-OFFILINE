@@ -201,9 +201,9 @@ const AIChatPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="flex flex-col h-[calc(100vh-80px)] overflow-hidden bg-slate-50">
       {/* Chat Header */}
-      <div className="bg-white border-b border-slate-100 py-4 px-6 sticky top-20 z-40">
+      <div className="bg-white border-b border-slate-100 py-4 px-6 shrink-0 z-40">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link to="/" className="p-2 text-slate-400 hover:text-slate-900 transition-colors">
@@ -232,8 +232,8 @@ const AIChatPage = () => {
         </div>
       </div>
 
-    <div className="flex-1 overflow-y-auto pt-4 pb-48">
-      <div className="max-w-4xl mx-auto px-6 space-y-8">
+    <div className="flex-1 overflow-y-auto p-4 md:p-8 w-full max-w-4xl mx-auto">
+      <div className="space-y-8">
         <AnimatePresence initial={false}>
           {messages.map((m, i) => (
             <motion.div
@@ -318,8 +318,8 @@ const AIChatPage = () => {
     </div>
 
     {/* Chat Input Area */}
-    <div className="fixed bottom-6 left-0 right-0 z-40 px-6 pointer-events-none">
-      <div className="max-w-4xl mx-auto w-full pointer-events-auto">
+    <div className="shrink-0 w-full bg-white border-t border-slate-200 p-4 md:p-6 pb-8 flex justify-center">
+      <div className="max-w-4xl mx-auto w-full">
         <div className="bg-white/90 backdrop-blur-lg border border-slate-100 p-6 rounded-[2rem] shadow-2xl">
           {/* Quick Suggestions */}
           <div className="flex flex-wrap gap-2 mb-4 overflow-x-auto pb-2 no-scrollbar">

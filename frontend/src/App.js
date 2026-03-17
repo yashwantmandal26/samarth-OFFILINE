@@ -86,54 +86,53 @@ const LanguageToggle = () => {
   );
 };
 
-function App() {
+function AppContent() {
   const { t } = useLanguage();
+  const location = useLocation();
 
   return (
-    <Router>
-      <ScrollToTop />
-      <LanguageModal />
-      <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-primary-100 selection:text-primary-900">
-        {/* Navigation Bar */}
-        <nav className="bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="flex justify-between h-20 items-center">
-              <div className="flex items-center gap-2">
-                <Link to="/" className="flex items-center gap-3 group">
-                  <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-105 transition-transform duration-300 overflow-hidden border border-slate-100">
-                    <img src={logo} alt="Samarth Logo" className="w-full h-full object-contain p-1.5" />
-                  </div>
-                  <div>
-                    <span className="block text-2xl font-black text-slate-900 tracking-tighter uppercase leading-none">Samarth</span>
-                    <span className="text-[8px] font-black text-slate-400 uppercase tracking-[0.3em]">Jharkhand Platform</span>
-                  </div>
-                </Link>
-              </div>
-              <div className="hidden lg:flex items-center gap-4">
-                <NavLink to="/" icon={Home} label={t('nav_home')} />
-                <NavLink to="/finder" icon={Search} label={t('nav_finder')} />
-                <NavLink to="/explorer" icon={BookOpen} label={t('nav_explorer')} />
-                <NavLink to="/chat" icon={MessageSquare} label={t('nav_chat')} />
-                <div className="w-px h-8 bg-slate-100 mx-2" />
-                <LanguageToggle />
-              </div>
+    <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-primary-100 selection:text-primary-900">
+      {/* Navigation Bar */}
+      <nav className="bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex justify-between h-20 items-center">
+            <div className="flex items-center gap-2">
+              <Link to="/" className="flex items-center gap-3 group">
+                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-105 transition-transform duration-300 overflow-hidden border border-slate-100">
+                  <img src={logo} alt="Samarth Logo" className="w-full h-full object-contain p-1.5" />
+                </div>
+                <div>
+                  <span className="block text-2xl font-black text-slate-900 tracking-tighter uppercase leading-none">Samarth</span>
+                  <span className="text-[8px] font-black text-slate-400 uppercase tracking-[0.3em]">Scheme Identification</span>
+                </div>
+              </Link>
+            </div>
+            <div className="hidden lg:flex items-center gap-4">
+              <NavLink to="/" icon={Home} label={t('nav_home')} />
+              <NavLink to="/finder" icon={Search} label={t('nav_finder')} />
+              <NavLink to="/explorer" icon={BookOpen} label={t('nav_explorer')} />
+              <NavLink to="/chat" icon={MessageSquare} label={t('nav_chat')} />
+              <div className="w-px h-8 bg-slate-100 mx-2" />
+              <LanguageToggle />
             </div>
           </div>
-        </nav>
+        </div>
+      </nav>
 
-        {/* Main Content */}
-        <main className="flex-1">
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/finder" element={<SchemeFinderWizard />} />
-            <Route path="/results" element={<ResultsPage />} />
-            <Route path="/scheme/:id" element={<SchemeDetailPage />} />
-            <Route path="/explorer" element={<SchemeExplorerPage />} />
-            <Route path="/chat" element={<AIChatPage />} />
-          </Routes>
-        </main>
+      {/* Main Content */}
+      <main className="flex-1">
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/finder" element={<SchemeFinderWizard />} />
+          <Route path="/results" element={<ResultsPage />} />
+          <Route path="/scheme/:id" element={<SchemeDetailPage />} />
+          <Route path="/explorer" element={<SchemeExplorerPage />} />
+          <Route path="/chat" element={<AIChatPage />} />
+        </Routes>
+      </main>
 
-        {/* Footer */}
+      {/* Footer */}
+      {location.pathname !== '/chat' && (
         <footer className="bg-white border-t border-slate-100 py-16">
           <div className="max-w-7xl mx-auto px-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
@@ -191,7 +190,17 @@ function App() {
             </div>
           </div>
         </footer>
-      </div>
+      )}
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <ScrollToTop />
+      <LanguageModal />
+      <AppContent />
     </Router>
   );
 }
