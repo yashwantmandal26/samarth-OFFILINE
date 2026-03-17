@@ -93,12 +93,17 @@ const EligibilityAgent = {
                 }
             }
 
-            // Rule 6: Preferred Field Match (User Intent Filter)
-            if (userProfile.preferredField && scheme.category) {
-                // Check if user's preferred field matches the scheme category
-                // This is an optional boost, so it doesn't add to totalPossibleWeight 
-                // unless we want it to be a strict requirement (which we don't, it's a filter/preference)
-                if (userProfile.preferredField.toLowerCase() === scheme.category.toLowerCase()) {
+            // Rule 6: Preferred Field Match (Strict Filter)
+            if (userProfile.preferredField && userProfile.preferredField !== 'Any' && scheme.category) {
+                if (userProfile.preferredField.toLowerCase() !== scheme.category.toLowerCase()) {
+                    // Strict Disqualification: Scheme doesn't match the preferred field
+                    return {
+                        ...scheme,
+                        matchScore: 0,
+                        reasoningPath: `DISQUALIFIED: FIELD_MISMATCH(UserPrefers:${userProfile.preferredField}, SchemeCategory:${scheme.category})`
+                    };
+                } else {
+                    // It matches, so we can give it a small boost or just continue
                     score += WEIGHTS.PREFERRED_FIELD;
                     totalPossibleWeight += WEIGHTS.PREFERRED_FIELD;
                     reasoning_path.push(`RULE_PREFERENCE_MATCH: UserPreferred(${userProfile.preferredField}) == SchemeCategory(${scheme.category})`);

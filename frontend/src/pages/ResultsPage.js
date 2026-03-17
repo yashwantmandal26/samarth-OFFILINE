@@ -41,7 +41,7 @@ const TypewriterSummary = ({ text }) => {
           </div>
         </div>
         
-        <p className="text-lg md:text-xl font-medium leading-relaxed text-slate-100 max-w-3xl">
+        <p className="text-lg md:text-xl font-medium leading-relaxed text-slate-100 max-w-3xl bg-transparent">
           {displayedText}
           <span className="inline-block w-2 h-6 bg-primary-500 ml-1 animate-pulse align-middle"></span>
         </p>
@@ -97,7 +97,7 @@ const ResultsPage = () => {
 
   const { recommendations, profile, totalMatches } = results;
 
-  const summaryText = `Analysis complete. Based on your socio-economic profile as a ${profile.occupation} in ${profile.district}, our Multi-Agent System has identified high-probability matches primarily in ${recommendations[0]?.category || 'Education and Skill Development'} sectors. Below is the refined list of eligible schemes ranked by match accuracy.`;
+  const summaryText = `Analysis complete, ${profile.name ? profile.name : 'Citizen'}. Based on your socio-economic profile as a ${profile.occupation} in ${profile.district}, Samarth has identified high-probability matches primarily in the ${recommendations[0]?.category || 'Education and Skill Development'} sector. Below is the refined list of eligible schemes ranked by match accuracy.`;
 
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-6">
@@ -154,8 +154,12 @@ const ResultsPage = () => {
                     </div>
                   </div>
                 </div>
-                <div className="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl font-black text-xs border border-emerald-100 shadow-sm uppercase tracking-widest">
-                  {scheme.matchScore}% Match
+                <div className={`px-4 py-2 rounded-xl font-black text-xs border shadow-sm uppercase tracking-widest ${
+                  scheme.matchScore > 75 
+                  ? 'bg-emerald-50 text-emerald-700 border-emerald-100' 
+                  : 'bg-blue-50 text-blue-700 border-blue-100'
+                }`}>
+                  {scheme.matchScore > 75 ? 'Highly Recommended' : 'Eligible'}
                 </div>
               </div>
 

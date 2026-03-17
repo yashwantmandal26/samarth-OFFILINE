@@ -16,6 +16,7 @@ const userProfilingAgent = {
             isBPL: userData.isBPL || false,
             housingStatus: userData.housingStatus || 'Own',
             landHolding: userData.landHolding || 'None',
+            preferredField: userData.preferredField || 'Any',
             specialStatus: userData.specialStatus || [] // Widows, Disabled, etc.
         };
     }

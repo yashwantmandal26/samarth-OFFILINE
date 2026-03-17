@@ -124,4 +124,4 @@ npm start
 **Remote Origin:** [https://github.com/yashwantmandal26/samarth-OFFILINE.git](https://github.com/yashwantmandal26/samarth-OFFILINE.git)
 
 ---
-© 2026 Government of Jharkhand (Unofficial) • Local AI Powered Platform
+MCA Dissertation Project • Local AI Powered Platform

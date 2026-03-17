@@ -184,79 +184,79 @@ const AIChatPage = () => {
         </div>
       </div>
 
-      {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto p-6">
-        <div className="max-w-4xl mx-auto space-y-8 pb-32">
-          <AnimatePresence initial={false}>
-            {messages.map((m, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
-                <div className={`flex gap-3 max-w-[85%] ${m.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 shadow-sm ${m.role === 'user' ? 'bg-slate-900 text-white' : 'bg-white text-slate-900 border border-slate-100'}`}>
-                    {m.role === 'user' ? <User size={14} /> : <img src={logo} alt="Bot" className="w-full h-full object-contain" />}
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <div className={`p-4 rounded-2xl shadow-sm border text-sm font-sans leading-relaxed not-italic ${
-                      m.role === 'user' 
-                      ? 'bg-slate-900 text-white border-slate-800 rounded-tr-none' 
-                      : 'bg-white text-slate-800 border-slate-50 rounded-tl-none'
-                    }`}>
-                      <ReactMarkdown 
-                        components={{
-                          strong: ({node, ...props}) => <span className="font-semibold text-slate-900" {...props} />,
-                          b: ({node, ...props}) => <span className="font-semibold text-slate-900" {...props} />,
-                          code: ({node, inline, ...props}) => (
-                            <code className="bg-blue-50 text-blue-800 px-1.5 py-0.5 rounded text-xs font-mono" {...props} />
-                          ),
-                          ul: ({node, ...props}) => <ul className="list-disc ml-4 space-y-1 my-2" {...props} />,
-                          ol: ({node, ...props}) => <ol className="list-decimal ml-4 space-y-1 my-2" {...props} />,
-                          p: ({node, ...props}) => <p className="mb-2 last:mb-0" {...props} />,
-                        }}
-                      >
-                        {m.content}
-                      </ReactMarkdown>
-                    </div>
-                    {m.role === 'assistant' && (
-                      <button 
-                        onClick={() => activeSpeechIndex === i ? stopSpeaking() : speak(m.content, i)}
-                        className={`self-start p-1.5 rounded-full transition-all ${activeSpeechIndex === i ? 'bg-primary-50 text-primary-600 animate-pulse' : 'text-slate-300 hover:text-primary-500 hover:bg-slate-50'}`}
-                        title={activeSpeechIndex === i ? "Stop speaking" : "Read aloud"}
-                      >
-                        {activeSpeechIndex === i ? <VolumeX size={14} /> : <Volume2 size={14} />}
-                      </button>
-                    )}
-                  </div>
+    <div className="flex-1 overflow-y-auto pt-4 pb-48">
+      <div className="max-w-4xl mx-auto px-6 space-y-8">
+        <AnimatePresence initial={false}>
+          {messages.map((m, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              className={`flex w-full ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              <div className={`flex gap-3 max-w-[85%] ${m.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 shadow-sm mt-1 ${m.role === 'user' ? 'bg-slate-900 text-white' : 'bg-white text-slate-900 border border-slate-100 overflow-hidden'}`}>
+                  {m.role === 'user' ? <User size={14} /> : <img src={logo} alt="Bot" className="w-full h-full object-contain p-1" />}
                 </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-          {loading && (
-            <div className="flex justify-start">
-              <div className="flex gap-3">
-                <div className="w-8 h-8 bg-white border border-slate-100 rounded-lg flex items-center justify-center shrink-0 shadow-sm overflow-hidden">
-                  <img src={logo} alt="Bot" className="w-full h-full object-contain" />
-                </div>
-                <div className="bg-white p-4 rounded-2xl rounded-tl-none border border-slate-50 shadow-sm">
-                  <div className="flex gap-1.5">
-                    <span className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                    <span className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                    <span className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                <div className={`flex flex-col gap-2 ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
+                  <div className={`p-4 rounded-2xl shadow-sm border text-sm font-sans leading-relaxed not-italic ${
+                    m.role === 'user' 
+                    ? 'bg-slate-900 text-white border-slate-800 rounded-tr-none' 
+                    : 'bg-white text-slate-800 border-slate-50 rounded-tl-none'
+                  }`}>
+                    <ReactMarkdown 
+                      components={{
+                        strong: ({node, ...props}) => <span className="font-semibold text-slate-900" {...props} />,
+                        b: ({node, ...props}) => <span className="font-semibold text-slate-900" {...props} />,
+                        code: ({node, inline, ...props}) => (
+                          <code className="bg-blue-50 text-blue-800 px-1.5 py-0.5 rounded text-xs font-mono" {...props} />
+                        ),
+                        ul: ({node, ...props}) => <ul className="list-disc ml-4 space-y-1 my-2" {...props} />,
+                        ol: ({node, ...props}) => <ol className="list-decimal ml-4 space-y-1 my-2" {...props} />,
+                        p: ({node, ...props}) => <p className="mb-2 last:mb-0" {...props} />,
+                      }}
+                    >
+                      {m.content}
+                    </ReactMarkdown>
                   </div>
+                  {m.role === 'assistant' && (
+                    <button 
+                      onClick={() => activeSpeechIndex === i ? stopSpeaking() : speak(m.content, i)}
+                      className={`p-1.5 rounded-full transition-all ${activeSpeechIndex === i ? 'bg-primary-50 text-primary-600 animate-pulse' : 'text-slate-300 hover:text-primary-500 hover:bg-slate-50'}`}
+                      title={activeSpeechIndex === i ? "Stop speaking" : "Read aloud"}
+                    >
+                      {activeSpeechIndex === i ? <VolumeX size={14} /> : <Volume2 size={14} />}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+        {loading && (
+          <div className="flex justify-start w-full">
+            <div className="flex gap-3">
+              <div className="w-8 h-8 bg-white border border-slate-100 rounded-lg flex items-center justify-center shrink-0 shadow-sm overflow-hidden mt-1">
+                <img src={logo} alt="Bot" className="w-full h-full object-contain p-1" />
+              </div>
+              <div className="bg-white p-4 rounded-2xl rounded-tl-none border border-slate-50 shadow-sm">
+                <div className="flex gap-1.5">
+                  <span className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                  <span className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                  <span className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
                 </div>
               </div>
             </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
+          </div>
+        )}
+        <div ref={messagesEndRef} />
       </div>
+    </div>
 
-      {/* Chat Input Area */}
-      <div className="bg-white border-t border-slate-100 p-6 fixed bottom-0 left-0 right-0 z-40 md:left-auto md:right-auto md:w-full md:max-w-4xl md:mx-auto md:rounded-t-[2rem] shadow-2xl">
-        <div className="max-w-4xl mx-auto">
+    {/* Chat Input Area */}
+    <div className="fixed bottom-6 left-0 right-0 z-40 px-6 pointer-events-none">
+      <div className="max-w-4xl mx-auto w-full pointer-events-auto">
+        <div className="bg-white/90 backdrop-blur-lg border border-slate-100 p-6 rounded-[2rem] shadow-2xl">
           {/* Quick Suggestions */}
           <div className="flex flex-wrap gap-2 mb-4 overflow-x-auto pb-2 no-scrollbar">
             {['Student Schemes', 'Farmer Loans', 'Scholarships', 'Ayushman Bharat?'].map(q => (
@@ -303,6 +303,7 @@ const AIChatPage = () => {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };

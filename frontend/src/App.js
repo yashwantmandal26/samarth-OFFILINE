@@ -131,7 +131,7 @@ function App() {
 
             <div className="pt-8 border-t border-slate-50 flex flex-col md:flex-row justify-between items-center gap-4">
               <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">
-                © 2026 Government of Jharkhand • MCA Dissertation Project
+                MCA Dissertation Project
               </p>
               <div className="flex items-center gap-2 text-[10px] font-black text-slate-300 uppercase tracking-widest">
                 <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>

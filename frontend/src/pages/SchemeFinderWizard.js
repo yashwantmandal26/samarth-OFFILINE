@@ -31,7 +31,7 @@ const SchemeFinderWizard = () => {
   const [loading, setLoading] = useState(false);
   const [visionLoading, setVisionLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [document, setDocument] = useState(null);
+  const [uploadedFile, setUploadedFile] = useState(null);
   const [documentPreview, setDocumentPreview] = useState(null);
   const [agentWorkflow, setAgentWorkflow] = useState([]);
 
@@ -48,7 +48,7 @@ const SchemeFinderWizard = () => {
     isBPL: false,
     housingStatus: 'Own',
     landHolding: 'None',
-    preferredField: ''
+    preferredField: 'Any'
   });
 
   const steps = [
@@ -62,7 +62,7 @@ const SchemeFinderWizard = () => {
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      setDocument(file);
+      setUploadedFile(file);
       setDocumentPreview(URL.createObjectURL(file));
       
       // Auto-extract logic
@@ -263,6 +263,7 @@ const SchemeFinderWizard = () => {
                     <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Select Preferred Field (Optional)</label>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                       {[
+                        { label: 'Any / All Fields', value: 'Any' },
                         { label: 'Student / Education', value: 'Students' },
                         { label: 'Scholarship / Higher Studies', value: 'Education' },
                         { label: 'Farmer / Agriculture', value: 'Farmers' },
@@ -280,9 +281,15 @@ const SchemeFinderWizard = () => {
                         <button
                           key={field.label}
                           type="button"
-                          onClick={() => setFormData(p => ({ ...p, preferredField: p.preferredField === field.value ? '' : field.value }))}
+                          onClick={() => {
+                            if (field.value === 'Any') {
+                              setFormData(p => ({ ...p, preferredField: 'Any' }));
+                            } else {
+                              setFormData(p => ({ ...p, preferredField: p.preferredField === field.value ? 'Any' : field.value }));
+                            }
+                          }}
                           className={`p-2 rounded-xl border text-[9px] font-black uppercase tracking-tight transition-all text-center flex items-center justify-center min-h-[44px] ${
-                            formData.preferredField === field.value 
+                            (formData.preferredField === field.value || (field.value === 'Any' && (!formData.preferredField || formData.preferredField === 'Any')))
                             ? 'border-primary-600 bg-primary-600 text-white shadow-md shadow-primary-100' 
                             : 'border-slate-100 bg-slate-50 text-slate-500 hover:border-primary-200'
                           }`}
@@ -308,7 +315,7 @@ const SchemeFinderWizard = () => {
                     <p className="text-xs font-black text-slate-900 truncate">Extraction Complete</p>
                     <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Click continue to verify data</p>
                   </div>
-                  <button onClick={() => {setDocument(null); setDocumentPreview(null);}} className="text-rose-500 font-black text-[10px] uppercase">Reset</button>
+                  <button onClick={() => {setUploadedFile(null); setDocumentPreview(null);}} className="text-rose-500 font-black text-[10px] uppercase">Reset</button>
                 </div>
               )}
             </div>
@@ -640,7 +647,7 @@ const SchemeFinderWizard = () => {
                       disabled={visionLoading}
                       className="flex items-center gap-3 px-10 py-4 bg-slate-900 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-2xl shadow-slate-200 active:scale-95 disabled:opacity-50 group"
                     >
-                      {step === 1 && document ? 'Verify Profile' : 'Continue'} <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                      {step === 1 && uploadedFile ? 'Verify Profile' : 'Continue'} <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
                     </button>
                   ) : (
                     <button
