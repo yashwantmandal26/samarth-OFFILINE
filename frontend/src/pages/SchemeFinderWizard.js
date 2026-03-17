@@ -23,7 +23,7 @@ import { useLanguage } from '../context/LanguageContext';
 
 const SchemeFinderWizard = () => {
   const navigate = useNavigate();
-  const { userLanguage } = useLanguage();
+  const { userLanguage, t } = useLanguage();
   const [step, setStep] = useState(1);
   
   useEffect(() => {
@@ -54,11 +54,11 @@ const SchemeFinderWizard = () => {
   });
 
   const steps = [
-    { title: 'Smart Start', icon: Sparkles, color: 'bg-primary-500' },
-    { title: 'Personal', icon: User, color: 'bg-blue-500' },
-    { title: 'Region', icon: MapPin, color: 'bg-emerald-500' },
-    { title: 'Social', icon: Users, color: 'bg-purple-500' },
-    { title: 'Status', icon: Briefcase, color: 'bg-orange-500' }
+    { title: t('wizard_step_1'), icon: Sparkles, color: 'bg-primary-500' },
+    { title: t('wizard_step_2'), icon: User, color: 'bg-blue-500' },
+    { title: t('wizard_step_3'), icon: MapPin, color: 'bg-emerald-500' },
+    { title: t('wizard_step_4'), icon: Users, color: 'bg-purple-500' },
+    { title: t('wizard_step_5'), icon: Briefcase, color: 'bg-orange-500' }
   ];
 
   const handleFileChange = async (e) => {
@@ -101,11 +101,30 @@ const SchemeFinderWizard = () => {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
+    
+    if (name === 'income') {
+      // Remove all non-numeric characters for the state
+      const numericValue = value.replace(/[^0-9]/g, '');
+      setFormData(prev => ({
+        ...prev,
+        [name]: numericValue
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: type === 'checkbox' ? checked : value
+      }));
+    }
     if (error) setError(null);
+  };
+
+  const formatIncome = (val) => {
+    if (!val) return '';
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0
+    }).format(val);
   };
 
   const nextStep = () => {
@@ -269,28 +288,28 @@ const SchemeFinderWizard = () => {
                         { label: 'Scholarship / Higher Studies', value: 'Education' },
                         { label: 'Farmer / Agriculture', value: 'Farmers' },
                         { label: 'Employment / Jobs', value: 'Employment' },
-                        { label: 'Skill Development', value: 'Entrepreneurs' },
-                        { label: 'Business / Startup', value: 'Entrepreneurs' },
+                        { label: 'Skill Development', value: 'Skill Development' },
+                        { label: 'Business / Startup', value: 'Business / Startup' },
                         { label: 'Women Welfare', value: 'Women' },
                         { label: 'Healthcare', value: 'Healthcare' },
                         { label: 'Housing', value: 'Housing' },
                         { label: 'Pension / Senior Citizen', value: 'Pension' },
-                        { label: 'Entrepreneurship', value: 'Entrepreneurs' },
-                        { label: 'Digital Services', value: 'Social Welfare' },
-                        { label: 'General Welfare', value: 'Social Welfare' }
+                        { label: 'Entrepreneurship', value: 'Entrepreneurship' },
+                        { label: 'Digital Services', value: 'Digital Services' },
+                        { label: 'General Welfare', value: 'General Welfare' }
                       ].map((field) => (
                         <button
                           key={field.label}
                           type="button"
                           onClick={() => {
-                            if (field.value === 'Any') {
-                              setFormData(p => ({ ...p, preferredField: 'Any' }));
-                            } else {
-                              setFormData(p => ({ ...p, preferredField: p.preferredField === field.value ? 'Any' : field.value }));
-                            }
+                            // Single selection logic with toggle off
+                            setFormData(prev => ({
+                              ...prev,
+                              preferredField: prev.preferredField === field.value ? 'Any' : field.value
+                            }));
                           }}
                           className={`p-2 rounded-xl border text-[9px] font-black uppercase tracking-tight transition-all text-center flex items-center justify-center min-h-[44px] ${
-                            (formData.preferredField === field.value || (field.value === 'Any' && (!formData.preferredField || formData.preferredField === 'Any')))
+                            formData.preferredField === field.value
                             ? 'border-primary-600 bg-primary-600 text-white shadow-md shadow-primary-100' 
                             : 'border-slate-100 bg-slate-50 text-slate-500 hover:border-primary-200'
                           }`}
@@ -450,14 +469,19 @@ const SchemeFinderWizard = () => {
             <div className="space-y-4">
               <div>
                 <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Annual Income (₹)</label>
-                <input
-                  type="number"
-                  name="income"
-                  value={formData.income}
-                  onChange={handleInputChange}
-                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-rose-500 focus:bg-white focus:ring-0 transition-all text-sm font-bold text-slate-700"
-                  placeholder="e.g. 150000"
-                />
+                <div className="relative group">
+                  <input
+                    type="text"
+                    name="income"
+                    value={formatIncome(formData.income)}
+                    onChange={handleInputChange}
+                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-rose-500 focus:bg-white focus:ring-0 transition-all text-sm font-black text-slate-900 placeholder:text-slate-300"
+                    placeholder="e.g. ₹ 1,50,000"
+                  />
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
+                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">INR</span>
+                  </div>
+                </div>
               </div>
               <div>
                 <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Occupation</label>
@@ -496,40 +520,66 @@ const SchemeFinderWizard = () => {
           <div className="w-16 h-16 bg-primary-50 text-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
             <Brain size={32} className="animate-pulse" />
           </div>
-          <h2 className="text-sm font-black text-slate-900 mb-6 uppercase tracking-[0.2em]">MAS Analysis</h2>
-          <div className="space-y-3">
+          <h2 className="text-sm font-black text-slate-900 mb-6 uppercase tracking-[0.2em]">Samarth Analysis</h2>
+          <div className="space-y-4 mb-8">
             {agentWorkflow.map((agent, i) => (
               <motion.div 
-                key={i} 
-                animate={{ 
-                  scale: agent.active ? 1.05 : 1,
-                  backgroundColor: agent.active ? 'rgba(79, 70, 229, 0.05)' : 'rgba(248, 250, 252, 1)',
-                  borderColor: agent.active ? 'rgba(79, 70, 229, 0.2)' : 'rgba(241, 245, 249, 1)'
-                }}
-                className="flex items-center gap-3 p-4 rounded-xl border transition-all duration-300"
+                key={agent.agent}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.2 }}
+                className={`p-5 rounded-2xl border transition-all ${
+                  agent.active 
+                  ? 'bg-white border-primary-200 shadow-xl shadow-primary-50 ring-1 ring-primary-100' 
+                  : agent.status === 'Complete' 
+                    ? 'bg-emerald-50/50 border-emerald-100 opacity-80' 
+                    : 'bg-slate-50 border-slate-100 opacity-40'
+                }`}
               >
-                <div className={`${agent.active ? 'text-primary-600' : 'text-slate-300'}`}>
-                  {agent.agent === 'Vision Agent' ? <Eye size={16} /> : agent.agent === 'Reasoning Agent' ? <Brain size={16} /> : <Languages size={16} />}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                      agent.active ? 'bg-primary-600 text-white animate-pulse' : 
+                      agent.status === 'Complete' ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-400'
+                    }`}>
+                      {agent.agent === 'Vision Agent' ? <Eye size={20} /> : 
+                       agent.agent === 'Reasoning Agent' ? <Brain size={20} /> : <Sparkles size={20} />}
+                    </div>
+                    <div>
+                      <p className={`text-[10px] font-black uppercase tracking-widest ${
+                        agent.active ? 'text-primary-600' : 
+                        agent.status === 'Complete' ? 'text-emerald-600' : 'text-slate-400'
+                      }`}>{agent.agent}</p>
+                      <p className="text-sm font-black text-slate-900 uppercase tracking-tight">{agent.status}</p>
+                    </div>
+                  </div>
+                  {agent.active && (
+                    <div className="flex gap-1">
+                      <span className="w-1.5 h-1.5 bg-primary-600 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                      <span className="w-1.5 h-1.5 bg-primary-600 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                      <span className="w-1.5 h-1.5 bg-primary-600 rounded-full animate-bounce"></span>
+                    </div>
+                  )}
+                  {agent.status === 'Complete' && (
+                    <div className="w-6 h-6 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center">
+                      <CheckCircle2 size={14} />
+                    </div>
+                  )}
                 </div>
-                <div className="text-left flex-1">
-                  <p className={`text-[8px] font-black uppercase tracking-widest leading-none mb-1 ${agent.active ? 'text-primary-600' : 'text-slate-400'}`}>{agent.agent}</p>
-                  <p className={`text-[10px] font-bold leading-tight ${agent.active ? 'text-slate-900' : 'text-slate-500'}`}>{agent.status}</p>
-                </div>
-                {agent.active && <Loader className="animate-spin text-primary-600" size={12} />}
-                {!agent.active && agent.status !== 'Pending' && <CheckCircle2 size={12} className="text-emerald-500" />}
               </motion.div>
             ))}
           </div>
-          <div className="mt-8">
-            <div className="w-full bg-slate-100 h-1 rounded-full overflow-hidden">
-                <motion.div 
-                    initial={{ width: "0%" }}
-                    animate={{ width: "100%" }}
-                    transition={{ duration: 3, ease: "linear" }}
-                    className="bg-primary-600 h-full"
-                ></motion.div>
+
+          <div className="text-center">
+            <div className="inline-flex flex-col items-center">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg border border-slate-100 p-1.5">
+                  <img src={logo} alt="Samarth" className="w-full h-full object-contain" />
+                </div>
+                <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">Samarth Engine</h3>
+              </div>
+              <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] mt-1">E-Governance Platform</p>
             </div>
-            <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest mt-2">Processing Protocols</p>
           </div>
         </motion.div>
       </div>
@@ -548,7 +598,7 @@ const SchemeFinderWizard = () => {
               </div>
               <div>
                 <h2 className="text-2xl font-black tracking-tighter uppercase text-primary-400 leading-none">Samarth</h2>
-                <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] mt-1">E-Governance MAS</p>
+                <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] mt-1">E-Governance Platform</p>
               </div>
             </div>
             

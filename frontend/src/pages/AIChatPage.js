@@ -1,22 +1,40 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { schemeService } from '../services/api';
 import { Send, User, Bot, Sparkles, ArrowLeft, Trash2, Mic, Volume2, VolumeX, MicOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import logo from '../assets/logo.png';
 import { useLanguage } from '../context/LanguageContext';
 
 const AIChatPage = () => {
-  const { userLanguage } = useLanguage();
+  const navigate = useNavigate();
+  const { userLanguage, t } = useLanguage();
   
   useEffect(() => {
     document.title = "Samarth | AI Assistant";
+    
+    // Cleanup: Stop all speech and recognition when leaving the page
+    return () => {
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
   }, []);
 
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: userLanguage === 'hi' ? "नमस्ते! मैं **समर्थ** हूँ, आपका झारखंड सरकारी योजना सहायक। मैं आज आपकी क्या मदद कर सकता हूँ?" : (userLanguage === 'hinglish' ? "Namaste! Main **Samarth** hoon, aapka Jharkhand Government Scheme assistant. Main aaj aapki kya madad kar sakta hoon?" : "Hello! I am **Samarth**, your Jharkhand Government Scheme assistant. How can I help you today?") }
+    { role: 'assistant', content: t('chat_initial') }
   ]);
+
+  // Update initial message if language changes and no other messages exist
+  useEffect(() => {
+    if (messages.length === 1 && messages[0].role === 'assistant') {
+      setMessages([{ role: 'assistant', content: t('chat_initial') }]);
+    }
+  }, [userLanguage]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
@@ -142,7 +160,13 @@ const AIChatPage = () => {
       // Optional: Get user profile from localStorage if available
       const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
       const response = await schemeService.chat(messageToSend, userProfile, [], userLanguage);
-      const assistantMessage = { role: 'assistant', content: response.data.response };
+      
+      const assistantMessage = { 
+        role: 'assistant', 
+        content: response.data.response,
+        relatedSchemes: response.data.relatedSchemes || []
+      };
+      
       const updatedMessages = [...newMessages, assistantMessage];
       setMessages(updatedMessages);
       
@@ -161,10 +185,8 @@ const AIChatPage = () => {
   };
 
   const clearChat = () => {
-    const confirmMsg = userLanguage === 'hi' ? 'क्या आप बातचीत मिटाना चाहते हैं?' : (userLanguage === 'hinglish' ? 'Kya aap conversation clear karna chahte hain?' : 'Are you sure you want to clear the conversation?');
-    if (window.confirm(confirmMsg)) {
-      const initialMsg = userLanguage === 'hi' ? "नमस्ते! मैं **समर्थ** हूँ, आपका झारखंड सरकारी योजना सहायक। मैं आज आपकी क्या मदद कर सकता हूँ?" : (userLanguage === 'hinglish' ? "Namaste! Main **Samarth** hoon, aapka Jharkhand Government Scheme assistant. Main aaj aapki kya madad kar sakta hoon?" : "Hello! I am **Samarth**, your Jharkhand Government Scheme assistant. How can I help you today?");
-      setMessages([{ role: 'assistant', content: initialMsg }]);
+    if (window.confirm(t('chat_clear_confirm'))) {
+      setMessages([{ role: 'assistant', content: t('chat_initial') }]);
       stopSpeaking();
     }
   };
@@ -235,6 +257,22 @@ const AIChatPage = () => {
                     >
                       {m.content}
                     </ReactMarkdown>
+
+                    {/* Interactive Scheme Buttons */}
+                    {m.role === 'assistant' && m.relatedSchemes && m.relatedSchemes.length > 0 && (
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {m.relatedSchemes.map((scheme) => (
+                          <button
+                            key={scheme.id}
+                            onClick={() => navigate(`/scheme/${scheme.id}`)}
+                            className="flex items-center gap-2 px-4 py-2 bg-primary-50 text-primary-700 border border-primary-100 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary-600 hover:text-white transition-all shadow-sm active:scale-95 group"
+                          >
+                            <Sparkles size={12} className="group-hover:animate-pulse" />
+                            {scheme.scheme_name}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   {m.role === 'assistant' && (
                     <button 

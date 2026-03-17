@@ -1,7 +1,7 @@
-# Samarth: Hybrid Symbolic-Generative Multi-Agent System (MAS)
+# Samarth: Hybrid Symbolic-Generative Platform
 ### Research-Grade Digital Assistant for Jharkhand E-Governance
 
-Samarth is a research-oriented, full-stack Multi-Agent System (MAS) designed for the dissertation project of MCA. It addresses the complexity of government policy accessibility in Jharkhand by combining **Symbolic AI** (deterministic rule engines) with **Generative AI** (Large Language Models) to provide accurate, explainable, and accessible scheme recommendations.
+Samarth is a research-oriented, full-stack E-Governance platform designed for the dissertation project of MCA. It addresses the complexity of government policy accessibility in Jharkhand by combining **Symbolic AI** (deterministic rule engines) with **Generative AI** (Large Language Models) to provide accurate, explainable, and accessible scheme recommendations.
 
 ---
 
@@ -15,7 +15,7 @@ graph TD
     User((Citizen)) -->|Input/Docs| UI[React Frontend]
     UI -->|API Request| Coordinator[Coordinator Agent - AMS/DF]
     
-    subgraph "Multi-Agent System (MAS) - FIPA-lite Protocol"
+    subgraph "Samarth Engine - FIPA-lite Protocol"
         Coordinator <-->|Message| Vision[Vision Agent - LLaVA]
         Coordinator <-->|Message| Eligibility[Eligibility Agent - Symbolic AI]
         Coordinator <-->|Message| Explanation[Explanation Agent - Generative AI]
@@ -52,7 +52,7 @@ The system is composed of several specialized agents that communicate via a **Co
 
 ```text
 samarth/
-├── backend/                # MAS Server (Node.js/Express)
+├── backend/                # Samarth Server (Node.js/Express)
 │   ├── agents/             # Autonomous Agent Definitions
 │   │   ├── CoordinatorAgent.js   # Agent Management System (AMS)
 │   │   ├── EligibilityAgent.js   # Symbolic Matching Engine

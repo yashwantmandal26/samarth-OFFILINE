@@ -41,38 +41,51 @@ const chatAgent = {
 
         let languageInstruction = "";
         if (language === 'hi') {
-            languageInstruction = "IMPORTANT: You MUST generate your entire response in pure Hindi script (Devanagari). Do not use English.";
+            languageInstruction = "CRITICAL SYSTEM DIRECTIVE: You MUST generate your entire response in pure Hindi script (Devanagari). Do NOT use English characters. Even if the user message is in English, you must reply in Hindi.";
         } else if (language === 'hinglish') {
-            languageInstruction = "IMPORTANT: You MUST generate your entire response in Hinglish. Use the Latin/English alphabet, but speak in conversational Hindi (e.g., 'Aap is scheme ke liye eligible hain kyunki...').";
+            languageInstruction = "CRITICAL SYSTEM DIRECTIVE: You MUST generate your entire response in Hinglish. Use the Latin/English alphabet, but speak in conversational Hindi (e.g., 'Aap is scheme ke liye eligible hain kyunki...'). Do NOT use standard English.";
         } else {
             languageInstruction = "Respond in clear, professional English.";
         }
 
-        const prompt = `
-        System: You are Samarth, a professional AI assistant for Jharkhand E-Governance.
+        const systemPrompt = `
+        You are Samarth, a professional AI assistant for Jharkhand E-Governance.
+        ${languageInstruction}
+        
+        System Context:
         User Name: ${userProfile.name || 'Citizen'}
         User Context: ${JSON.stringify(userProfile)}
         
         Knowledge Base (Relevant Schemes):
         ${schemeContext}
 
-        User Query: "${userMessage}"
-
-        Instructions:
+        Core Instructions:
         1. Answer based on the Knowledge Base and the user's context.
         2. Be helpful, professional, and empathetic.
         3. If the user asks for eligibility, check the 'Eligibility' section in context.
         4. If you don't know the exact answer, suggest visiting a Pragya Kendra (CSC) or Block Office in Jharkhand.
         5. Respond in a clear, conversational tone.
         6. Keep responses under 100 words unless detail is requested.
-        7. ${languageInstruction}
+        7. MANDATORY LANGUAGE COMPLIANCE: ${languageInstruction}
         `;
+
+        const prompt = `User Query: "${userMessage}"`;
         
         try {
-            return await generateResponse(prompt);
+            const aiResponse = await generateResponse(prompt, { system: systemPrompt });
+            return {
+                response: aiResponse,
+                relatedSchemes: contextSchemes.map(s => ({
+                    id: s.id,
+                    scheme_name: s.scheme_name
+                }))
+            };
         } catch (error) {
             console.error("ChatAgent: Error generating response", error);
-            return "I apologize, but my connection to the AI engine is currently slow. Please ensure Ollama is running Llama3:8b and try again in a moment.";
+            return {
+                response: "I apologize, but my connection to the AI engine is currently slow. Please ensure Ollama is running Llama3:8b and try again in a moment.",
+                relatedSchemes: []
+            };
         }
     }
 };

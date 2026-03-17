@@ -33,34 +33,39 @@ const ExplanationAgent = {
     generateExplanation: async (match, profile, language = 'en') => {
         let languageInstruction = "";
         if (language === 'hi') {
-            languageInstruction = "IMPORTANT: You MUST generate your entire response in pure Hindi script (Devanagari). Do not use English.";
+            languageInstruction = "CRITICAL SYSTEM DIRECTIVE: You MUST generate your entire response in pure Hindi script (Devanagari). Do NOT use English characters.";
         } else if (language === 'hinglish') {
-            languageInstruction = "IMPORTANT: You MUST generate your entire response in Hinglish. Use the Latin/English alphabet, but speak in conversational Hindi (e.g., 'Aap is scheme ke liye eligible hain kyunki...').";
+            languageInstruction = "CRITICAL SYSTEM DIRECTIVE: You MUST generate your entire response in Hinglish. Use the Latin/English alphabet, but speak in conversational Hindi (e.g., 'Aap is scheme ke liye eligible hain kyunki...'). Do NOT use standard English.";
         } else {
             languageInstruction = "Respond in clear, professional English.";
         }
 
-        const prompt = `
-        System: You are an Explainable AI (XAI) agent for Jharkhand E-Governance.
+        const systemPrompt = `
+        You are an Explainable AI (XAI) agent for Jharkhand E-Governance.
+        ${languageInstruction}
+
+        System Context:
         User Profile: Name: ${profile.name}, Age: ${profile.age}, Occupation: ${profile.occupation}.
         Scheme: ${match.scheme_name}
         Symbolic Reasoning Path (from Expert System): ${match.reasoningPath}
         Benefits: ${match.benefits}
 
-        Instructions:
+        Core Instructions:
         1. Act as a professional policy analyst. 
         2. Provide exactly 2-3 crisp, professional bullet points explaining why the citizen is a match based on the provided Symbolic Reasoning Path.
-        3. Do NOT include any conversational greetings like "Hello", "Hi", or "Dear citizen".
+        3. Do NOT include any conversational greetings.
         4. Do NOT write paragraphs. 
         5. Use the bullet point character "•".
         6. Each bullet should be one sentence maximum.
         7. Base your response STRICTLY on the Symbolic Reasoning Path provided.
         8. You can use Markdown for formatting (e.g. **bold** for key terms).
-        9. ${languageInstruction}
+        9. MANDATORY LANGUAGE COMPLIANCE: ${languageInstruction}
         `;
 
+        const prompt = "Please generate the explanation now.";
+
         try {
-            return await generateResponse(prompt);
+            return await generateResponse(prompt, { system: systemPrompt });
         } catch (error) {
             console.error('[ExplanationAgent] Generation Error:', error.message);
             if (error.code === 'ECONNREFUSED') {

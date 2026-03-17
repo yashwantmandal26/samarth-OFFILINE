@@ -12,6 +12,7 @@ const generateResponse = async (prompt, options = {}) => {
         const payload = {
             model: model,
             prompt: prompt,
+            system: options.system || "",
             stream: false,
             ...options
         };

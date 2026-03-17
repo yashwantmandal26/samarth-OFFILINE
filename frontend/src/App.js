@@ -87,6 +87,8 @@ const LanguageToggle = () => {
 };
 
 function App() {
+  const { t } = useLanguage();
+
   return (
     <Router>
       <ScrollToTop />
@@ -103,15 +105,15 @@ function App() {
                   </div>
                   <div>
                     <span className="block text-2xl font-black text-slate-900 tracking-tighter uppercase leading-none">Samarth</span>
-                    <span className="text-[8px] font-black text-slate-400 uppercase tracking-[0.3em]">Jharkhand MAS</span>
+                    <span className="text-[8px] font-black text-slate-400 uppercase tracking-[0.3em]">Jharkhand Platform</span>
                   </div>
                 </Link>
               </div>
               <div className="hidden lg:flex items-center gap-4">
-                <NavLink to="/" icon={Home} label="Home" />
-                <NavLink to="/finder" icon={Search} label="Find Schemes" />
-                <NavLink to="/explorer" icon={BookOpen} label="Explorer" />
-                <NavLink to="/chat" icon={MessageSquare} label="AI Assistant" />
+                <NavLink to="/" icon={Home} label={t('nav_home')} />
+                <NavLink to="/finder" icon={Search} label={t('nav_finder')} />
+                <NavLink to="/explorer" icon={BookOpen} label={t('nav_explorer')} />
+                <NavLink to="/chat" icon={MessageSquare} label={t('nav_chat')} />
                 <div className="w-px h-8 bg-slate-100 mx-2" />
                 <LanguageToggle />
               </div>
@@ -183,8 +185,8 @@ function App() {
                 MCA Dissertation Project
               </p>
               <div className="flex items-center gap-2 text-[10px] font-black text-slate-300 uppercase tracking-widest">
-                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                MAS System Active
+                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                Samarth System Active
               </div>
             </div>
           </div>

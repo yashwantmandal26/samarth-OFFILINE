@@ -6,7 +6,7 @@ require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 
-// NEW: Hybrid Symbolic-Generative MAS Orchestration
+// NEW: Hybrid Symbolic-Generative Platform Orchestration
 const CoordinatorAgent = require('./agents/CoordinatorAgent');
 const SimulationAgent = require('./agents/SimulationAgent');
 const chatAgent = require('./agents/chatAgent');
@@ -25,15 +25,15 @@ app.post('/api/chat', async (req, res) => {
     try {
         const { message, userProfile, topSchemes, language } = req.body;
         console.log(`[API] Received Chat Request (${language}). Delegating to ChatAgent...`);
-        const response = await chatAgent.chat(message, userProfile || {}, topSchemes || [], language || 'en');
-        res.json({ response });
+        const result = await chatAgent.chat(message, userProfile || {}, topSchemes || [], language || 'en');
+        res.json(result);
     } catch (error) {
         console.error('[API] Chat Error:', error);
         res.status(500).json({ error: 'Chat Protocol Failed' });
     }
 });
 
-// 1. Policy Recommendation Endpoint (MAS Workflow)
+// 1. Policy Recommendation Endpoint (Samarth Workflow)
 app.post('/api/recommendations', upload.single('document'), async (req, res) => {
     try {
         const rawUserData = req.body.userData ? JSON.parse(req.body.userData) : req.body;
@@ -45,7 +45,7 @@ app.post('/api/recommendations', upload.single('document'), async (req, res) => 
         res.json(result);
     } catch (error) {
         console.error('[API] Recommendation Error:', error);
-        res.status(500).json({ error: 'MAS Protocol Execution Failed' });
+        res.status(500).json({ error: 'Samarth Protocol Execution Failed' });
     }
 });
 
@@ -92,9 +92,9 @@ app.get('/api/schemes/:id', (req, res) => {
 });
 
 app.get('/api/health', (req, res) => {
-    res.json({ status: 'Samarth MAS Backend is Active', architecture: 'Hybrid Symbolic-Generative' });
+    res.json({ status: 'Samarth Backend is Active', architecture: 'Hybrid Symbolic-Generative' });
 });
 
 app.listen(PORT, () => {
-    console.log(`Samarth MAS Backend running on http://localhost:${PORT}`);
+    console.log(`Samarth Backend running on http://localhost:${PORT}`);
 });

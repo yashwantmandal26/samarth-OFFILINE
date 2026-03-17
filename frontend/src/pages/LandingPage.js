@@ -12,8 +12,11 @@ import {
   Sparkles
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useLanguage } from '../context/LanguageContext';
 
 const LandingPage = () => {
+  const { t } = useLanguage();
+
   useEffect(() => {
     document.title = "Samarth | Jharkhand AI E-Governance";
   }, []);
@@ -34,10 +37,14 @@ const LandingPage = () => {
                 Next-Gen E-Governance Platform
               </div>
               <h1 className="text-6xl md:text-7xl lg:text-8xl font-black text-slate-900 mb-8 tracking-tighter leading-[0.9]">
-                Empowering <span className="text-primary-600">Jharkhand</span> through AI.
+                {t('hero_title').split(' ').map((word, i) => (
+                  <React.Fragment key={i}>
+                    {word === 'Jharkhand' || word === 'झारखंड' ? <span className="text-primary-600">{word}</span> : word}{' '}
+                  </React.Fragment>
+                ))}
               </h1>
               <p className="text-lg md:text-xl text-slate-500 font-medium leading-relaxed max-w-2xl mx-auto mb-12 italic">
-                Samarth is a research-grade Multi-Agent System designed to bridge the gap between complex government policies and citizens.
+                {t('hero_subtitle')}
               </p>
               
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -45,13 +52,13 @@ const LandingPage = () => {
                   to="/finder"
                   className="btn-primary px-10 py-5 text-lg"
                 >
-                  Find My Schemes <Search size={20} />
+                  {t('find_btn')} <Search size={20} />
                 </Link>
                 <Link
                   to="/chat"
                   className="w-full sm:w-auto px-10 py-5 bg-white text-slate-700 border border-slate-200 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:border-primary-200 hover:text-primary-600 transition-all flex items-center justify-center gap-3 active:scale-95 shadow-sm"
                 >
-                  <MessageSquare size={20} /> AI Assistant
+                  <MessageSquare size={20} /> {t('nav_chat')}
                 </Link>
               </div>
             </motion.div>
