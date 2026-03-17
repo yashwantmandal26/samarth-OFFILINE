@@ -23,9 +23,9 @@ app.use(bodyParser.json());
 // 0. AI Chat Endpoint
 app.post('/api/chat', async (req, res) => {
     try {
-        const { message, userProfile, topSchemes, language } = req.body;
+        const { message, userProfile, topSchemes, language, history } = req.body;
         console.log(`[API] Received Chat Request (${language}). Delegating to ChatAgent...`);
-        const result = await chatAgent.chat(message, userProfile || {}, topSchemes || [], language || 'en');
+        const result = await chatAgent.chat(message, userProfile || {}, topSchemes || [], language || 'en', history || []);
         res.json(result);
     } catch (error) {
         console.error('[API] Chat Error:', error);
@@ -36,7 +36,20 @@ app.post('/api/chat', async (req, res) => {
 // 1. Policy Recommendation Endpoint (Samarth Workflow)
 app.post('/api/recommendations', upload.single('document'), async (req, res) => {
     try {
-        const rawUserData = req.body.userData ? JSON.parse(req.body.userData) : req.body;
+        console.log("[API] Body keys:", Object.keys(req.body));
+        let rawUserData = {};
+        
+        if (req.body.userData) {
+            try {
+                rawUserData = JSON.parse(req.body.userData);
+            } catch (e) {
+                console.warn("[API] Could not parse userData as JSON, using raw body");
+                rawUserData = req.body;
+            }
+        } else {
+            rawUserData = req.body;
+        }
+
         const fileBuffer = req.file ? req.file.buffer : null;
         const language = req.body.language || 'en';
 
@@ -44,8 +57,8 @@ app.post('/api/recommendations', upload.single('document'), async (req, res) => 
         const result = await CoordinatorAgent.requestRecommendations(rawUserData, fileBuffer, language);
         res.json(result);
     } catch (error) {
-        console.error('[API] Recommendation Error:', error);
-        res.status(500).json({ error: 'Samarth Protocol Execution Failed' });
+        console.error('[API] Recommendation Error:', error.message);
+        res.status(500).json({ error: error.message || 'Samarth Protocol Execution Failed' });
     }
 });
 

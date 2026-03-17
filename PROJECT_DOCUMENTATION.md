@@ -59,7 +59,7 @@ graph TD
 ```
 
 - **Coordinator Agent (AMS/DF)**: Orchestrates the workflow and manages the message-passing protocol.
-- **Vision Agent**: Handles multimodal document analysis using LLaVA.
+- **Vision Agent**: Handles multimodal document analysis using a Hybrid OCR approach (EasyOCR for stable, accurate text extraction + Llama3 for semantic parsing).
 - **Eligibility Agent**: Executes deterministic, rule-based matching (Symbolic AI).
 - **Explanation Agent**: Translates complex logic into human-readable vernacular summaries.
 - **Chat Agent**: A RAG (Retrieval-Augmented Generation) assistant for real-time policy queries.
@@ -141,13 +141,17 @@ Stored in `jharkhand_schemes.json` as a collection of objects:
 2. **Pull Models**:
    ```bash
    ollama pull llama3:8b
-   ollama pull llava
    ```
-3. **Setup Backend**:
+3. **Setup OCR (EasyOCR)**:
+   Ensure Python is installed, then run:
+   ```bash
+   pip install easyocr
+   ```
+4. **Setup Backend**:
    ```bash
    cd backend && npm install && node server.js
    ```
-4. **Setup Frontend**:
+5. **Setup Frontend**:
    ```bash
    cd frontend && npm install && npm start
    ```

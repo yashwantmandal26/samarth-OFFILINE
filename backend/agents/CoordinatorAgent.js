@@ -38,44 +38,67 @@ const CoordinatorAgent = {
 
             // 1. VISION AGENT INTERACTION (If document provided)
             if (fileBuffer) {
-                const visionMsg = CoordinatorAgent.createMessage(
-                    "CoordinatorAgent", 
-                    "VisionAgent", 
-                    "REQUEST_EXTRACT_ATTRIBUTES", 
-                    { buffer: "IMAGE_DATA" }
-                );
-                messageLog.push(visionMsg);
+                try {
+                    const visionMsg = CoordinatorAgent.createMessage(
+                        "CoordinatorAgent", 
+                        "VisionAgent", 
+                        "REQUEST_EXTRACT_ATTRIBUTES", 
+                        { buffer: "IMAGE_DATA" }
+                    );
+                    messageLog.push(visionMsg);
 
-                const extractedData = await VisionAgent.handleMessage(visionMsg, fileBuffer);
-                currentProfile = { ...currentProfile, ...extractedData };
+                    const extractedData = await VisionAgent.handleMessage(visionMsg, fileBuffer);
+                    console.log("[CoordinatorAgent] Vision Data Extracted:", extractedData);
+                    currentProfile = { ...currentProfile, ...extractedData };
+                } catch (visionErr) {
+                    console.error("[CoordinatorAgent] Vision Stage Failed:", visionErr.message);
+                    // Continue with manual data if vision fails
+                }
             }
 
             // 2. ELIGIBILITY AGENT INTERACTION (Symbolic AI)
-            const rawSchemes = JSON.parse(fs.readFileSync(SCHEMES_PATH, 'utf8'));
-            const eligibilityMsg = CoordinatorAgent.createMessage(
-                "CoordinatorAgent",
-                "EligibilityAgent",
-                "REQUEST_SYMBOLIC_EVALUATION",
-                { profile: currentProfile, schemes: rawSchemes }
-            );
-            messageLog.push(eligibilityMsg);
+            let evaluationResult;
+            try {
+                const rawSchemes = JSON.parse(fs.readFileSync(SCHEMES_PATH, 'utf8'));
+                const eligibilityMsg = CoordinatorAgent.createMessage(
+                    "CoordinatorAgent",
+                    "EligibilityAgent",
+                    "REQUEST_SYMBOLIC_EVALUATION",
+                    { profile: currentProfile, schemes: rawSchemes }
+                );
+                messageLog.push(eligibilityMsg);
 
-            const evaluationResult = await EligibilityAgent.handleMessage(eligibilityMsg);
+                evaluationResult = await EligibilityAgent.handleMessage(eligibilityMsg);
+            } catch (eligibilityErr) {
+                console.error("[CoordinatorAgent] Eligibility Stage Failed:", eligibilityErr.message);
+                throw new Error(`Eligibility Engine Error: ${eligibilityErr.message}`);
+            }
 
             // 3. EXPLANATION AGENT INTERACTION (Generative XAI)
-            const top3 = evaluationResult.matches.slice(0, 3);
-            const explainedMatches = await Promise.all(top3.map(async (match) => {
-                const explanationMsg = CoordinatorAgent.createMessage(
-                    "CoordinatorAgent",
-                    "ExplanationAgent",
-                    "REQUEST_XAI_EXPLANATION",
-                    { match, profile: currentProfile, language }
-                );
-                messageLog.push(explanationMsg);
-                
-                const explanation = await ExplanationAgent.handleMessage(explanationMsg);
-                return { ...match, aiExplanation: explanation };
-            }));
+            let explainedMatches = [];
+            try {
+                const top3 = evaluationResult.matches.slice(0, 3);
+                explainedMatches = await Promise.all(top3.map(async (match) => {
+                    const explanationMsg = CoordinatorAgent.createMessage(
+                        "CoordinatorAgent",
+                        "ExplanationAgent",
+                        "REQUEST_XAI_EXPLANATION",
+                        { match, profile: currentProfile, language }
+                    );
+                    messageLog.push(explanationMsg);
+                    
+                    try {
+                        const explanation = await ExplanationAgent.handleMessage(explanationMsg);
+                        return { ...match, aiExplanation: explanation };
+                    } catch (e) {
+                        console.error(`[CoordinatorAgent] Explanation failed for ${match.scheme_name}:`, e.message);
+                        return { ...match, aiExplanation: "Explanation currently unavailable." };
+                    }
+                }));
+            } catch (explanationErr) {
+                console.error("[CoordinatorAgent] Explanation Stage Failed:", explanationErr.message);
+                // Non-critical, return matches without AI explanations if needed
+            }
 
             // 4. FINAL RESPONSE ASSEMBLY
             return {
@@ -89,7 +112,7 @@ const CoordinatorAgent = {
             };
 
         } catch (error) {
-            console.error('[CoordinatorAgent] Protocol Failure:', error);
+            console.error('[CoordinatorAgent] Protocol Failure:', error.message);
             throw error;
         }
     }

@@ -22,7 +22,8 @@ export const schemeService = {
         }
         return api.post('/recommendations', { ...userData, language });
     },
-    chat: (message, userProfile, topSchemes, language) => api.post('/chat', { message, userProfile, topSchemes, language })
+    chat: (message, userProfile, topSchemes, language, history = []) => 
+        api.post('/chat', { message, userProfile, topSchemes, language, history })
 };
 
 export default api;

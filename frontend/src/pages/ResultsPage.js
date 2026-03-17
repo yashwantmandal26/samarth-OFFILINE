@@ -126,14 +126,14 @@ const ResultsPage = () => {
     'Social Welfare': ['Social Welfare', 'Social Security']
   };
 
-  const filteredRecommendations = activeCategory === 'All' 
+  const filteredRecommendations = (activeCategory === 'All' 
     ? recommendations 
     : recommendations.filter(r => {
         const mappedCategories = categoryMap[activeCategory] || [activeCategory];
         return mappedCategories.includes(r.category);
-      });
+      })).slice(0, 12); // Limit to Top 12 highly relevant matches
 
-  const summaryText = `Analysis complete, ${profile.name ? profile.name : 'Citizen'}. Based on your socio-economic profile as a ${profile.occupation} in ${profile.district}, Samarth has identified high-probability matches primarily in the ${recommendations[0]?.category || 'Education and Skill Development'} sector. Below is the refined list of eligible schemes ranked by match accuracy.`;
+  const summaryText = `Analysis complete, ${profile.name ? profile.name : 'Citizen'}. Based on your socio-economic profile as a ${profile.occupation} in ${profile.district}, Samarth has identified high-probability matches primarily in the ${recommendations[0]?.category || 'Education and Skill Development'} sector. Below is the refined list of the top ${filteredRecommendations.length} highly relevant schemes tailored for your profile.`;
 
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-6">
@@ -148,7 +148,7 @@ const ResultsPage = () => {
               Recommended Schemes
             </h1>
             <p className="text-sm text-slate-500 font-medium">
-              Showing {filteredRecommendations.length} matches tailored for <span className="text-slate-900 font-bold">{profile.name}</span>
+              Showing Top {filteredRecommendations.length} highly relevant matches tailored for <span className="text-slate-900 font-bold">{profile.name}</span>
             </p>
           </div>
           <div className="hidden md:block text-right">

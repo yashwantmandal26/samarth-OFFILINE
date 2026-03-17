@@ -346,34 +346,50 @@ const SchemeFinderWizard = () => {
                     <motion.div 
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="w-full space-y-4"
+                      className="w-full space-y-6"
                     >
-                      <div className="grid grid-cols-2 gap-3">
-                        {Object.entries(extractedSummary).map(([key, value]) => (key !== 'missing' && value) && (
-                          <div key={key} className="p-4 bg-slate-50 border border-slate-100 rounded-2xl">
-                            <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">{key}</p>
-                            <p className="text-xs font-black text-slate-900 uppercase truncate">
-                              {value === 'Not specified' ? 'Not found' : value}
-                            </p>
+                      <div className="grid grid-cols-2 gap-4">
+                        {Object.entries(extractedSummary).map(([key, value]) => (key !== 'missing' && key !== 'income' && key !== 'socialCategory') && (
+                          <div key={key} className="relative group">
+                            <label className="absolute -top-2 left-3 px-1 bg-white text-[8px] font-black text-primary-600 uppercase tracking-widest z-10">
+                              {key}
+                            </label>
+                            <input 
+                              type={key === 'age' ? 'number' : 'text'}
+                              value={formData[key] || ''}
+                              onChange={(e) => handleInputChange({ target: { name: key, value: e.target.value } })}
+                              className="w-full p-4 bg-white border-2 border-slate-100 rounded-2xl text-xs font-black text-slate-900 uppercase focus:border-primary-500 focus:ring-4 focus:ring-primary-50/50 transition-all outline-none"
+                              placeholder={`Enter ${key}...`}
+                            />
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-300">
+                              <Sparkles size={12} />
+                            </div>
                           </div>
                         ))}
                       </div>
 
                       {missingFields.length > 0 ? (
-                        <div className="p-4 bg-amber-50 border border-amber-100 rounded-2xl">
-                          <div className="flex items-center gap-2 mb-2">
-                            <AlertCircle size={14} className="text-amber-600" />
-                            <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest">Incomplete Data</p>
+                        <div className="p-5 bg-amber-50 border-2 border-amber-100 rounded-[2rem] relative overflow-hidden">
+                          <div className="absolute top-0 right-0 p-3 opacity-10">
+                            <AlertCircle size={40} className="text-amber-600" />
                           </div>
-                          <p className="text-[11px] text-amber-700 font-bold">
-                            I couldn't find your <span className="text-amber-900">{missingFields.join(', ')}</span>. Please fill them in the next steps.
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-2 h-2 bg-amber-500 rounded-full animate-ping"></div>
+                            <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest">Action Required</p>
+                          </div>
+                          <p className="text-[11px] text-amber-800 font-bold leading-relaxed">
+                            Aadhaar scan complete, but I still need your <span className="text-amber-900 underline decoration-amber-300 decoration-2 underline-offset-4">{missingFields.join(', ')}</span>. 
+                            <br/><span className="text-[9px] mt-1 block opacity-70">Click 'Continue' to fill these details.</span>
                           </p>
                         </div>
                       ) : (
-                        <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-2xl">
-                          <div className="flex items-center gap-2">
-                            <CheckCircle2 size={14} className="text-emerald-600" />
-                            <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Complete Profile Found</p>
+                        <div className="p-5 bg-emerald-50 border-2 border-emerald-100 rounded-[2rem] flex items-center gap-4">
+                          <div className="w-10 h-10 bg-emerald-500 text-white rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-emerald-100">
+                            <CheckCircle2 size={20} />
+                          </div>
+                          <div>
+                            <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Verification Ready</p>
+                            <p className="text-[11px] text-emerald-800 font-bold">All essential data captured. Please review above and proceed.</p>
                           </div>
                         </div>
                       )}

@@ -18,18 +18,20 @@ const generateResponse = async (prompt, options = {}) => {
         };
 
         const response = await axios.post(OLLAMA_URL, payload, {
-            timeout: 90000 // 90 seconds timeout for larger models
+            timeout: 180000 // 3 minutes timeout for LLaVA/large models
         });
         
-        // Handle both raw string and JSON responses
+        // Return raw response and let agent handle formatting if JSON fails
         if (options.format === 'json') {
             try {
-                return typeof response.data.response === 'string' 
-                    ? JSON.parse(response.data.response) 
-                    : response.data.response;
+                // Check if Ollama already parsed it
+                if (typeof response.data.response === 'object') return response.data.response;
+                
+                // Try parsing raw string
+                return JSON.parse(response.data.response);
             } catch (e) {
-                console.error('[OllamaService] JSON Parse Error:', e.message);
-                throw new Error('Failed to parse AI JSON response');
+                console.warn('[OllamaService] Direct JSON parse failed, returning raw string for agent extraction');
+                return response.data.response;
             }
         }
         

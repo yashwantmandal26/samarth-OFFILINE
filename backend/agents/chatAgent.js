@@ -5,27 +5,58 @@ const path = require('path');
 const SCHEMES_PATH = path.join(__dirname, '../dataset/jharkhand_schemes.json');
 
 /**
- * Handles natural language queries from users about schemes.
+ * Handles natural language queries from users about schemes and the Samarth project itself.
  */
 const chatAgent = {
-    chat: async (userMessage, userProfile, topSchemes, language = 'en') => {
-        // Load full dataset for RAG-like context if topSchemes is empty
+    chat: async (userMessage, userProfile, topSchemes, language = 'en', history = []) => {
+        // 1. Static Project Knowledge Base (Internal RAG)
+        const projectKnowledge = {
+            name: "Samarth",
+            description: "A Hybrid Symbolic-Generative Multi-Agent System for Jharkhand E-Governance.",
+            developer: "Yashwant Mandal (MCA Dissertation - VIT Vellore)",
+            architecture: "Hybrid Symbolic-Generative (FIPA-lite Protocol)",
+            agents: [
+                { name: "Coordinator Agent", role: "Agent Management System (AMS) / Orchestrator" },
+                { name: "Vision Agent", role: "Multimodal OCR (Aadhaar/Certificate scanning) using LLaVA" },
+                { name: "Eligibility Agent", role: "Deterministic rule matching using Symbolic AI" },
+                { name: "Explanation Agent", role: "Generative Explainable AI (XAI) for policy reasoning" },
+                { name: "Chat Agent", role: "RAG-based conversational assistant" }
+            ],
+            techStack: "Node.js, React, Tailwind, Ollama (Llama3, LLaVA)",
+            features: "Offline-first privacy, voice-enabled STT/TTS, smart document intake."
+        };
+
+        // 2. Enhanced Scheme Retrieval (Scoring Logic)
         let contextSchemes = topSchemes;
         if (!contextSchemes || contextSchemes.length === 0) {
             try {
                 const allSchemes = JSON.parse(fs.readFileSync(SCHEMES_PATH, 'utf8'));
-                // Filter some relevant schemes based on simple keyword match in query
-                const keywords = userMessage.toLowerCase().split(' ');
-                contextSchemes = allSchemes.filter(s => {
-                    const nameMatch = s.scheme_name.toLowerCase().includes(userMessage.toLowerCase());
-                    const categoryMatch = s.category.toLowerCase().includes(userMessage.toLowerCase());
-                    const keywordMatch = Array.isArray(s.keywords) 
-                        ? s.keywords.some(kw => keywords.some(k => kw.toLowerCase().includes(k)))
-                        : (typeof s.keywords === 'string' && keywords.some(k => s.keywords.toLowerCase().includes(k)));
-                    return nameMatch || categoryMatch || keywordMatch;
-                }).slice(0, 5);
+                const query = userMessage.toLowerCase();
+                const historyText = history.slice(-2).map(h => h.content.toLowerCase()).join(' ');
                 
-                // If still empty, just take first 3 for basic context
+                // Scoring system for better RAG
+                contextSchemes = allSchemes.map(s => {
+                    let score = 0;
+                    const name = s.scheme_name.toLowerCase();
+                    const category = s.category.toLowerCase();
+                    const kws = Array.isArray(s.keywords) ? s.keywords.map(k => k.toLowerCase()) : [];
+
+                    if (name.includes(query)) score += 10;
+                    if (category.includes(query)) score += 5;
+                    kws.forEach(kw => { if (query.includes(kw)) score += 3; });
+                    
+                    // Contextual score from history
+                    if (historyText) {
+                        if (name.split(' ').some(word => word.length > 3 && historyText.includes(word))) score += 4;
+                        if (category.split(' ').some(word => word.length > 3 && historyText.includes(word))) score += 2;
+                    }
+                    
+                    return { ...s, r_score: score };
+                })
+                .filter(s => s.r_score > 0)
+                .sort((a, b) => b.r_score - a.r_score)
+                .slice(0, 5);
+                
                 if (contextSchemes.length === 0) {
                     contextSchemes = allSchemes.slice(0, 3);
                 }
@@ -36,49 +67,48 @@ const chatAgent = {
         }
 
         const schemeContext = contextSchemes.map(s => 
-            `- ${s.scheme_name}: ${s.description}. Benefits: ${s.benefits}. Eligibility: ${JSON.stringify(s.eligibility)}`
+            `- ${s.scheme_name}: ${s.description}. Benefits: ${s.benefits}. Eligibility: ${JSON.stringify(s.eligibility)}. Application Process: ${s.application_process}. Documents Needed: ${s.documents_required?.join(', ')}`
         ).join('\n');
 
+        // 3. Prompt Engineering
         let languageInstruction = "";
         if (language === 'hi') {
-            languageInstruction = "CRITICAL SYSTEM DIRECTIVE: You MUST generate your entire response in pure Hindi script (Devanagari). Do NOT use English characters. Even if the user message is in English, you must reply in Hindi.";
+            languageInstruction = "CRITICAL: Reply ONLY in pure Hindi script (Devanagari).";
         } else if (language === 'hinglish') {
-            languageInstruction = "CRITICAL SYSTEM DIRECTIVE: You MUST generate your entire response in Hinglish. Use the Latin/English alphabet, but speak in conversational Hindi (e.g., 'Aap is scheme ke liye eligible hain kyunki...'). Do NOT use standard English.";
+            languageInstruction = "CRITICAL: Reply in Hinglish (Hindi words in English script).";
         } else {
-            languageInstruction = "Respond in clear, professional English.";
+            languageInstruction = "Reply in professional English.";
         }
 
+        const conversationHistory = history.map(h => `${h.role === 'user' ? 'User' : 'Samarth'}: ${h.content}`).join('\n');
+
         const systemPrompt = `
-        You are Samarth, a professional AI assistant for Jharkhand Scheme Identification.
+        You are Samarth, the intelligent assistant for the Samarth Project.
         ${languageInstruction}
         
-        System Context:
-        User Name: ${userProfile.name || 'Citizen'}
-        User Context: ${JSON.stringify(userProfile)}
-        
-        Knowledge Base (Relevant Schemes):
+        KNOWLEDGE BASE (Jharkhand Schemes):
         ${schemeContext}
 
-        Core Instructions:
-        1. Answer the user's query directly and concisely based on the Knowledge Base and user context.
-        2. NO GREETINGS: Do NOT use repetitive greetings like "Namaste, Citizen!" or "I'm here to help you". Jump straight into the information or the answer.
-        3. Be professional, accurate, and empathetic.
-        4. If the user asks for eligibility, check the 'Eligibility' section in context.
-        5. If you don't know the exact answer, suggest visiting a Pragya Kendra (CSC) or Block Office in Jharkhand.
-        6. Keep responses under 100 words unless detail is requested.
-        7. MANDATORY LANGUAGE COMPLIANCE: ${languageInstruction}
+        PROJECT KNOWLEDGE (Internal):
+        - Description: ${projectKnowledge.description}
+        - Architecture: ${projectKnowledge.architecture}
+        - Agents: ${projectKnowledge.agents.map(a => `${a.name} (${a.role})`).join(', ')}
+
+        CORE DIRECTIVES (STRICT):
+        1. CONTEXT STICKINESS: If the user asks "how to get it", "what to do", or "is it for X", you MUST refer to the Application Process, Documents, or Eligibility of the scheme discussed in the IMMEDIATE PREVIOUS message.
+        2. NO HALLUCINATION: Only talk about schemes listed in the KNOWLEDGE BASE above. Do NOT mention schemes like PMJDY or others if they are not in the list.
+        3. NO REPETITION: Do NOT repeat the user's question or use "Citizen" as a prefix.
+        4. DIRECT ANSWER: If asked "what to do", list the Application Process steps directly from the context.
+        5. LANGUAGE: ${languageInstruction}
         `;
 
-        const prompt = `User Query: "${userMessage}"`;
+        const prompt = `History:\n${conversationHistory}\n\nQuery: "${userMessage}"`;
         
         try {
             const aiResponse = await generateResponse(prompt, { system: systemPrompt });
             return {
                 response: aiResponse,
-                relatedSchemes: contextSchemes.map(s => ({
-                    id: s.id,
-                    scheme_name: s.scheme_name
-                }))
+                relatedSchemes: contextSchemes.map(s => ({ id: s.id, scheme_name: s.scheme_name }))
             };
         } catch (error) {
             console.error("ChatAgent: Error generating response", error);

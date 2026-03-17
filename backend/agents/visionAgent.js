@@ -8,6 +8,7 @@
  */
 
 const { generateResponse } = require('../services/ollamaService');
+const Tesseract = require('tesseract.js');
 require('dotenv').config();
 
 const VisionAgent = {
@@ -19,7 +20,7 @@ const VisionAgent = {
 
         switch (intent) {
             case "REQUEST_EXTRACT_ATTRIBUTES":
-                console.log("[VisionAgent] Processing Multimodal Input (LLaVA)...");
+                console.log("[VisionAgent] Processing Document with Native Tesseract Engine...");
                 return await VisionAgent.extract(fileBuffer);
             default:
                 throw new Error(`[VisionAgent] Unknown Intent: ${intent}`);
@@ -27,79 +28,92 @@ const VisionAgent = {
     },
 
     /**
-     * Multimodal Feature Extraction
-     * Communicates with local LLaVA via Ollama API.
+     * Stable OCR Extraction (Native Tesseract.js)
+     * No Python/Paddle dependencies required.
      */
     extract: async (imageBuffer) => {
         try {
-            const base64Image = imageBuffer.toString('base64');
+            console.log(`[VisionAgent] Step 1: Extracting text with Tesseract.js...`);
             
-            const prompt = `
-            You are a specialized OCR agent for Indian Aadhaar Cards. 
-            Analyze the provided image and extract information with 100% accuracy.
-            
-            Look for:
-            1. Name: Usually above the DOB.
-            2. DOB: Format is DD/MM/YYYY. Calculate age based on current year 2026.
-            3. Gender: Male/Female.
-            4. Address: Extract District, State, and PIN code if available on the back side.
-            
-            Return ONLY a JSON object in this strict format:
-            {
-                "name": "Full Name",
-                "age": 25,
-                "gender": "Male/Female",
-                "income": 0, 
-                "socialCategory": "General",
-                "isBPL": false,
-                "district": "District Name",
-                "state": "State Name",
-                "pincode": "6-digit number"
-            }
-            
-            If a value is not found, use these defaults: name: "Citizen", age: 0, gender: "Not specified", district: "Not specified", state: "Jharkhand", pincode: "".
-            Do not include any conversational text.
-            `;
-
-            const aiResponse = await generateResponse(prompt, {
-                model: 'llava',
-                images: [base64Image],
-                format: 'json'
+            const { data: { text } } = await Tesseract.recognize(imageBuffer, 'eng+hin', {
+                // Config to prioritize clean text over speed
+                tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz/ -.,:()',
             });
 
-            // Clean and Parse logic
-            let cleanedData = {};
-            try {
-                if (typeof aiResponse === 'string') {
-                    const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
-                    cleanedData = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(aiResponse);
-                } else {
-                    cleanedData = aiResponse;
-                }
-            } catch (e) {
-                console.error('[VisionAgent] JSON Parse Error:', e.message);
-                throw new Error('Aadhaar data extraction failed. Please ensure the image is clear.');
+            console.log("[VisionAgent] Raw Text Captured:", text?.substring(0, 100));
+
+            if (!text || text.trim().length < 10) {
+                console.warn("[VisionAgent] Text too short. Skipping AI parsing.");
+                return { name: 'Citizen', age: 0 };
             }
 
-            // Enhanced Normalization for Aadhaar
+            console.log("[VisionAgent] Step 2: Semantic Parsing with Llama3...");
+            
+            const parsingPrompt = `
+            Extracted text from an Indian Aadhaar Card (front and back):
+            """
+            ${text}
+            """
+
+            CRITICAL TASK: Extract the MAIN HOLDER'S details with 100% precision.
+            
+            Strict Name Rules:
+            1. The User's Name is ONLY found on the FRONT side, usually above or near the DOB.
+            2. NEVER use names associated with "C/O", "S/O", "D/O", or "W/O" as the User Name. These are relative names found on the BACK side.
+            3. If you see "Shyam Kumar Saw" after "C/O", it is the FATHER/RELATIVE name. IGNORE it for the 'name' field.
+            4. Identify the name that appears independently (e.g., "Srishti Saw").
+
+            Other Rules:
+            - DOB/AGE: Use "DOB: DD/MM/YYYY" to calculate age in 2026.
+            - GENDER: Standardize to "Male" or "Female".
+            - DISTRICT: Identify the Jharkhand district from the address.
+            
+            Required JSON Format:
+            {
+                "name": "Main Holder Full Name (MUST NOT BE RELATIVE)",
+                "age": 25,
+                "gender": "Male/Female",
+                "district": "District Name"
+            }
+            Return ONLY the JSON object.
+            `;
+
+            let aiResponse;
+            try {
+                aiResponse = await generateResponse(parsingPrompt, {
+                    model: 'llama3:8b',
+                    format: 'json'
+                });
+            } catch (llamaErr) {
+                console.error("[VisionAgent] Llama3 Parsing Failed. Returning defaults.");
+                return { name: 'Citizen', age: 0 };
+            }
+
+            let cleanedData = {};
+            try {
+                if (typeof aiResponse === 'object') {
+                    cleanedData = aiResponse;
+                } else {
+                    const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
+                    cleanedData = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(aiResponse);
+                }
+            } catch (e) {
+                cleanedData = { name: 'Citizen', age: 0 };
+            }
+
             return {
                 name: cleanedData.name || 'Citizen',
                 age: parseInt(cleanedData.age) || 0,
-                gender: (cleanedData.gender || 'Not specified').charAt(0).toUpperCase() + (cleanedData.gender || '').slice(1).toLowerCase(),
-                income: parseInt(cleanedData.income) || 0,
-                socialCategory: cleanedData.socialCategory || 'General',
-                isBPL: !!cleanedData.isBPL,
-                district: cleanedData.district || 'Not specified',
-                state: cleanedData.state || 'Jharkhand',
-                pincode: cleanedData.pincode || '',
-                residence: (cleanedData.district && cleanedData.district !== 'Not specified') ? 'Rural' : 'Rural' // Logic can be refined
+                gender: cleanedData.gender || 'Not specified',
+                income: 0,
+                socialCategory: 'General',
+                isBPL: false,
+                district: cleanedData.district || 'Not specified'
             };
         } catch (error) {
-            console.error('[VisionAgent] Extraction Error:', error.message);
-            if (error.code === 'ECONNABORTED') {
-                throw new Error('Ollama vision processing timed out. Please try again or fill manually.');
-            }
-            throw new Error('Ollama server unreachable or LLaVA model missing. Please ensure Ollama is running with "llava" model.');
+            console.error('[VisionAgent] Native OCR Error:', error.message);
+            // DO NOT THROW. Return fallback to allow manual fill.
+            return { name: 'Citizen', age: 0, error: 'OCR failed. Please fill manually.' };
         }
     }
 };

@@ -46,30 +46,50 @@ const EligibilityAgent = {
             let reasoning_path = []; // Mathematical Audit Trail
             const { eligibility } = scheme;
 
-            // Rule 1: Occupation Match
+            // --- START STRICT VETO RULES ---
+            
+            // Veto 1: Gender Match (Hard Disqualification)
+            if (eligibility.gender && userProfile.gender && userProfile.gender !== 'Other') {
+                if (userProfile.gender !== eligibility.gender) {
+                    return { ...scheme, matchScore: 0, reasoningPath: `VETO: GENDER_MISMATCH(User:${userProfile.gender}, Scheme:${eligibility.gender})` };
+                }
+            }
+
+            // Veto 2: Age Bounds (Hard Disqualification)
+            if (eligibility.age_min || eligibility.age_max) {
+                const ageMin = eligibility.age_min || 0;
+                const ageMax = eligibility.age_max || 150;
+                if (userProfile.age < ageMin || userProfile.age > ageMax) {
+                    return { ...scheme, matchScore: 0, reasoningPath: `VETO: AGE_OUT_OF_BOUNDS(${ageMin} <= UserAge(${userProfile.age}) <= ${ageMax})` };
+                }
+            }
+
+            // Veto 3: Strict Occupation/Category (Heavy Penalty / Veto)
+            if (eligibility.occupation && userProfile.occupation) {
+                if (userProfile.occupation !== eligibility.occupation) {
+                    // If scheme is specific to an occupation (e.g. Farmer) and user is not, reject
+                    return { ...scheme, matchScore: 0, reasoningPath: `VETO: OCCUPATION_MISMATCH(User:${userProfile.occupation}, Scheme:${eligibility.occupation})` };
+                }
+            }
+
+            // --- END STRICT VETO RULES ---
+
+            // Rule 1: Occupation Match (Redundant due to Veto, but kept for score weight)
             if (eligibility.occupation) {
                 totalPossibleWeight += WEIGHTS.OCCUPATION;
                 if (userProfile.occupation === eligibility.occupation) {
                     score += WEIGHTS.OCCUPATION;
-                    reasoning_path.push(`RULE_OCCUPATION_MATCH: User(${userProfile.occupation}) == Scheme(${eligibility.occupation})`);
+                    reasoning_path.push(`RULE_OCCUPATION_MATCH`);
                 }
             }
 
-            // Rule 2: Income Threshold (Normalized Logic)
+            // Rule 2: Income Threshold
             if (eligibility.income_limit !== undefined && eligibility.income_limit !== null) {
                 totalPossibleWeight += WEIGHTS.INCOME;
-                if (typeof eligibility.income_limit === 'number') {
-                    if (userProfile.income <= eligibility.income_limit || userProfile.isBPL) {
-                        score += WEIGHTS.INCOME;
-                        reasoning_path.push(`RULE_INCOME_VALID: UserIncome(${userProfile.income}) <= Limit(${eligibility.income_limit})`);
-                    }
+                if (userProfile.income <= eligibility.income_limit || userProfile.isBPL) {
+                    score += WEIGHTS.INCOME;
+                    reasoning_path.push(`RULE_INCOME_VALID`);
                 }
-            } else {
-                // No income limit defined (null or undefined) - citizen is eligible by default for this rule
-                // We don't add to totalPossibleWeight, effectively ignoring this rule in the score calculation
-                // OR we could give full marks for this weight. Let's follow the "do not penalize" instruction.
-                // By not adding to totalPossibleWeight, the denominator is smaller, so other rules carry more weight.
-                reasoning_path.push(`RULE_INCOME_SKIP: No Income Limit Defined for this scheme.`);
             }
 
             // Rule 3: Social Category Inclusion
@@ -77,7 +97,7 @@ const EligibilityAgent = {
                 totalPossibleWeight += WEIGHTS.CATEGORY;
                 if (eligibility.social_category.includes(userProfile.socialCategory)) {
                     score += WEIGHTS.CATEGORY;
-                    reasoning_path.push(`RULE_CATEGORY_MATCH: UserCategory(${userProfile.socialCategory}) IN [${eligibility.social_category.join(',')}]`);
+                    reasoning_path.push(`RULE_CATEGORY_MATCH`);
                 }
             }
 
@@ -86,61 +106,41 @@ const EligibilityAgent = {
                 totalPossibleWeight += WEIGHTS.RESIDENCE;
                 if (userProfile.residence === eligibility.residence) {
                     score += WEIGHTS.RESIDENCE;
-                    reasoning_path.push(`RULE_RESIDENCE_MATCH: UserArea(${userProfile.residence}) == SchemeArea(${eligibility.residence})`);
+                    reasoning_path.push(`RULE_RESIDENCE_MATCH`);
                 }
             }
 
-            // Rule 5: Age Constraint
+            // Rule 5: Age Constraint (Already Vetoed, but adds to score weight)
             if (eligibility.age_min || eligibility.age_max) {
                 totalPossibleWeight += WEIGHTS.AGE;
-                const ageMin = eligibility.age_min || 0;
-                const ageMax = eligibility.age_max || 150;
-                if (userProfile.age >= ageMin && userProfile.age <= ageMax) {
-                    score += WEIGHTS.AGE;
-                    reasoning_path.push(`RULE_AGE_VALID: ${ageMin} <= UserAge(${userProfile.age}) <= ${ageMax}`);
-                }
+                score += WEIGHTS.AGE; // Full score if it passed Veto
+                reasoning_path.push(`RULE_AGE_VALID`);
             }
 
-            // Rule 6: Preferred Field Match (Strict Filter)
+            // Rule 6: Preferred Field Match
             if (userProfile.preferredField && userProfile.preferredField !== 'Any' && scheme.category) {
                 if (userProfile.preferredField.toLowerCase() !== scheme.category.toLowerCase()) {
-                    // Strict Disqualification: Scheme doesn't match the preferred field
-                    return {
-                        ...scheme,
-                        matchScore: 0,
-                        reasoningPath: `DISQUALIFIED: FIELD_MISMATCH(UserPrefers:${userProfile.preferredField}, SchemeCategory:${scheme.category})`
-                    };
+                    return { ...scheme, matchScore: 0, reasoningPath: `DISQUALIFIED: FIELD_MISMATCH` };
                 } else {
-                    // It matches, so we can give it a small boost or just continue
                     score += WEIGHTS.PREFERRED_FIELD;
                     totalPossibleWeight += WEIGHTS.PREFERRED_FIELD;
-                    reasoning_path.push(`RULE_PREFERENCE_MATCH: UserPreferred(${userProfile.preferredField}) == SchemeCategory(${scheme.category})`);
+                    reasoning_path.push(`RULE_PREFERENCE_MATCH`);
                 }
             }
 
-            // Normalization: Scale score to 100% based on defined rules
-            // If no specific rules were defined (rare), default to a baseline match
-            let finalMatchPercentage = 0;
-            if (totalPossibleWeight > 0) {
-                finalMatchPercentage = Math.round((score / totalPossibleWeight) * 100);
-            } else {
-                finalMatchPercentage = 100; // General schemes apply to everyone
-            }
-
-            // Hard Disqualification: Gender (If defined and mismatched, score becomes 0)
-            if (eligibility.gender && userProfile.gender !== eligibility.gender) {
-                finalMatchPercentage = 0;
-                reasoning_path = [`DISQUALIFIED: GENDER_MISMATCH(User:${userProfile.gender}, Scheme:${eligibility.gender})`];
-            }
+            let finalMatchPercentage = totalPossibleWeight > 0 ? Math.round((score / totalPossibleWeight) * 100) : 100;
 
             return {
                 ...scheme,
                 matchScore: finalMatchPercentage,
-                reasoningPath: reasoning_path.join(' | ') // FIPA Content for Explanation Agent
+                reasoningPath: reasoning_path.join(' | ')
             };
         })
-        .filter(s => s.matchScore > 0)
+        .filter(s => s.matchScore >= 60) // High Score Threshold
         .sort((a, b) => b.matchScore - a.matchScore);
+
+        return { matches: evaluatedMatches };
+    },
 
         return { matches: evaluatedMatches };
     },

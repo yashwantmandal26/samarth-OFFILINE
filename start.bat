@@ -1,66 +1,41 @@
 @echo off
-SETLOCAL EnableDelayedExpansion
+TITLE Samarth AI - Full Stack Launcher
+COLOR 0B
 
-echo ====================================================
-echo      SAMARTH - PROJECT STARTUP SCRIPT
-echo ====================================================
+echo.
+echo  =======================================================
+echo           SAMARTH AI - LOCAL INTELLIGENCE
+echo  =======================================================
+echo.
 
-:: Step 1: Check for Node.js
-echo [1/4] Detecting Runtime Environment...
-node -v >nul 2>&1
-if %errorlevel% neq 0 (
-    echo [ERROR] Node.js is not installed. Please install Node.js to run Samarth.
-    pause
-    exit /b 1
-)
-echo [OK] Node.js detected.
-
-:: Step 2: Install Backend Dependencies
-echo [2/4] Checking Backend Dependencies...
-cd backend
-if not exist "node_modules\" (
-    echo [INFO] node_modules not found in backend. Installing...
-    call npm install
-    if !errorlevel! neq 0 (
-        echo [ERROR] Backend dependency installation failed.
-        pause
-        exit /b 1
-    )
-) else (
-    echo [OK] Backend dependencies already installed.
-)
-cd ..
-
-:: Step 3: Install Frontend Dependencies
-echo [3/4] Checking Frontend Dependencies...
-cd frontend
-if not exist "node_modules\" (
-    echo [INFO] node_modules not found in frontend. Installing...
-    call npm install
-    if !errorlevel! neq 0 (
-        echo [ERROR] Frontend dependency installation failed.
-        pause
-        exit /b 1
-    )
-) else (
-    echo [OK] Frontend dependencies already installed.
-)
-cd ..
-
-:: Step 4: Launching Application
-echo [4/4] Starting Samarth Platform...
-echo ----------------------------------------------------
-echo [TIP] Ensure Ollama is running for AI features.
-echo [TIP] Backend will run on http://localhost:5000
-echo [TIP] Frontend will run on http://localhost:3000
-echo ----------------------------------------------------
-
-:: Start Backend in a new window
-start cmd /k "cd backend && echo Starting Backend Server... && npm start"
-
-:: Start Frontend in the current window (or new)
-start cmd /k "cd frontend && echo Starting Frontend Dev Server... && npm start"
-
-echo [SUCCESS] Samarth is starting up. Please wait for the browser to open.
+:: 1. START OLLAMA (if not already running)
+echo [1/3] Checking Ollama Service...
+set OLLAMA_ORIGINS=*
+start /min "Ollama Service" cmd /c "ollama serve"
 timeout /t 5 >nul
-exit /b 0
+
+:: 2. START BACKEND AGENTS
+echo [2/3] Starting Samarth Backend Agents...
+cd backend
+start /min "Samarth Backend" cmd /c "node server.js"
+timeout /t 3 >nul
+
+:: 3. START FRONTEND INTERFACE
+echo [3/3] Starting Samarth Frontend Interface...
+cd ../frontend
+:: We use port 3001 as default in the script to avoid conflicts
+set PORT=3001
+start /min "Samarth Frontend" cmd /c "npm start"
+
+echo.
+echo  -------------------------------------------------------
+echo   SUCCESS: All Samarth components are initializing!
+echo  -------------------------------------------------------
+echo   - Backend: http://localhost:5000
+echo   - Frontend: http://localhost:3001
+echo   - AI Model: Ollama (Llama3)
+echo  -------------------------------------------------------
+echo.
+echo  Keep this window open to maintain the environment.
+echo  Press any key to close this launcher (Services will keep running).
+pause >nul

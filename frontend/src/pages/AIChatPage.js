@@ -168,7 +168,8 @@ const AIChatPage = () => {
     try {
       // Optional: Get user profile from localStorage if available
       const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
-      const response = await schemeService.chat(messageToSend, userProfile, [], userLanguage);
+      // Pass history (messages) to maintain context, limiting to last 10 messages for performance
+      const response = await schemeService.chat(messageToSend, userProfile, [], userLanguage, messages.slice(-10));
       
       const assistantMessage = { 
         role: 'assistant', 
