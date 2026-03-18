@@ -28,6 +28,8 @@ const SchemeFinderWizard = () => {
   
   useEffect(() => {
     document.title = `Samarth | Step ${step} - Find Schemes`;
+    // Clear error whenever step changes to avoid stale validation messages
+    setError(null);
   }, [step]);
 
   const [loading, setLoading] = useState(false);
@@ -47,7 +49,7 @@ const SchemeFinderWizard = () => {
     income: '',
     socialCategory: '',
     district: '',
-    residence: 'Rural',
+    residence: 'Urban',
     qualification: '',
     isBPL: false,
     housingStatus: 'Own',
@@ -181,39 +183,44 @@ const SchemeFinderWizard = () => {
   };
 
   const nextStep = () => {
-    if (validateStep()) {
-      if (step < steps.length) setStep(step + 1);
+    const validationError = validateStep();
+    if (validationError === true) {
+      if (step < steps.length) {
+        setStep(step + 1);
+        setError(null);
+      }
+    } else {
+      setError(validationError);
     }
   };
 
   const prevStep = () => {
-    if (step > 1) setStep(step - 1);
+    if (step > 1) {
+      setStep(step - 1);
+      setError(null);
+    }
   };
 
   const validateStep = () => {
     switch (step) {
-      case 2: // Personal (Previously Step 1)
+      case 2: // Personal
         if (!formData.name || !formData.age || !formData.gender) {
-          setError('Please verify your personal details.');
-          return false;
+          return 'Please verify your personal details.';
         }
         return true;
       case 3: // Region
         if (!formData.district) {
-          setError('Please select your district.');
-          return false;
+          return 'Please select your district.';
         }
         return true;
       case 4: // Social
         if (!formData.socialCategory) {
-          setError('Please select your social category.');
-          return false;
+          return 'Please select your social category.';
         }
         return true;
       case 5: // Status
         if (!formData.income || !formData.occupation) {
-          setError('Please fill in all status details.');
-          return false;
+          return 'Please fill in all status details.';
         }
         return true;
       default:
@@ -223,7 +230,11 @@ const SchemeFinderWizard = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateStep()) return;
+    const validationError = validateStep();
+    if (validationError !== true) {
+      setError(validationError);
+      return;
+    }
     
     setLoading(true);
     setAnalysisProgress(0);

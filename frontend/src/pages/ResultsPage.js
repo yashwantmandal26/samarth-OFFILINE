@@ -84,14 +84,14 @@ const ResultsPage = () => {
 
   const formatAIExplanation = (text) => {
     if (!text) return null;
-    // Split by common delimiters if it's not already bulleted
-    const lines = text.split(/[•\n]|\d+\./).filter(line => line.trim().length > 0);
+    // Split by common bullet characters if the LLM outputted them as a block
+    const lines = text.split(/[✦•\n]|\d+\./).filter(line => line.trim().length > 3);
     return (
-      <ul className="space-y-2">
+      <ul className="space-y-4">
         {lines.map((line, idx) => (
-          <li key={idx} className="flex items-start gap-2">
-            <span className="text-blue-500 mt-1 text-[10px]">✦</span>
-            <span className="text-slate-700 font-medium leading-relaxed">{line.trim()}</span>
+          <li key={idx} className="flex items-start gap-3">
+            <span className="text-primary-500 mt-1 text-[10px]">✦</span>
+            <span className="text-slate-700 font-bold leading-relaxed tracking-tight text-[11px] uppercase italic">{line.trim()}</span>
           </li>
         ))}
       </ul>
@@ -282,26 +282,19 @@ const ResultsPage = () => {
                   </div>
                   <div className="text-xs flex-1 relative z-10">
                     {scheme.aiExplanation ? (
-                      <div className="prose prose-sm max-w-none">
-                        <ReactMarkdown 
-                          components={{
-                            ul: ({node, ...props}) => <ul className="space-y-3" {...props} />,
-                            li: ({node, ...props}) => (
-                              <li className="flex items-start gap-3">
-                                <span className="text-primary-500 mt-1 text-[10px]">✦</span>
-                                <span className="text-slate-700 font-bold leading-relaxed tracking-tight">{props.children}</span>
-                              </li>
-                            ),
-                            p: ({node, ...props}) => <span className="text-slate-700 font-bold leading-relaxed tracking-tight">{props.children}</span>
-                          }}
-                        >
-                          {cleanReasoning(scheme.reasoningPath)}
-                        </ReactMarkdown>
+                      <div className="bg-slate-50/50 rounded-2xl p-6 border border-slate-100/50 backdrop-blur-sm">
+                        {formatAIExplanation(scheme.aiExplanation)}
                       </div>
                     ) : (
-                      <div className="flex flex-col items-center justify-center h-full py-4 gap-3 opacity-70">
-                        <div className="w-6 h-6 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
-                        <span className="text-[10px] font-black text-primary-600 uppercase tracking-widest animate-pulse">Synthesizing logical proof...</span>
+                      <div className="bg-slate-50/50 rounded-2xl p-6 border border-slate-100/50 backdrop-blur-sm">
+                        <ul className="space-y-3">
+                          <li className="flex items-start gap-3">
+                            <span className="text-primary-500 mt-1 text-[10px]">✦</span>
+                            <span className="text-slate-700 font-bold leading-relaxed tracking-tight text-[11px] uppercase italic">
+                              {cleanReasoning(scheme.reasoningPath)}
+                            </span>
+                          </li>
+                        </ul>
                       </div>
                     )}
                   </div>

@@ -11,7 +11,7 @@ const userProfilingAgent = {
             income: parseInt(userData.income) || 0,
             socialCategory: userData.socialCategory || 'General',
             district: userData.district || 'Not specified',
-            residence: userData.residence || 'Rural', // Default to Rural
+            residence: userData.residence || 'Urban', // Default to Urban
             qualification: userData.qualification || 'None',
             isBPL: userData.isBPL || false,
             housingStatus: userData.housingStatus || 'Own',

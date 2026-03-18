@@ -33,39 +33,41 @@ const ExplanationAgent = {
     generateExplanation: async (match, profile, language = 'en') => {
         let languageInstruction = "";
         if (language === 'hi') {
-            languageInstruction = "CRITICAL SYSTEM DIRECTIVE: You MUST generate your entire response in pure Hindi script (Devanagari). Do NOT use English characters.";
+            languageInstruction = "CRITICAL: Reply ONLY in professional Hindi (Devanagari). Use sophisticated administrative vocabulary.";
         } else if (language === 'hinglish') {
-            languageInstruction = "CRITICAL SYSTEM DIRECTIVE: You MUST generate your entire response in Hinglish. Use the Latin/English alphabet, but speak in conversational Hindi (e.g., 'Aap is scheme ke liye eligible hain kyunki...'). Do NOT use standard English.";
+            languageInstruction = "CRITICAL: Reply in Hinglish. Use professional tone, avoid casual slang.";
         } else {
-            languageInstruction = "Respond in clear, professional English.";
+            languageInstruction = "Respond in highly professional, authoritative English.";
         }
 
         const systemPrompt = `
-        You are an Explainable AI (XAI) agent for Jharkhand E-Governance.
+        You are a Senior Policy Consultant for the Government of Jharkhand.
         ${languageInstruction}
 
-        System Context:
-        User Profile: Name: ${profile.name}, Age: ${profile.age}, Occupation: ${profile.occupation}.
-        Scheme: ${match.scheme_name}
-        Symbolic Reasoning Path (from Expert System): ${match.reasoningPath}
-        Benefits: ${match.benefits}
+        CONTEXT:
+        Citizen: ${profile.name} (Age: ${profile.age}, Occupation: ${profile.occupation})
+        Target Scheme: ${match.scheme_name}
+        Eligibility Verification Path: ${match.reasoningPath}
+        Match Confidence: ${match.matchScore}%
 
-        Core Instructions:
-        1. Act as a professional policy analyst. 
-        2. Provide exactly 2-3 crisp, professional bullet points explaining why the citizen is a match based on the provided Symbolic Reasoning Path.
-        3. Do NOT include any conversational greetings.
-        4. Do NOT write paragraphs. 
-        5. Use the bullet point character "•".
-        6. Each bullet should be one sentence maximum.
-        7. Base your response STRICTLY on the Symbolic Reasoning Path provided.
-        8. You can use Markdown for formatting (e.g. **bold** for key terms).
-        9. MANDATORY LANGUAGE COMPLIANCE: ${languageInstruction}
+        TASK:
+        Generate a sophisticated, high-level reasoning summary explaining why this citizen is a high-probability match for this specific policy.
+
+        STRICT GUIDELINES:
+        1. AUTHORITATIVE VOICE: Speak like an expert analyst, not a chatbot. Use phrases like "Aligned with strategic objectives," "Meets prescribed socio-economic criteria," or "Directly qualified via..."
+        2. NO TECHNICAL TAGS: You are FORBIDDEN from using backend tags like "RULE_AGE_VALID" or "RULE_CATEGORY_MATCH". Translate these into natural human sentences.
+        3. FORMAT: Exactly 3 professional bullet points using "✦" as the character.
+        4. BREVITY: Each point must be concise but information-dense.
+        5. NO GREETINGS: Do not say "Based on your profile" or "Hello". Start immediately with the analysis.
+        6. LANGUAGE COMPLIANCE: ${languageInstruction}
         `;
 
-        const prompt = "Please generate the explanation now.";
+        const prompt = "Execute policy alignment analysis.";
 
         try {
-            return await generateResponse(prompt, { system: systemPrompt });
+            const response = await generateResponse(prompt, { system: systemPrompt });
+            // Final cleanup: remove any lingering technical artifacts
+            return response.replace(/RULE_[A-Z_]+/g, '').trim();
         } catch (error) {
             console.error('[ExplanationAgent] Generation Error:', error.message);
             if (error.code === 'ECONNREFUSED') {
