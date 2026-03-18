@@ -113,6 +113,21 @@ const ResultsPage = () => {
 
   const { recommendations, profile, totalMatches } = results;
 
+  // Formatting Helpers for Demo
+  const formattedName = profile.name ? profile.name.split(' ').map(n => n.charAt(0).toUpperCase() + n.slice(1).toLowerCase()).join(' ') : 'Citizen';
+  const occupationArticle = ['a', 'e', 'i', 'o', 'u'].includes(profile.occupation?.charAt(0).toLowerCase()) ? 'an' : 'a';
+  
+  const cleanReasoning = (text) => {
+    if (!text) return '';
+    // Remove technical tags like RULE_CATEGORY_MATCH
+    let cleaned = text.replace(/RULE_[A-Z_]+/g, '');
+    // Remove underscores and pipes
+    cleaned = cleaned.replace(/_/g, ' ').replace(/\|/g, ', ');
+    // Convert to sentence case
+    cleaned = cleaned.trim().toLowerCase();
+    return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+  };
+
   // Robust filtering logic to handle inconsistent dataset categories
   const categoryMap = {
     'Students': ['Students', 'Education'],
@@ -131,9 +146,9 @@ const ResultsPage = () => {
     : recommendations.filter(r => {
         const mappedCategories = categoryMap[activeCategory] || [activeCategory];
         return mappedCategories.includes(r.category);
-      })).slice(0, 12); // Limit to Top 12 highly relevant matches
+      })).slice(0, 10); // STRICT LIMIT: Top 10 highly relevant matches for Demo
 
-  const summaryText = `Analysis complete, ${profile.name ? profile.name : 'Citizen'}. Based on your socio-economic profile as a ${profile.occupation} in ${profile.district}, Samarth has identified high-probability matches primarily in the ${recommendations[0]?.category || 'Education and Skill Development'} sector. Below is the refined list of the top ${filteredRecommendations.length} highly relevant schemes tailored for your profile.`;
+  const summaryText = `Analysis complete, ${formattedName}. Based on your socio-economic profile as ${occupationArticle} ${profile.occupation} in ${profile.district}, Samarth has identified high-probability matches primarily in the ${recommendations[0]?.category || 'Education and Skill Development'} sector. Below is the refined list of the top ${filteredRecommendations.length} highly relevant schemes tailored for your profile.`;
 
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-6">
@@ -148,7 +163,7 @@ const ResultsPage = () => {
               Recommended Schemes
             </h1>
             <p className="text-sm text-slate-500 font-medium">
-              Showing Top {filteredRecommendations.length} highly relevant matches tailored for <span className="text-slate-900 font-bold">{profile.name}</span>
+              Showing Top {filteredRecommendations.length} highly relevant matches tailored for <span className="text-slate-900 font-bold">{formattedName}</span>
             </p>
           </div>
           <div className="hidden md:block text-right">
@@ -274,13 +289,13 @@ const ResultsPage = () => {
                             li: ({node, ...props}) => (
                               <li className="flex items-start gap-3">
                                 <span className="text-primary-500 mt-1 text-[10px]">✦</span>
-                                <span className="text-slate-700 font-bold leading-relaxed uppercase tracking-tight">{props.children}</span>
+                                <span className="text-slate-700 font-bold leading-relaxed tracking-tight">{props.children}</span>
                               </li>
                             ),
-                            p: ({node, ...props}) => <span className="text-slate-700 font-bold leading-relaxed uppercase tracking-tight">{props.children}</span>
+                            p: ({node, ...props}) => <span className="text-slate-700 font-bold leading-relaxed tracking-tight">{props.children}</span>
                           }}
                         >
-                          {scheme.aiExplanation}
+                          {cleanReasoning(scheme.reasoningPath)}
                         </ReactMarkdown>
                       </div>
                     ) : (

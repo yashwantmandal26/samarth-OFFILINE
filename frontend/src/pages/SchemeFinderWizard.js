@@ -58,6 +58,20 @@ const SchemeFinderWizard = () => {
 
   const [missingFields, setMissingFields] = useState([]);
 
+  useEffect(() => {
+    // Health Check on Load
+    const checkHealth = async () => {
+      try {
+        await api.get('/health');
+        console.log('[Samarth] Backend Connection Verified');
+      } catch (err) {
+        console.error('[Samarth] Backend Connection Failed:', err.message);
+        setError('Backend server unreachable. Please run start.bat and wait 10 seconds.');
+      }
+    };
+    checkHealth();
+  }, []);
+
   const steps = [
     { title: t('wizard_step_1'), icon: Sparkles, color: 'bg-primary-500' },
     { title: t('wizard_step_2'), icon: User, color: 'bg-blue-500' },
@@ -216,8 +230,8 @@ const SchemeFinderWizard = () => {
     // Initial state for the sequential animation
     setAgentWorkflow([
         { agent: 'Vision Agent', status: 'Pending', active: false },
-        { agent: 'Reasoning Agent', status: 'Pending', active: false },
-        { agent: 'Translation Agent', status: 'Pending', active: false }
+        { agent: 'Eligibility Agent', status: 'Pending', active: false },
+        { agent: 'Explanation Agent', status: 'Pending', active: false }
     ]);
 
     try {
@@ -230,28 +244,28 @@ const SchemeFinderWizard = () => {
       // Step 1: Vision Agent
       setAgentWorkflow([
         { agent: 'Vision Agent', status: 'Scanning document...', active: true },
-        { agent: 'Reasoning Agent', status: 'Pending', active: false },
-        { agent: 'Translation Agent', status: 'Pending', active: false }
+        { agent: 'Eligibility Agent', status: 'Pending', active: false },
+        { agent: 'Explanation Agent', status: 'Pending', active: false }
       ]);
       setAnalysisProgress(20);
 
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // Step 2: Reasoning Agent
+      // Step 2: Eligibility Agent
       setAgentWorkflow([
         { agent: 'Vision Agent', status: 'Complete', active: false },
-        { agent: 'Reasoning Agent', status: 'Matching policies...', active: true },
-        { agent: 'Translation Agent', status: 'Pending', active: false }
+        { agent: 'Eligibility Agent', status: 'Matching policies...', active: true },
+        { agent: 'Explanation Agent', status: 'Pending', active: false }
       ]);
       setAnalysisProgress(50);
 
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      // Step 3: Translation Agent
+      // Step 3: Explanation Agent
       setAgentWorkflow([
         { agent: 'Vision Agent', status: 'Complete', active: false },
-        { agent: 'Reasoning Agent', status: 'Complete', active: false },
-        { agent: 'Translation Agent', status: 'Simplifying output...', active: true }
+        { agent: 'Eligibility Agent', status: 'Complete', active: false },
+        { agent: 'Explanation Agent', status: 'Simplifying output...', active: true }
       ]);
       setAnalysisProgress(80);
 
@@ -260,8 +274,8 @@ const SchemeFinderWizard = () => {
       
       setAgentWorkflow([
         { agent: 'Vision Agent', status: 'Complete', active: false },
-        { agent: 'Reasoning Agent', status: 'Complete', active: false },
-        { agent: 'Translation Agent', status: 'Complete', active: false }
+        { agent: 'Eligibility Agent', status: 'Complete', active: false },
+        { agent: 'Explanation Agent', status: 'Complete', active: false }
       ]);
       setAnalysisProgress(100);
 
@@ -534,7 +548,7 @@ const SchemeFinderWizard = () => {
                     name="income"
                     value={formatIncome(formData.income)}
                     onChange={handleInputChange}
-                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-rose-500 focus:bg-white focus:ring-0 transition-all text-sm font-black text-slate-900 placeholder:text-slate-300"
+                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-primary-500 focus:bg-white focus:ring-0 transition-all text-sm font-black text-slate-900 placeholder:text-slate-300"
                     placeholder="e.g. ₹ 1,50,000"
                   />
                   <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
@@ -552,7 +566,7 @@ const SchemeFinderWizard = () => {
                       onClick={() => setFormData(p => ({ ...p, occupation: o }))}
                       className={`py-2.5 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all ${
                         formData.occupation === o 
-                        ? 'border-rose-600 bg-rose-600 text-white shadow-lg shadow-rose-100' 
+                        ? 'border-purple-600 bg-purple-600 text-white shadow-lg shadow-purple-100' 
                         : 'border-slate-100 bg-slate-50 text-slate-500 hover:border-rose-200'
                       }`}
                     >
@@ -613,7 +627,7 @@ const SchemeFinderWizard = () => {
                       agent.status === 'Complete' ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-400'
                     }`}>
                       {agent.agent === 'Vision Agent' ? <Eye size={20} /> : 
-                       agent.agent === 'Reasoning Agent' ? <Brain size={20} /> : <Sparkles size={20} />}
+                       agent.agent === 'Eligibility Agent' ? <Brain size={20} /> : <Sparkles size={20} />}
                     </div>
                     <div className="text-left">
                       <p className={`text-[10px] font-black uppercase tracking-widest ${
@@ -643,8 +657,8 @@ const SchemeFinderWizard = () => {
           <div className="text-center">
             <div className="inline-flex flex-col items-center">
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-slate-100 p-1.5">
-                  <img src={logo} alt="Samarth" className="w-full h-full object-contain" />
+                <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-100">
+                  <span className="text-white font-black text-lg">S</span>
                 </div>
                 <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">Samarth Engine</h3>
               </div>
@@ -663,8 +677,8 @@ const SchemeFinderWizard = () => {
           {/* Sidebar */}
           <div className="md:w-80 bg-slate-900 p-10 text-white hidden md:flex flex-col">
             <div className="mb-12 flex items-center gap-3">
-              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center overflow-hidden border border-slate-800">
-                <img src={logo} alt="Samarth Logo" className="w-full h-full object-contain p-1.5" />
+              <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center border border-white/5 shadow-inner">
+                <span className="text-white font-black text-2xl">S</span>
               </div>
               <div>
                 <h2 className="text-2xl font-black tracking-tighter uppercase text-primary-400 leading-none">Samarth</h2>

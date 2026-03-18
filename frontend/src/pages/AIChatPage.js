@@ -208,8 +208,8 @@ const AIChatPage = () => {
               <ArrowLeft size={20} />
             </Link>
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center border border-slate-100 overflow-hidden">
-                <img src={logo} alt="Samarth Logo" className="w-full h-full object-contain p-1.5" />
+              <div className="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center border border-slate-800 shadow-lg shadow-indigo-100">
+                <span className="text-white font-black text-xl">S</span>
               </div>
               <div>
                 <h2 className="text-sm font-black text-slate-900 uppercase tracking-tight">Samarth AI</h2>
@@ -241,8 +241,8 @@ const AIChatPage = () => {
               className={`flex w-full ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div className={`flex gap-3 max-w-[85%] ${m.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 shadow-sm mt-1 ${m.role === 'user' ? 'bg-slate-900 text-white' : 'bg-white text-slate-900 border border-slate-100 overflow-hidden'}`}>
-                  {m.role === 'user' ? <User size={14} /> : <img src={logo} alt="Bot" className="w-full h-full object-contain p-1" />}
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 shadow-sm mt-1 ${m.role === 'user' ? 'bg-slate-900 text-white' : 'bg-slate-900 text-white border border-slate-800'}`}>
+                  {m.role === 'user' ? <User size={14} /> : <span className="font-black text-xs">S</span>}
                 </div>
                 <div className={`flex flex-col gap-2 ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
                   <div className={`p-4 rounded-2xl shadow-sm border text-sm font-sans leading-relaxed not-italic ${
@@ -298,8 +298,8 @@ const AIChatPage = () => {
         {loading && (
           <div className="flex justify-start w-full">
             <div className="flex gap-3">
-              <div className="w-8 h-8 bg-white border border-slate-100 rounded-lg flex items-center justify-center shrink-0 shadow-sm overflow-hidden mt-1">
-                <img src={logo} alt="Bot" className="w-full h-full object-contain p-1" />
+              <div className="w-8 h-8 bg-slate-900 text-white border border-slate-800 rounded-lg flex items-center justify-center shrink-0 shadow-sm mt-1">
+                <span className="font-black text-xs">S</span>
               </div>
               <div className="bg-white p-4 rounded-2xl rounded-tl-none border border-slate-50 shadow-sm">
                 <div className="flex gap-1.5">

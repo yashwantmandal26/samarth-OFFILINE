@@ -142,9 +142,6 @@ const EligibilityAgent = {
         return { matches: evaluatedMatches };
     },
 
-        return { matches: evaluatedMatches };
-    },
-
     simulate: (profile, schemes) => {
         return EligibilityAgent.evaluate(profile, schemes);
     }

@@ -1,13 +1,28 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+// Use 127.0.0.1 directly to avoid localhost resolution issues on Windows
+const API_BASE_URL = 'http://127.0.0.1:5000/api';
 
 const api = axios.create({
     baseURL: API_BASE_URL,
+    timeout: 120000, 
     headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
     }
 });
+
+// Interceptor to handle Network Errors more clearly
+api.interceptors.response.use(
+    response => response,
+    error => {
+        if (!error.response) {
+            console.error('[API] Network Error - Is the backend running?');
+            return Promise.reject(new Error('Backend server is unreachable. Please ensure Samarth Backend is running.'));
+        }
+        return Promise.reject(error);
+    }
+);
 
 export const schemeService = {
     getAllSchemes: () => api.get('/schemes'),
